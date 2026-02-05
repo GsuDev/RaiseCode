@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
+import { PrismaSqlService } from './prisma-sql/prisma-sql.service';
+import { PrismaSqlModule } from './prisma-sql/prisma-sql.module';
 
 
 @Module({
-  imports: [],
+  imports: [PrismaSqlModule],
   controllers: [],
-  providers: [],
+  providers: [PrismaSqlService],
 })
 export class AppModule {}
