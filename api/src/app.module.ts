@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
-import { PrismaSqlService } from './prisma-sql/prisma-sql.service';
-import { PrismaSqlModule } from './prisma-sql/prisma-sql.module';
+import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
+import { MongooseService } from './mongoose/mongoose.service';
+import { MongooseModule } from './mongoose/mongoose.module';
 
 
 @Module({
-  imports: [PrismaSqlModule],
+  imports: [PrismaModule, MongooseModule],
   controllers: [],
-  providers: [PrismaSqlService],
+  providers: [PrismaService, MongooseService],
 })
 export class AppModule {}
