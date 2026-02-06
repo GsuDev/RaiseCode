@@ -8,6 +8,7 @@ export class MongooseService implements OnModuleInit, OnModuleDestroy {
     
     constructor () {}
 
+    // Al iniciar el modulo, realiza la conexión
     async onModuleInit() {
         try {
             this.connection = await mongoose.connect(process.env.MONGO_URL!, {})
@@ -20,11 +21,13 @@ export class MongooseService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    // Al finalizar el modulo, corta la conexión
     async onModuleDestroy() {
         await mongoose.disconnect();
         console.log(kleur.magenta('MongoDB desconectado'))
     }
 
+    // Metodo para recoger el estado de la conexión
     getConnection() {
         return this.connection;
     }
