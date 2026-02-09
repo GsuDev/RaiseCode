@@ -14,4 +14,119 @@ datasource db {
   provider = "mysql"
 }
 
-// Modelos de la base de datos
+// Modelos sin Foreign keys
+
+model Dificulty {
+  id         Int         @id @default(autoincrement())
+  name       String
+  // Relaciones de Dificulty
+  challenges Challenge[]
+}
+
+model Language {
+  id         Int         @id @default(autoincrement())
+  name       String
+  // Relaciones de Language
+  challenges Challenge[]
+}
+
+model Subject {
+  id           Int            @id @default(autoincrement())
+  name         String
+  // Relaciones de Subject
+  challenges   Challenge[]
+  userSubjects UserSubjects[]
+}
+
+model User {
+  id                   Int                   @id @default(autoincrement())
+  email                String                @unique
+  name                 String
+  lastname             String
+  password             String
+
+  // Relaciones de User
+  createdChallenges    Challenge[]           @relation("ChallengeCreator")
+  validatedChallenges  Challenge[]           @relation("ChallengeValidator")
+  completedChallenges  CompletedChallenges[]
+  userRoles            UserRoles[]
+  userAchievements     UserAchievements[]
+  userSubjects         UserSubjects[]
+}
+
+model Role {
+  id        Int         @id @default(autoincrement())
+  name      String
+  // Relaciones de Role
+  userRoles UserRoles[]
+}
+
+model Achievement {
+  id               Int                @id @default(autoincrement())
+  name             String
+  // Relaciones de Achievement
+  userAchievements UserAchievements[]
+}
+
+// Modelos de las tablas intermedias de User
+
+model UserRoles {
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int
+
+  @@id([userId, roleId])
+}
+
+model UserAchievements {
+  user         User       @relation(fields: [userId], references: [id])
+  userId       Int
+  achivement   Achievement @relation(fields: [achievementId], references: [id])
+  achievementId Int
+
+  @@id([userId, achievementId])
+}
+
+model UserSubjects {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId Int
+
+  @@id([userId, subjectId])
+}
+
+// Modelo de Challenges
+
+model Challenge {
+  id                  Int                   @id @default(autoincrement())
+  title               String
+  statement           String
+  dificulty           Dificulty             @relation(fields: [dificultyId], references: [id])
+  dificultyId         Int
+  language            Language              @relation(fields: [languageId], references: [id])
+  languageId          Int
+  subject             Subject               @relation(fields: [subjectId], references: [id])
+  subjectId           Int
+  creator             User                  @relation("ChallengeCreator", fields: [creatorId], references: [id])
+  creatorId           Int
+  validator           User                  @relation("ChallengeValidator", fields: [validatorId], references: [id])
+  validatorId         Int
+  validate            Boolean
+  // Relaciones de Challenge
+  completedChallenges CompletedChallenges[]
+}
+
+// Modelo de CompletedChallenges
+
+model CompletedChallenges {
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  challengeId Int
+  time        BigInt
+  code        String
+
+  @@id([userId, challengeId])
+}
