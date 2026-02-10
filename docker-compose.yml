@@ -1,0 +1,290 @@
+services:
+  # ============================================================================
+  # NGINX - Reverse Proxy
+  # ============================================================================
+  nginx:
+    image: nginx:${NGINX_VERSION:-alpine}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    environment:
+      - TZ=${TIMEZONE:-UTC}
+    env_file:
+      - ./.env
+    depends_on:
+      frontend:
+        condition: service_started
+      api:
+        condition: service_healthy
+    networks:
+      - frontend_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # ============================================================================
+  # FRONTEND - SPA con Vite - DESARROLLO
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      args:
+        - NODE_VERSION=${NODE_VERSION:-20}
+        - VITE_PORT=${FRONTEND_INTERNAL_PORT:-5173}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_frontend
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=${FRONTEND_API_URL:-http://localhost/api}
+      - VITE_PORT=${FRONTEND_INTERNAL_PORT:-5173}
+    env_file:
+      - ./.env
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "${FRONTEND_EXTERNAL_PORT:-5173}:${FRONTEND_INTERNAL_PORT:-5173}"
+    networks:
+      - frontend_network
+    # Instalar dependencias y luego arrancar
+    command: sh -c "npm install && npm run dev"
+    restart: unless-stopped
+
+  # ============================================================================
+  # API - Backend NestJS con Yarn - DESARROLLO
+  # ============================================================================
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+      args:
+        - NODE_VERSION=${NODE_VERSION:-20}
+        - API_PORT=${API_PORT:-3000}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_api
+    environment:
+      - NODE_ENV=development
+      - PORT=${API_PORT:-3000}
+      - TZ=${TIMEZONE:-UTC}
+      # MariaDB
+      - DATABASE_HOST=${DB_HOST:-mariadb}
+      - DATABASE_PORT=${DB_PORT:-3306}
+      - DATABASE_NAME=${DB_NAME:-code_judge}
+      - DATABASE_USER=${DB_USER:-code_judge_user}
+      - DATABASE_PASSWORD=${DB_PASSWORD:-dev_password}
+      - DATABASE_URL=mysql://${DB_USER:-code_judge_user}:${DB_PASSWORD:-dev_password}@${DB_HOST:-mariadb}:${DB_PORT:-3306}/${DB_NAME:-code_judge}
+      # MongoDB
+      - MONGO_HOST=${MONGO_HOST:-mongodb}
+      - MONGO_PORT=${MONGO_PORT:-27017}
+      - MONGO_DATABASE=${MONGO_DATABASE:-code_judge_logs}
+      - MONGO_URL=mongodb://${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DATABASE:-code_judge_logs}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_URL=redis://${REDIS_HOST:-redis}:${REDIS_PORT:-6379}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-dev_secret_not_for_production}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-7d}
+      # Worker
+      - WORKER_URL=http://worker:${WORKER_PORT:-4000}
+    env_file:
+      - ./.env
+    volumes:
+      - ./api:/app
+      - api_node_modules:/app/node_modules
+    ports:
+      - "${API_EXTERNAL_PORT:-3000}:${API_PORT:-3000}"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - frontend_network
+      - backend_network
+    # Instalar dependencias y luego arrancar
+    command: sh -c "yarn install && yarn prisma generate && yarn start:dev"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_PORT:-3000}/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  # ============================================================================
+  # WORKER - Python con Flask - DESARROLLO
+  # ============================================================================
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.dev
+      args:
+        - PYTHON_VERSION=${PYTHON_VERSION:-3.11}
+        - WORKER_PORT=${WORKER_PORT:-4000}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_worker
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - PORT=${WORKER_PORT:-4000}
+      - TZ=${TIMEZONE:-UTC}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_URL=redis://${REDIS_HOST:-redis}:${REDIS_PORT:-6379}
+      # API
+      - API_URL=http://api:${API_PORT:-3000}
+      # Configuración de runners
+      - RUNNER_TIMEOUT=${RUNNER_TIMEOUT:-10}
+      - RUNNER_MEMORY_LIMIT=${RUNNER_MEMORY_LIMIT:-256m}
+      - RUNNER_CPU_LIMIT=${RUNNER_CPU_LIMIT:-0.5}
+      # Docker
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      # Flask
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    env_file:
+      - ./.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./worker:/app
+    ports:
+      - "${WORKER_EXTERNAL_PORT:-4000}:${WORKER_PORT:-4000}"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - backend_network
+      - runner_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import requests; requests.get('http://localhost:${WORKER_PORT:-4000}/health', timeout=2)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ============================================================================
+  # REDIS - DESARROLLO
+  # ============================================================================
+  redis:
+    image: redis:${REDIS_VERSION:-7-alpine}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_redis
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory ${REDIS_MAX_MEMORY:-256mb}
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_EXTERNAL_PORT:-6379}:6379"
+    env_file:
+      - ./.env
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ============================================================================
+  # MARIADB - DESARROLLO
+  # ============================================================================
+  mariadb:
+    image: mariadb:${MARIADB_VERSION:-11.2}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_dev_password}
+      - MYSQL_DATABASE=${DB_NAME:-code_judge}
+      - MYSQL_USER=${DB_USER:-code_judge_user}
+      # - MYSQL_PASSWORD=${DB_PASSWORD:-dev_password}
+      - MYSQL_ROOT_HOST='%'
+      - TZ=${TIMEZONE:-UTC}
+    env_file:
+      - ./.env
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=${DB_MAX_CONNECTIONS:-200}
+      --innodb-buffer-pool-size=${DB_BUFFER_POOL_SIZE:-256M}
+    ports:
+      - "${DB_EXTERNAL_PORT:-3306}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./mariadb/init:/docker-entrypoint-initdb.d:ro
+      - ./mariadb/conf.d:/etc/mysql/conf.d:ro
+    networks:
+      - backend_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # MONGODB - DESARROLLO
+  # ============================================================================
+  mongodb:
+    image: mongo:${MONGO_VERSION:-7.0}
+    container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-root}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-mongo_dev_password}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE:-code_judge_logs}
+      - TZ=${TIMEZONE:-UTC}
+    ports:
+      - "${MONGO_EXTERNAL_PORT:-27017}:27017"
+    env_file:
+      - ./.env
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+      - ./mongodb/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - backend_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ==============================================================================
+# NETWORKS
+# ==============================================================================
+networks:
+  frontend_network:
+    driver: bridge
+  backend_network:
+    driver: bridge
+  runner_network:
+    driver: bridge
+
+# ==============================================================================
+# VOLUMES
+# ==============================================================================
+volumes:
+  mariadb_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  redis_data:
+    driver: local
+  # Volúmenes para node_modules (evitar sobrescribir con bind mount)
+  api_node_modules:
+    driver: local
+  frontend_node_modules:
+    driver: local
