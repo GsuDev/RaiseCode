@@ -1,0 +1,39 @@
+# ==============================================================================
+# Worker Dockerfile - DESARROLLO con Flask y Python
+# ==============================================================================
+
+# Versión de Python configurable desde docker-compose
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}-slim
+
+# Instalar Docker CLI y dependencias
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    docker.io \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copiar requirements
+COPY requirements.txt requirements-dev.txt ./
+RUN pip install --no-cache-dir --break-system-packages -r requirements.txt && \
+    pip install --no-cache-dir --break-system-packages -r requirements-dev.txt
+
+# Copiar código (se sobrescribirá con volumen)
+COPY . .
+
+# Puerto configurable
+ARG WORKER_PORT=4000
+ENV PORT=${WORKER_PORT}
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV FLASK_ENV=development
+ENV FLASK_DEBUG=1
+
+EXPOSE ${WORKER_PORT}
+
+# Comando de desarrollo con hot-reload
+# Usar sh -c para que interprete la variable
+CMD sh -c "python3 -m flask --app src/main.py run --host=0.0.0.0 --port=${PORT} --reload"
