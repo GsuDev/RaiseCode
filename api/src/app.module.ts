@@ -3,12 +3,13 @@ import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { MongooseService } from './mongoose/mongoose.service';
 import { MongooseModule } from './mongoose/mongoose.module';
-import { ConfigModule } from '@nestjs/config'
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
-    PrismaModule, 
-    MongooseModule,
+      PrismaModule, 
+      MongooseModule, 
+      HealthModule,
     ],
   controllers: [],
   providers: [PrismaService, MongooseService],
