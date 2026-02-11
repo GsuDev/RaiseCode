@@ -7,13 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 
 
 @Module({
-  imports: [
-    PrismaModule, 
-    MongooseModule,
-    // Cargar las variables de entorno generales de la aplicación
-    ConfigModule.forRoot({
-      envFilePath: '../.env', 
-    })],
+  imports: [PrismaModule, MongooseModule],
   controllers: [],
   providers: [PrismaService, MongooseService],
 })
