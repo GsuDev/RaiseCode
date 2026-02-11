@@ -110,10 +110,10 @@ services:
       - frontend_network
       - backend_network
     # Instalar dependencias y luego arrancar
-    command: sh -c "yarn install && yarn prisma generate && yarn start:dev"
+    command: sh -c "yarn install && yarn prisma generate && yarn prisma migrate dev && yarn start:dev"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_PORT:-3000}/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${API_PORT:-3000}/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -204,11 +204,11 @@ services:
     image: mariadb:${MARIADB_VERSION:-11.2}
     container_name: ${COMPOSE_PROJECT_NAME:-code_judge}_mariadb
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_dev_password}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root_dev_password}
       - MYSQL_DATABASE=${DB_NAME:-code_judge}
-      - MYSQL_USER=${DB_USER:-code_judge_user}
+      # - MYSQL_USER=${DB_USER:-code_judge_user}
       # - MYSQL_PASSWORD=${DB_PASSWORD:-dev_password}
-      - MYSQL_ROOT_HOST='%'
+      - MYSQL_ROOT_HOST=%
       - TZ=${TIMEZONE:-UTC}
     env_file:
       - ./.env
