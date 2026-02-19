@@ -101,7 +101,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                     variant="ghost"
                     color="fg"
                     size="sm"
-                    onClick={() => onNavigate("perfil")}
+                    onClick={() => onNavigate("/")}
                     _hover={{ bg: "bg.subtle" }}
                     >
                     <User size={16} />
@@ -113,7 +113,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                         variant="ghost"
                         color="fg"
                         size="sm"
-                        onClick={() => onNavigate("login")}
+                        onClick={() => onNavigate("/")}
                         _hover={{ bg: "bg.subtle" }}
                     >
                         <LogIn size={16} />
@@ -123,7 +123,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                         bg="brand.500"
                         color="bg"
                         size="sm"
-                        onClick={() => onNavigate("registro")}
+                        onClick={() => onNavigate("/")}
                         _hover={{ bg: "brand.600" }}
                     >
                         Registrarse
@@ -186,7 +186,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 variant="ghost"
                 justifyContent="flex-start"
                 color="fg"
-                onClick={() => { onNavigate("perfil"); setMobileMenuOpen(false) }}
+                onClick={() => { onNavigate("/"); setMobileMenuOpen(false) }}
                 _hover={{ bg: "bg.subtle" }}
               >
                 <User size={16} />
@@ -198,7 +198,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                   variant="ghost"
                   justifyContent="flex-start"
                   color="fg"
-                  onClick={() => { onNavigate("login"); setMobileMenuOpen(false) }}
+                  onClick={() => { onNavigate("/"); setMobileMenuOpen(false) }}
                   _hover={{ bg: "bg.subtle" }}
                 >
                   <LogIn size={16} />
@@ -208,7 +208,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                   bg="brand.500"
                   color="bg"
                   justifyContent="flex-start"
-                  onClick={() => { onNavigate("registro"); setMobileMenuOpen(false) }}
+                  onClick={() => { onNavigate("/"); setMobileMenuOpen(false) }}
                   _hover={{ bg: "brand.600" }}
                 >
                   Registrarse
