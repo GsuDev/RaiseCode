@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Flex, Button, IconButton, Text, HStack, VStack, Image } from "@chakra-ui/react"
+import { Box, Flex, Button, IconButton, Text, HStack, VStack, Image, Tooltip } from "@chakra-ui/react"
 import { Trophy, BookOpen, PlusCircle, User, Menu, X, LogIn } from "lucide-react"
 import { ColorModeToggle } from "../ui/color-mode"
 import LogoSrc from "src/assets/Logo.svg"
@@ -76,19 +76,39 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                     {navItems.map((item) => {
                     const Icon = item.icon
                     return (
-                        <Button
-                        key={item.id}
-                        variant={currentPage === item.id ? "solid" : "ghost"}
-                        bg={currentPage === item.id ? "surface.secondary" : "transparent"}
-                        color={currentPage === item.id ? "surface.bg" : "fg"}
-                        size="sm"
-                        onClick={() => onNavigate(item.id)}
-                        _hover={{ bg: "bg.subtle" , color: "fg" }}
-                        >
-                        <Icon size={16} />
-                        {item.label}
-                        </Button>
-                    )
+                      <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                          <Button
+                            key={item.id}
+                            variant={currentPage === item.id ? "solid" : "ghost"}
+                            bg={currentPage === item.id ? "surface.secondary" : "transparent"}
+                            color={currentPage === item.id ? "surface.bg" : "fg"}
+                            size="sm"
+                            aria-label="En desarrollo"
+                            onClick={() => onNavigate(item.id)}
+                            _hover={{ bg: "bg.subtle" , color: "fg" }}
+                          >
+                          <Icon size={16} />
+                          {item.label}
+                          </Button>
+                        </Tooltip.Trigger>
+  
+                         <Tooltip.Positioner>
+                          <Tooltip.Content 
+                            bg="bg.canvas" 
+                            color="fg" 
+                            borderColor="border" 
+                            borderWidth="1px" 
+                            borderRadius="md" 
+                            p="2"
+                            zIndex="popover"
+                          >
+                            <Tooltip.Arrow />
+                            En desarrollo
+                          </Tooltip.Content>
+                        </Tooltip.Positioner>
+                      </Tooltip.Root>
+                      )
                     })}
                 </HStack>
             )}
@@ -97,19 +117,40 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
             {/* Desktop Auth */}
             <HStack gap="2" display={{ base: "none", md: "flex" }}>
                 {isLoggedIn ? (
-                    <Button
-                    variant="ghost"
-                    color="fg"
-                    size="sm"
-                    onClick={() => onNavigate("/")}
-                    _hover={{ bg: "bg.subtle" }}
-                    >
-                    <User size={16} />
-                    Mi Perfil
-                    </Button>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <Button
+                        variant="ghost"
+                        color="fg"
+                        size="sm"
+                        onClick={() => onNavigate("/")}
+                        _hover={{ bg: "bg.subtle" }}
+                        >
+                        <User size={16} />
+                        Mi Perfil
+                        </Button>
+                      </Tooltip.Trigger>
+
+                      <Tooltip.Positioner>
+                        <Tooltip.Content 
+                          bg="bg.canvas" 
+                          color="fg" 
+                          borderColor="border" 
+                          borderWidth="1px" 
+                          borderRadius="md" 
+                          p="2"
+                          zIndex="popover"
+                        >
+                          <Tooltip.Arrow />
+                          En desarrollo
+                        </Tooltip.Content>
+                      </Tooltip.Positioner>
+                    </Tooltip.Root>
                 ) : (
                     <>
-                    <Button
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <Button
                         variant="ghost"
                         color="fg"
                         size="sm"
@@ -118,7 +159,26 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                     >
                         <LogIn size={16} />
                         Iniciar Sesion
-                    </Button>
+                        </Button>
+                        </Tooltip.Trigger>
+
+                      <Tooltip.Positioner>
+                        <Tooltip.Content 
+                          bg="bg.canvas" 
+                          color="fg" 
+                          borderColor="border" 
+                          borderWidth="1px" 
+                          borderRadius="md" 
+                          p="2"
+                          zIndex="popover"
+                        >
+                          <Tooltip.Arrow />
+                          En desarrollo
+                        </Tooltip.Content>
+                      </Tooltip.Positioner>
+                    </Tooltip.Root>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
                     <Button
                         bg="brand.500"
                         color="bg"
@@ -128,7 +188,23 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                     >
                         Registrarse
                     </Button>
-                    </>
+                     </Tooltip.Trigger>
+                      <Tooltip.Positioner>
+                        <Tooltip.Content 
+                          bg="bg.canvas" 
+                          color="fg" 
+                          borderColor="border" 
+                          borderWidth="1px" 
+                          borderRadius="md" 
+                          p="2"
+                          zIndex="popover"
+                        >
+                          <Tooltip.Arrow />
+                          En desarrollo
+                        </Tooltip.Content>
+                      </Tooltip.Positioner>
+                    </Tooltip.Root>
+                  </>
                 )}
                 <ColorModeToggle />
             </HStack>
