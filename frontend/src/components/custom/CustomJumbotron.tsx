@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Flex, Button, IconButton, Text, HStack, VStack } from "@chakra-ui/react"
-import { Code2, Trophy, BookOpen, PlusCircle, User, Menu, X, LogIn } from "lucide-react"
+import { Box, Flex, Button, IconButton, Text, HStack, VStack, Image } from "@chakra-ui/react"
+import { Trophy, BookOpen, PlusCircle, User, Menu, X, LogIn } from "lucide-react"
 import { ColorModeToggle } from "../ui/color-mode"
+import LogoSrc from "src/assets/Logo.svg"
 interface NavigationProps {
   currentPage: string
   onNavigate: (page: string) => void
@@ -54,12 +55,17 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
             alignItems="center"
             justifyContent="center"
             borderRadius="lg"
-            bg="brand.500"
           >
-            <Code2 size={20} color="#0F0A1A" />
+            <Image 
+              src={LogoSrc} 
+              alt="RaiseCode" 
+              w="full" 
+              h="full"
+              scale={1.2}
+            />
           </Flex>
           <Text fontWeight="bold" fontSize="xl" color="fg">
-            Retos VdG
+            RaiseCode
           </Text>
         </Flex>
 
