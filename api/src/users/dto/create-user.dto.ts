@@ -1,34 +1,30 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsEnum }  from 'class-validator';
-import {Cycle} from '@prisma/client';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Cycle } from 'generated/client/client';
 
 export class CreateUserDto {
-    // Nombre (obligatorio)
-    @IsString({ message: 'El nombre debe ser texto'})
-    @IsNotEmpty({message: 'El nombre es obligatorio'})
-    name: string;
+  @IsString()
+  @IsNotEmpty({ message: 'El nombre es obligatorio' })
+  nombre: string;
 
-    // Apellidos (obligatorio)
-    @IsString({message: 'El apellido debe ser texto'})
-    @IsNotEmpty({message: 'El apellido es obligatorio'})
-    lastname: string;
-    
-    // Email (obligatorio)
-    @IsEmail({message: 'El email no tiene un formato valido'})
-    @IsNotEmpty({message: 'El email es obligatorio'})
-    email: string;
+  @IsString()
+  @IsNotEmpty({ message: 'Los apellidos son obligatorios' })
+  apellidos: string;
 
-    // Contraseña (obligatorio)
-    @IsString()
-    @MinLength(6, {message: 'La contraseña debe tener al menos 6 caracteres'})
-    password: string;
+  @IsEmail({}, { message: 'El email no tiene un formato válido' })
+  @IsNotEmpty({ message: 'El email es obligatorio' })
+  email: string;
 
-    // Confirmacion de contraseña (obligatorio)
-    @IsString()
-    @IsNotEmpty({message: 'Debes confirmar la contraseña'})
-    passwordConfirm: string;
+  @IsString()
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
+  @IsNotEmpty({ message: 'La contraseña es obligatoria' })
+  password: string;
 
-    // Ciclo (obligatorio)
-    @IsEnum(Cycle, {message: 'El civlo debe ser DAM, DAW o ASIR'})
-    @IsNotEmpty({message:'El ciclo es obligatorio'})
-    cycle: Cycle;
+  // Se valida pero no se persiste en base de datos
+  @IsString()
+  @IsNotEmpty({ message: 'La confirmación de contraseña es obligatoria' })
+  passwordConfirm: string;
+
+  @IsEnum(Cycle, { message: 'El ciclo debe ser DAW, DAM o ASIR' })
+  @IsNotEmpty({ message: 'El ciclo es obligatorio' })
+  cycle: Cycle;
 }
