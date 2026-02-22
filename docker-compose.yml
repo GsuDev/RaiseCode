@@ -81,7 +81,7 @@ services:
       # MongoDB
       - MONGO_HOST=${MONGO_HOST:-mongodb}
       - MONGO_PORT=${MONGO_PORT:-27017}
-      - MONGO_DATABASE=${MONGO_DATABASE:-code_judge_logs}
+      - MONGO_DATABASE=${MONGO_DATABASE:-code_judge_logs}  
       - MONGO_URL=mongodb://${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DATABASE:-code_judge_logs}
       # Redis
       - REDIS_HOST=${REDIS_HOST:-redis}

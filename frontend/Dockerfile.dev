@@ -10,16 +10,6 @@ WORKDIR /app
 
 # Copiar dependencias
 COPY package*.json ./
-RUN npm install
 
 # Copiar código (se sobrescribirá con volumen)
 COPY . .
-
-# Puerto configurable (aunque lo configura Vite desde vite.config)
-ARG VITE_PORT=5173
-ENV VITE_PORT=${VITE_PORT}
-
-EXPOSE ${VITE_PORT}
-
-# Comando de desarrollo
-CMD ["npm", "run", "dev"]

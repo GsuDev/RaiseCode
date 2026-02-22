@@ -14,17 +14,7 @@ WORKDIR /app
 # Copiar dependencias
 COPY package.json yarn.lock ./
 RUN corepack enable
-RUN yarn install --frozen-lockfile
+
 
 # Copiar código (se sobrescribirá con volumen)
 COPY . .
-
-
-# Puerto configurable
-ARG API_PORT=3000
-ENV PORT=${API_PORT}
-
-EXPOSE ${API_PORT}
-
-# Comando de desarrollo con hot-reload
-CMD ["yarn", "start:dev"]
