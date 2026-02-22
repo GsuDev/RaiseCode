@@ -15,8 +15,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: config.get<string>('JWT_EXPIRATION') || '7d' },
+        secret: config.get<string>('JWT_SECRET') ?? '',
+        signOptions: {
+          // Casteamos a 'any' porque el tipo StringValue de 'ms' no infiere bien desde ConfigService
+          expiresIn: (config.get<string>('JWT_EXPIRATION') ?? '7d') as any,
+        },
       }),
     }),
   ],
