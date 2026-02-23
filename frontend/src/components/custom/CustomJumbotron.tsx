@@ -5,6 +5,7 @@ import { Box, Flex, Button, IconButton, Text, HStack, VStack, Image, Tooltip } f
 import { Trophy, BookOpen, PlusCircle, User, Menu, X, LogIn } from "lucide-react"
 import { ColorModeToggle } from "../ui/color-mode"
 import LogoSrc from "src/assets/Logo.svg"
+
 interface NavigationProps {
   currentPage: string
   onNavigate: (page: string) => void
@@ -20,7 +21,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
     { id: "/", label: "Crear Reto", icon: PlusCircle },
   ]
 
-  const isAuthPage = currentPage === "login" || currentPage === "registro"
+  const isAuthPage = currentPage === "/login" || currentPage === "/registro"
 
   return (
     <Box
@@ -46,23 +47,11 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
           as="button"
           alignItems="center"
           gap="2"
-          onClick={() => onNavigate("home")}
+          onClick={() => onNavigate("/")}
           cursor="pointer"
         >
-          <Flex
-            h="9"
-            w="9"
-            alignItems="center"
-            justifyContent="center"
-            borderRadius="lg"
-          >
-            <Image 
-              src={LogoSrc} 
-              alt="RaiseCode" 
-              w="full" 
-              h="full"
-              scale={1.2}
-            />
+          <Flex h="9" w="9" alignItems="center" justifyContent="center" borderRadius="lg">
+            <Image src={LogoSrc} alt="RaiseCode" w="full" h="full" scale={1.2} />
           </Flex>
           <Text fontWeight="bold" fontSize="2xl" color="fg" fontFamily="var(--chakra-fonts-heading)">
             RaiseCode
@@ -71,165 +60,129 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
 
         {/* Desktop Nav */}
         <Box>
-            {!isAuthPage && (
-                <HStack gap="1" display={{ base: "none", md: "flex" }}>
-                    {navItems.map((item) => {
-                    const Icon = item.icon
-                    return (
-                      <Tooltip.Root>
-                        <Tooltip.Trigger asChild>
-                          <Button
-                            key={item.id}
-                            variant={currentPage === item.id ? "solid" : "ghost"}
-                            bg={currentPage === item.id ? "surface.secondary" : "transparent"}
-                            color={currentPage === item.id ? "surface.bg" : "fg"}
-                            size="sm"
-                            aria-label="En desarrollo"
-                            onClick={() => onNavigate(item.id)}
-                            _hover={{ bg: "bg.subtle" , color: "fg" }}
-                          >
-                          <Icon size={16} />
-                          {item.label}
-                          </Button>
-                        </Tooltip.Trigger>
-  
-                         <Tooltip.Positioner>
-                          <Tooltip.Content 
-                            bg="bg.canvas" 
-                            color="fg" 
-                            borderColor="border" 
-                            borderWidth="1px" 
-                            borderRadius="md" 
-                            p="2"
-                            zIndex="popover"
-                          >
-                            <Tooltip.Arrow />
-                            En desarrollo
-                          </Tooltip.Content>
-                        </Tooltip.Positioner>
-                      </Tooltip.Root>
-                      )
-                    })}
-                </HStack>
-            )}
-        </Box>
-        <Box>
-            {/* Desktop Auth */}
-            <HStack gap="2" display={{ base: "none", md: "flex" }}>
-                {isLoggedIn ? (
-                    <Tooltip.Root>
-                      <Tooltip.Trigger asChild>
-                        <Button
-                        variant="ghost"
+          {!isAuthPage && (
+            <HStack gap="1" display={{ base: "none", md: "flex" }}>
+              {navItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <Tooltip.Root key={item.label}>
+                    <Tooltip.Trigger asChild>
+                      <Button
+                        variant={currentPage === item.id ? "solid" : "ghost"}
+                        bg={currentPage === item.id ? "surface.secondary" : "transparent"}
+                        color={currentPage === item.id ? "surface.bg" : "fg"}
+                        size="sm"
+                        aria-label="En desarrollo"
+                        onClick={() => onNavigate(item.id)}
+                        _hover={{ bg: "bg.subtle", color: "fg" }}
+                      >
+                        <Icon size={16} />
+                        {item.label}
+                      </Button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Positioner>
+                      <Tooltip.Content
+                        bg="bg.canvas"
                         color="fg"
-                        size="sm"
-                        onClick={() => onNavigate("/")}
-                        _hover={{ bg: "bg.subtle" }}
-                        >
-                        <User size={16} />
-                        Mi Perfil
-                        </Button>
-                      </Tooltip.Trigger>
-
-                      <Tooltip.Positioner>
-                        <Tooltip.Content 
-                          bg="bg.canvas" 
-                          color="fg" 
-                          borderColor="border" 
-                          borderWidth="1px" 
-                          borderRadius="md" 
-                          p="2"
-                          zIndex="popover"
-                        >
-                          <Tooltip.Arrow />
-                          En desarrollo
-                        </Tooltip.Content>
-                      </Tooltip.Positioner>
-                    </Tooltip.Root>
-                ) : (
-                    <>
-                    <Tooltip.Root>
-                      <Tooltip.Trigger asChild>
-                        <Button
-                        variant="ghost"
-                        color="fg"
-                        size="sm"
-                        onClick={() => onNavigate("/")}
-                        _hover={{ bg: "bg.subtle" }}
-                    >
-                        <LogIn size={16} />
-                        Iniciar Sesion
-                        </Button>
-                        </Tooltip.Trigger>
-
-                      <Tooltip.Positioner>
-                        <Tooltip.Content 
-                          bg="bg.canvas" 
-                          color="fg" 
-                          borderColor="border" 
-                          borderWidth="1px" 
-                          borderRadius="md" 
-                          p="2"
-                          zIndex="popover"
-                        >
-                          <Tooltip.Arrow />
-                          En desarrollo
-                        </Tooltip.Content>
-                      </Tooltip.Positioner>
-                    </Tooltip.Root>
-                    <Tooltip.Root>
-                      <Tooltip.Trigger asChild>
-                    <Button
-                        bg="brand.500"
-                        color="bg"
-                        size="sm"
-                        onClick={() => onNavigate("/")}
-                        _hover={{ bg: "brand.600" }}
-                    >
-                        Registrarse
-                    </Button>
-                     </Tooltip.Trigger>
-                      <Tooltip.Positioner>
-                        <Tooltip.Content 
-                          bg="bg.canvas" 
-                          color="fg" 
-                          borderColor="border" 
-                          borderWidth="1px" 
-                          borderRadius="md" 
-                          p="2"
-                          zIndex="popover"
-                        >
-                          <Tooltip.Arrow />
-                          En desarrollo
-                        </Tooltip.Content>
-                      </Tooltip.Positioner>
-                    </Tooltip.Root>
-                  </>
-                )}
-                <ColorModeToggle />
+                        borderColor="border"
+                        borderWidth="1px"
+                        borderRadius="md"
+                        p="2"
+                        zIndex="popover"
+                      >
+                        <Tooltip.Arrow />
+                        En desarrollo
+                      </Tooltip.Content>
+                    </Tooltip.Positioner>
+                  </Tooltip.Root>
+                )
+              })}
             </HStack>
+          )}
         </Box>
-        
+
+        {/* Desktop Auth */}
+        <Box>
+          <HStack gap="2" display={{ base: "none", md: "flex" }}>
+            {isLoggedIn ? (
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Button
+                    variant="ghost"
+                    color="fg"
+                    size="sm"
+                    onClick={() => onNavigate("/")}
+                    _hover={{ bg: "bg.subtle" }}
+                  >
+                    <User size={16} />
+                    Mi Perfil
+                  </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Positioner>
+                  <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
+                    <Tooltip.Arrow />
+                    En desarrollo
+                  </Tooltip.Content>
+                </Tooltip.Positioner>
+              </Tooltip.Root>
+            ) : (
+              <>
+                {/* TODO: Enlazar a /login cuando se implemente la HU de login */}
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <Button
+                      variant="ghost"
+                      color="fg"
+                      size="sm"
+                      onClick={() => onNavigate("/")}
+                      _hover={{ bg: "bg.subtle" }}
+                    >
+                      <LogIn size={16} />
+                      Iniciar Sesión
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Positioner>
+                    <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
+                      <Tooltip.Arrow />
+                      En desarrollo
+                    </Tooltip.Content>
+                  </Tooltip.Positioner>
+                </Tooltip.Root>
+
+                {/* Botón Registrarse → navega a /registro */}
+                <Button
+                  bg="brand.500"
+                  color="bg"
+                  size="sm"
+                  onClick={() => onNavigate("/registro")}
+                  _hover={{ bg: "brand.600" }}
+                >
+                  Registrarse
+                </Button>
+              </>
+            )}
+            <ColorModeToggle />
+          </HStack>
+        </Box>
+
         {/* Mobile Menu Button */}
         <IconButton
-            display={{ base: "flex", md: "none" }}
-            variant="ghost"
-            color="fg"
-            aria-label="Menu"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            _hover={{ bg: "bg.subtle" }}
-            >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          display={{ base: "flex", md: "none" }}
+          variant="ghost"
+          color="fg"
+          aria-label="Menu"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          _hover={{ bg: "bg.subtle" }}
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </IconButton>
         <Box display={{ base: "block", md: "none" }}>
-            <ColorModeToggle />
+          <ColorModeToggle />
         </Box>
-        
       </Flex>
-    
+
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        
         <Box
           borderTop="1px solid"
           borderColor="border"
@@ -243,7 +196,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
               const Icon = item.icon
               return (
                 <Button
-                  key={item.id}
+                  key={item.label}
                   variant="ghost"
                   justifyContent="flex-start"
                   color={currentPage === item.id ? "bg" : "fg"}
@@ -270,6 +223,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
               </Button>
             ) : (
               <>
+                {/* TODO: Enlazar a /login cuando se implemente la HU de login */}
                 <Button
                   variant="ghost"
                   justifyContent="flex-start"
@@ -278,13 +232,13 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                   _hover={{ bg: "bg.subtle" }}
                 >
                   <LogIn size={16} />
-                  Iniciar Sesion
+                  Iniciar Sesión
                 </Button>
                 <Button
                   bg="brand.500"
                   color="bg"
                   justifyContent="flex-start"
-                  onClick={() => { onNavigate("/"); setMobileMenuOpen(false) }}
+                  onClick={() => { onNavigate("/registro"); setMobileMenuOpen(false) }}
                   _hover={{ bg: "brand.600" }}
                 >
                   Registrarse
