@@ -8,8 +8,10 @@ FROM node:${NODE_VERSION}-alpine
 
 WORKDIR /app
 
-# Copiar dependencias
+# Solo copiamos package.json para instalar dependencias en la imagen.
+# El código NO se copia aquí: lo monta el volumen de docker-compose en tiempo real.
 COPY package*.json ./
 
-# Copiar código (se sobrescribirá con volumen)
-COPY . .
+# Instalamos dependencias para que queden en la imagen (node_modules).
+# El volumen anónimo de docker-compose protege este node_modules del bind mount.
+RUN npm install
