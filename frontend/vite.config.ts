@@ -1,19 +1,30 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import tsconfigPaths from "vite-tsconfig-paths"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { resolve } from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [
+    react(),
+    // Resuelve los paths del tsconfig.app.json (@/...)
+    tsconfigPaths({ projects: ["./tsconfig.app.json"] }),
+  ],
+  resolve: {
+    alias: {
+      // Alias explícito como fallback por si tsconfigPaths no lo resuelve
+      "@": resolve(__dirname, "./src"),
+    },
+  },
   server: {
-    host: '0.0.0.0', // CRÍTICO: Permite acceso desde fuera del contenedor
-    port: parseInt(process.env.VITE_PORT || '5173'),
+    host: "0.0.0.0", // CRÍTICO: Permite acceso desde fuera del contenedor
+    port: parseInt(process.env.VITE_PORT || "5173"),
     strictPort: true,
     watch: {
       usePolling: true, // CRÍTICO: Para hot-reload en Docker
     },
     hmr: {
-      clientPort: 5173, // Puerto que usa el navegador
+      clientPort: 5173,
     },
   },
-})
+});

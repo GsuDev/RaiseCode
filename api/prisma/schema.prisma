@@ -14,6 +14,15 @@ datasource db {
   provider = "mysql"
 }
 
+// Enums
+
+enum Cycle {
+  DAW
+  DAM
+  ASIR
+}
+
+
 // Modelos sin Foreign keys
 
 model Dificulty {
@@ -44,6 +53,7 @@ model User {
   name                 String
   lastname             String
   password             String
+  cycle                Cycle
 
   // Relaciones de User
   createdChallenges    Challenge[]           @relation("ChallengeCreator")

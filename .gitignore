@@ -141,3 +141,8 @@ vite.config.ts.timestamp-*
 bun.lock
 .DS_Store
 api/.yarn/install-state.gz
+
+
+install-state.gz
+
+client.http
