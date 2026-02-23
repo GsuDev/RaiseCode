@@ -64,7 +64,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
               scale={1.2}
             />
           </Flex>
-          <Text fontWeight="bold" fontSize="xl" color="fg">
+          <Text fontWeight="bold" fontSize="2xl" color="fg" fontFamily="var(--chakra-fonts-heading)">
             RaiseCode
           </Text>
         </Flex>
