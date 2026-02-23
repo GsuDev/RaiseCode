@@ -3,6 +3,11 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react"
 const config = defineConfig({
   theme: {
     tokens: {
+      fonts: {
+        heading: { value: "Space Grotesk" },
+        body: { value: "Inter" },
+        mono: { value: "JetBrains Mono, SFMono-Regular, Menlo, monospace" },
+      },
       colors: {
         // Definimos los colores base de tu marca (Brand Colors)
         brand: {
@@ -29,13 +34,13 @@ const config = defineConfig({
         bg: {
           canvas: {
             value: { 
-              _light: "#f8f9fa",     // Claro: Gris muy suave (casi blanco)
+              _light: "#d8d8d8d0",     // Claro: Gris muy suave (casi blanco)
               _dark: "#0e0a19"       // Oscuro: Tu violeta profundo original
             },
           },
           panel: {
             value: { 
-              _light: "#ffffff",     // Claro: Blanco puro para tarjetas
+              _light: "#d8d8d8d0",     // Claro: Blanco puro para tarjetas
               _dark: "#1b1424"       // Oscuro: Tu violeta de tarjetas
             },
           },
