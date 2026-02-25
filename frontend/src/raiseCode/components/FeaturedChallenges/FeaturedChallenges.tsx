@@ -1,4 +1,4 @@
-import { Carousel, IconButton, HStack, Box, VStack } from '@chakra-ui/react';
+import { Carousel, IconButton, HStack, Box, VStack, Stack } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { FeaturedChallengeTitle } from './components/FeaturedChallengeTitle';
 import { useFeaturedChallenges } from './hooks/useFeaturedChallenges';
@@ -54,22 +54,23 @@ export const FeaturedChallenges = ({ title }: Props) => {
                         textAlign="center"
                         bgColor="bg.panel"
                         position="relative"
+                
                         >
-                            <HStack justifyContent={{base:"center",md:"start", lg:"start"}} alignItems="center" h="100%" gap={4} >
-                                <VStack alignItems="start" gap={2} flex={1}>
-                                    <HStack justifyContent={{base:"center", lg:"start"}} align="start" gap={3} mx={3} mb={3}>
+                            <HStack justifyContent={{base:"center",md:"start", lg:"start"}} alignItems="center" w="full" h="full" gap={4} >
+                                <VStack alignItems={{ base: "center", md: "flex-start" }} gap={2} flex={1}>
+                                    <Stack direction={{ base: "column", md: "row" }} align={{ base: "center", md: "start" } } mb={1} mx={{base: 0, md: 3}} w="full">
                                         <ChallengeLanguage language={challenge.language.name} />
                                         <ChallengeDifficulty difficulty={challenge.dificulty.name} />
                                         <ChallengeSubject subject={challenge.subject.name} />
-                                    </HStack>
+                                    </Stack>
                                     <ChallengeTitle title={challenge.title} />
                                     <ChallengeStatement statement={challenge.statement} />
                                     <ChallengeNumCompleted users={challenge.completedCount} />
-                                    <Box display={{base:'flex', md:'none'}} justifyItems={'end'} alignItems='end'>
-                                    <ChallengeActions id={`${i}`} />
-                                </Box> 
+                                    <Box display={{base:'flex', md:'none'}} justifyContent={'center'} w="full">
+                                        <ChallengeActions id={`${i}`} />
+                                    </Box> 
                                 </VStack>
-                                <Box display={{ base: "none", md: "flex" }}>
+                                <Box display={{ base: "none", md: "flex" }} alignItems="center" height="full" flexShrink={0}>
                                     <ChallengeActions id={challenge.id.toString()} /> 
                                 </Box>        
                             </HStack>
@@ -77,6 +78,24 @@ export const FeaturedChallenges = ({ title }: Props) => {
                     </Carousel.Item>
                     ))}
                 </Carousel.ItemGroup>
+                <Box display="flex" justifyContent="center" gap="4" flexWrap={'nowrap'} w="full">
+                    <Carousel.Control h="100%" w="auto" gap="4" display={{ base: "flex", md: "none" }}>
+                        <Carousel.PrevTrigger asChild>
+                            <IconButton size="xs" variant="ghost">
+                                <LuChevronLeft />
+                            </IconButton>
+                        </Carousel.PrevTrigger>
+
+                        <Carousel.Indicators />
+
+                        <Carousel.NextTrigger asChild>
+                            <IconButton size="xs" variant="ghost">
+                                <LuChevronRight />
+                            </IconButton>
+                        </Carousel.NextTrigger>
+                    </Carousel.Control>
+                </Box>
+
             </Carousel.Root>
         </>      
     );

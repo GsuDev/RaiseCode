@@ -15,9 +15,11 @@ export const ChallengeStatement = ({ statement }: Props) => {
           lg: "xl"      
         }} 
         fontWeight="normal" 
-        m={3} 
+        mx={{base: 0, md: 3}} 
         color="fg.muted" 
         fontFamily="var(--chakra-fonts-body)"
+        textAlign={{ base: "center", md: "start" }}
+        w="full"
         >
             {statement || <SkeletonText width="300px" noOfLines={3}/>}
         </Text>

@@ -14,13 +14,13 @@ export const ChallengeTitle = ({ title }: Props) => {
         lg: "4xl"      
         }}
         fontWeight="bold" 
-        m={3} 
+        mx={{base: 0, md: 3}} 
         color="fg" 
         wordBreak="normal"    
         lineHeight={1.2}
         fontFamily="var(--chakra-fonts-heading)"
         width="full"
-        textAlign="start"
+        textAlign={{ base: "center", md: "start" }}
         >   
             {title || <SkeletonText width="200px" noOfLines={1}/>}
         </Text>
