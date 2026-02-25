@@ -1,6 +1,7 @@
 import { RaiseCodeLayout } from '@/raiseCode/layouts/RaiseCodeLayout';
 import { HomePage } from '@/raiseCode/pages/Home/HomePage';
 import { RegisterPage } from '@/raiseCode/pages/Register/RegisterPage';
+import { LoginPage } from '@/raiseCode/pages/Login/LoginPage';
 import { createBrowserRouter } from 'react-router';
 
 export const appRouter = createBrowserRouter([
@@ -16,7 +17,9 @@ export const appRouter = createBrowserRouter([
         path: 'registro',
         element: <RegisterPage />,
       },
-      // TODO: Añadir ruta /login cuando se implemente la HU de login
+      { path: 'login', 
+        element: <LoginPage /> 
+      }
     ],
   },
 ]);

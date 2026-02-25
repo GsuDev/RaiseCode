@@ -1,0 +1,32 @@
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost/api';
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  user: {
+    id: number;
+    email: string;
+    nombre: string;
+    apellidos: string;
+  };
+}
+
+export const loginService = async (data: LoginPayload): Promise<LoginResponse> => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.message ?? 'Credenciales incorrectas');
+  }
+
+  return json;
+};
