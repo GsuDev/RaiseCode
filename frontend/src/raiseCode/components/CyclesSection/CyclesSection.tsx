@@ -67,7 +67,7 @@ const getIconByCode = (code: string) => {
 
 export const CyclesSection = () => {
   return (
-    <Box as="section" mt={10} w="100%">
+    <Box as="section" mt={10} w="75%">
       <VStack mb="8" gap={1}>
         <Text fontWeight="bold" fontSize="2xl" color={{ base: "gray.900", _dark: "white" }} textAlign="center">
           Ciclos Formativos
