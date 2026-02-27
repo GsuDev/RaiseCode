@@ -151,6 +151,8 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 </Tooltip.Root>
 
                 {/* Botón Registrarse → navega a /registro */}
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
                 <Button
                   bg="brand.500"
                   color="bg"
@@ -160,6 +162,14 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 >
                   Registrarse
                 </Button>
+                 </Tooltip.Trigger>
+                  <Tooltip.Positioner>
+                    <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
+                      <Tooltip.Arrow />
+                      Crear una cuenta
+                    </Tooltip.Content>
+                  </Tooltip.Positioner>
+                </Tooltip.Root>
               </>
             )}
             <ColorModeToggle />
