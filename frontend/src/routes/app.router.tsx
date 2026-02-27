@@ -1,7 +1,7 @@
 import { RaiseCodeLayout } from '@/raiseCode/layouts/RaiseCodeLayout';
 import { HomePage } from '@/raiseCode/pages/Home/HomePage';
-import { RegisterPage } from '@/raiseCode/pages/Register/RegisterPage';
-import { LoginPage } from '@/raiseCode/pages/Login/LoginPage';
+import { RegisterPage } from '@/auth/Register/RegisterPage';
+import { LoginPage } from '@/auth/Login/LoginPage';
 import { createBrowserRouter } from 'react-router';
 
 export const appRouter = createBrowserRouter([
