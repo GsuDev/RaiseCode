@@ -158,7 +158,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                   color="bg"
                   size="sm"
                   onClick={() => onNavigate("/registro")}
-                  _hover={{ bg: "brand.600" }}
+                  _hover={{ bg: "bg.subtle", color: "fg" }}
                 >
                   Registrarse
                 </Button>
