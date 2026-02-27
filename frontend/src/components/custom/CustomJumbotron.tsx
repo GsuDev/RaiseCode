@@ -131,11 +131,12 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <Button
-                      variant="ghost"
-                      color="fg"
-                      size="sm"
+                      variant={"outline"}
+                      bg="bg.canvas"
+                      borderColor="primary.solid"
+                      color="primary.solid"
                       onClick={() => onNavigate("/login")}
-                      _hover={{ bg: "bg.subtle" }}
+                     _hover={{ bg: "bg.subtle" , color: "fg" , borderColor: "bg.subtle"}}
                     >
                       <LogIn size={16} />
                       Iniciar Sesión
@@ -225,11 +226,12 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
               <>
                 {/* Iniciar Sesión móvil → navega a /login */}
                 <Button
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  color="fg"
-                  onClick={() => { onNavigate("/login"); setMobileMenuOpen(false) }}
-                  _hover={{ bg: "bg.subtle" }}
+                  bg="bg.canvas"
+                  borderColor="primary.solid"
+                  color="primary.solid"
+                  onClick={() => onNavigate("/login")}
+                  _hover={{ bg: "bg.subtle" , color: "fg" , borderColor: "bg.subtle"}}
+                  justifyContent="start"
                 >
                   <LogIn size={16} />
                   Iniciar Sesión
