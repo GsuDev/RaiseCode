@@ -22,7 +22,7 @@ export const RegisterPage = () => {
           <Text fontWeight="bold" fontSize="2xl" color="fg" fontFamily="var(--chakra-fonts-heading)">
             RaiseCode
           </Text>
-          <Text color="fg.muted">Únete a la comunidad de programadores</Text>
+          <Text color="fg.muted" textAlign={"center"}>Únete a la comunidad de programadores</Text>
         </VStack>
 
         {/* Tarjeta del formulario */}

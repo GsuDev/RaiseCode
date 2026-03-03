@@ -131,11 +131,12 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <Button
-                      variant="ghost"
-                      color="fg"
-                      size="sm"
+                      variant={"outline"}
+                      bg="bg.canvas"
+                      borderColor="primary.solid"
+                      color="primary.solid"
                       onClick={() => onNavigate("/login")}
-                      _hover={{ bg: "bg.subtle" }}
+                     _hover={{ bg: "bg.subtle" , color: "fg" , borderColor: "bg.subtle"}}
                     >
                       <LogIn size={16} />
                       Iniciar Sesión
@@ -150,15 +151,25 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 </Tooltip.Root>
 
                 {/* Botón Registrarse → navega a /registro */}
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
                 <Button
                   bg="brand.500"
                   color="bg"
                   size="sm"
                   onClick={() => onNavigate("/registro")}
-                  _hover={{ bg: "brand.600" }}
+                  _hover={{ bg: "bg.subtle", color: "fg" }}
                 >
                   Registrarse
                 </Button>
+                 </Tooltip.Trigger>
+                  <Tooltip.Positioner>
+                    <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
+                      <Tooltip.Arrow />
+                      Crear una cuenta
+                    </Tooltip.Content>
+                  </Tooltip.Positioner>
+                </Tooltip.Root>
               </>
             )}
             <ColorModeToggle />
@@ -225,11 +236,12 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
               <>
                 {/* Iniciar Sesión móvil → navega a /login */}
                 <Button
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  color="fg"
-                  onClick={() => { onNavigate("/login"); setMobileMenuOpen(false) }}
-                  _hover={{ bg: "bg.subtle" }}
+                  bg="bg.canvas"
+                  borderColor="primary.solid"
+                  color="primary.solid"
+                  onClick={() => onNavigate("/login")}
+                  _hover={{ bg: "bg.subtle" , color: "fg" , borderColor: "bg.subtle"}}
+                  justifyContent="start"
                 >
                   <LogIn size={16} />
                   Iniciar Sesión
