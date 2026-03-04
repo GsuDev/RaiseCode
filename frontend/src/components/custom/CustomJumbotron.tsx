@@ -17,7 +17,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
 
   const navItems = [
     { id: "/", label: "Inicio", icon: Trophy },
-    { id: "/", label: "Asignaturas", icon: BookOpen },
+    { id: "/asignaturas", label: "Asignaturas", icon: BookOpen },
     { id: "/", label: "Crear Reto", icon: PlusCircle },
   ]
 
