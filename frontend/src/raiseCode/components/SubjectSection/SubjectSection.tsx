@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Box, Button, Flex, Grid, HStack, Input, VStack } from '@chakra-ui/react';
+import { Filter } from 'lucide-react'; 
 import { SubjectCard, type Subject } from './components/SubjectCard';
 
 const mockSubjects: Subject[] = [
@@ -25,14 +26,23 @@ export const SubjectSection = () => {
 
   return (
     <VStack gap="8" w="full" align="stretch">
-      {/* Controles: Buscador y Filtros */}
-      <Flex direction={{ base: 'column', md: 'row' }} gap="4" justify="space-between">
-        <Box maxW={{ md: '400px' }} w="full">
+      <Flex 
+        direction={{ base: 'column', lg: 'row' }} 
+        gap="4" 
+        w="full" 
+        justify="space-between" 
+        align="center"
+      >
+        <Box flex="1" w="full">
           <Input 
             placeholder="Buscar asignatura..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            bg="bg.subtle"
+            bg="bg.panel" 
+            h="10"
+            border="1px solid"
+            borderColor="bg.subtle" 
+            _focus={{ borderColor: "brand.500", outline: "none" }}
           />
         </Box>
 
@@ -42,16 +52,25 @@ export const SubjectSection = () => {
               key={cycle}
               size="sm"
               variant={selectedCycle === cycle ? 'solid' : 'outline'}
-              colorPalette={selectedCycle === cycle ? 'brand' : 'gray'}
+              colorPalette={selectedCycle === cycle ? 'green' : 'gray'}
               onClick={() => setSelectedCycle(cycle)}
+              borderRadius="full"
+              px="4"
+              border="1px solid"
+              borderColor="bg.subtle" 
+              _hover={{ bg: "bg.subtle" }}
             >
+              {cycle === 'ALL' && (
+                <Box as="span" display="inline-flex" mr="2">
+                  <Filter size={14} />
+                </Box>
+              )}
               {cycle === 'ALL' ? 'Todos' : cycle}
             </Button>
           ))}
         </HStack>
       </Flex>
 
-      {/* Grid de asignaturas */}
       <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap="6">
         {filteredSubjects.map(subject => (
           <SubjectCard key={subject.id} subject={subject} />
