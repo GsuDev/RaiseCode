@@ -4,6 +4,7 @@ import { RegisterPage } from '@/auth/Register/RegisterPage';
 import { LoginPage } from '@/auth/Login/LoginPage';
 import { createBrowserRouter } from 'react-router';
 import { SubjectsPage } from '@/raiseCode/pages/Subjects/SubjectsPage';
+import { ChallengeDetailPage } from '@/Challenges/detail/ChallengeDetailPage';
 
 export const appRouter = createBrowserRouter([
   {
@@ -22,8 +23,18 @@ export const appRouter = createBrowserRouter([
         path: 'login',
         element: <LoginPage />
       },
-      { path: 'asignaturas', 
-        element: <SubjectsPage /> },
+      {
+        path: 'asignaturas',
+        element: <SubjectsPage />
+      },
+      {
+        path: 'retos/:id',
+        element: <ChallengeDetailPage />
+      },
+      {
+        path: 'retos/:id/resolver',
+        element: <div>Página del Editor (Próximamente)</div>
+      }
     ],
   },
 ]);
