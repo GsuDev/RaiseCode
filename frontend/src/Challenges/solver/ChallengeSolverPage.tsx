@@ -1,5 +1,5 @@
 import { Box, Grid, GridItem, Spinner, Center, VStack, Text } from '@chakra-ui/react';
-import { useChallengeSolver } from './hooks/useChallengerSolver';
+import { useChallengeSolver } from './hooks/useChallengeSolver';
 import { ChallengeCodeEditor } from './components/ChallengeCodeEditor';
 import { ChallengeEditorToolbar } from './components/ChallengeEditorToolbar';
 import { ChallengeStatementPanel } from '../detail/components/ChallengeStatementPanel';
