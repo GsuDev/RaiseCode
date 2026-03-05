@@ -1,8 +1,12 @@
 import { Box, Grid, Text, VStack } from "@chakra-ui/react";
-import { ProfileStatCard } from "./components/ProfileStatCard";
 import { Flame, Target, Clock, TrendingUp } from "lucide-react";
+import { ProfileStatCard } from "./components/ProfileStatCard";
+import { ProfileHeader } from "./components/ProfileHeader";
+import { useAuth } from "@/auth/context/AuthContext";
 
 export const ProfilePage = () => {
+  const { user } = useAuth();
+
   // Uso datos mockeados para comprobar como se ve, en el futuro se cambiaran por datos reales
   const mockStats = {
     completedCount: 45,
@@ -10,13 +14,19 @@ export const ProfilePage = () => {
     avgTime: "125ms",
     bestStreak: "15 dias",
   };
+
+  if (!user) return null;
+
   return (
     <Box maxW="7xl" mx="auto" p={{ base: 4, md: 8 }} mt={4}>
       <VStack align="stretch" gap={8}>
-        {/* Título temporal de la sección */}
-        <Text fontSize="2xl" fontWeight="bold" color="fg" textAlign="center">
-          Mi Perfil
-        </Text>
+        {/* Cabecera del perfil */}
+        <ProfileHeader 
+          name={user.name}
+          lastname={user.lastname}
+          email={user.email}
+          cycle={user.cycle}
+        />
 
         <Grid
           templateColumns={{
