@@ -7,6 +7,7 @@ import { MongooseModule } from './mongoose/mongoose.module';
 import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ChallengesModule } from './challenges/challenges.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     HealthModule,
     UsersModule,
     AuthModule,
+    ChallengesModule,
   ],
   controllers: [],
   providers: [PrismaService, MongooseService],
