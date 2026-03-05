@@ -2,7 +2,7 @@ import { Box, Container, Spinner, Center, Text, SimpleGrid, VStack } from '@chak
 import { useChallengeDetail } from './hooks/useChallengeDetail';
 import { ChallengeDetailHeader } from './components/ChallengeDetailHeader';
 import { ChallengeStatCards } from './components/ChallengeStatCards';
-import { ChallengeStatementPanel } from './components/ChallengeStatamentPanel';
+import { ChallengeStatementPanel } from './components/ChallengeStatementPanel';
 import { ChallengeExampleTests } from './components/ChallengeExampleTests';
 import { ChallengeStartBar } from './components/ChallengeStartBar';
 

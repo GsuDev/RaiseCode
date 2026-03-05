@@ -2,7 +2,7 @@ import { Box, Grid, GridItem, Spinner, Center, VStack, Text } from '@chakra-ui/r
 import { useChallengeSolver } from './hooks/useChallengerSolver';
 import { ChallengeCodeEditor } from './components/ChallengeCodeEditor';
 import { ChallengeEditorToolbar } from './components/ChallengeEditorToolbar';
-import { ChallengeStatementPanel } from '../detail/components/ChallengeStatamentPanel';
+import { ChallengeStatementPanel } from '../detail/components/ChallengeStatementPanel';
 
 export const ChallengeSolverPage = () => {
   const { challenge, loading, code, setCode, isRunning, runCode, output } = useChallengeSolver();
