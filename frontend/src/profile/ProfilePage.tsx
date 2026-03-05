@@ -3,6 +3,8 @@ import { Flame, Target, Clock, TrendingUp } from "lucide-react";
 import { ProfileStatCard } from "./components/ProfileStatCard";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { useAuth } from "@/auth/context/AuthContext";
+import { ProfileLanguageChart } from "./components/ProfileLanguageChart";
+import { ProfileRecentActivity } from "./components/ProfileRecentActivity";
 
 export const ProfilePage = () => {
   const { user } = useAuth();
@@ -15,13 +17,51 @@ export const ProfilePage = () => {
     bestStreak: "15 dias",
   };
 
+  const mockLanguages = [
+    { languageName: "JavaScript", count: 28 },
+    { languageName: "PHP", count: 8 },
+    { languageName: "Java", count: 5 },
+    { languageName: "Python", count: 4 },
+  ];
+
+  const mockActivity = [
+    {
+      id: "1",
+      challengeTitle: "Crear numero de telefono",
+      languageName: "JavaScript",
+      time: "Hoy",
+      points: 100,
+    },
+    {
+      id: "2",
+      challengeTitle: "Suma de numeros en string",
+      languageName: "JavaScript",
+      time: "Ayer",
+      points: 80,
+    },
+    {
+      id: "3",
+      challengeTitle: "Validar email con regex",
+      languageName: "PHP",
+      time: "Hace 2 días",
+      points: 50,
+    },
+    {
+      id: "4",
+      challengeTitle: "Fibonacci recursivo",
+      languageName: "Java",
+      time: "Hace 3 días",
+      points: 250,
+    },
+  ];
+
   if (!user) return null;
 
   return (
     <Box maxW="7xl" mx="auto" p={{ base: 4, md: 8 }} mt={4}>
       <VStack align="stretch" gap={8}>
         {/* Cabecera del perfil */}
-        <ProfileHeader 
+        <ProfileHeader
           name={user.name}
           lastname={user.lastname}
           email={user.email}
@@ -64,6 +104,11 @@ export const ProfilePage = () => {
             iconColor="teal.500"
             boxBg="rgba(56, 178, 172, 0.15)"
           />
+        </Grid>
+
+        <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={4}>
+          <ProfileLanguageChart byLanguage={mockLanguages} />
+          <ProfileRecentActivity recentActivity={mockActivity} />
         </Grid>
       </VStack>
     </Box>
