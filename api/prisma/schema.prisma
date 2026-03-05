@@ -112,7 +112,8 @@ model UserSubjects {
 model Challenge {
   id                  Int                   @id @default(autoincrement())
   title               String
-  statement           String
+  description         String                // ← NUEVO: descripción breve para cards
+  statement           String                // enunciado completo en Markdown
   dificulty           Dificulty             @relation(fields: [dificultyId], references: [id])
   dificultyId         Int
   language            Language              @relation(fields: [languageId], references: [id])
@@ -124,7 +125,6 @@ model Challenge {
   validator           User                  @relation("ChallengeValidator", fields: [validatorId], references: [id])
   validatorId         Int
   validate            Boolean
-  // Relaciones de Challenge
   completedChallenges CompletedChallenges[]
 }
 
