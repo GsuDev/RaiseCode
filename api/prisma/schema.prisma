@@ -136,7 +136,7 @@ model CompletedChallenges {
   challenge   Challenge @relation(fields: [challengeId], references: [id])
   challengeId Int
   time        BigInt
-  code        String
+  Code        String    @db.VarChar(1500)
 
   @@id([userId, challengeId])
 }

@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost/api';
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
 export interface LoginPayload {
   email: string;
@@ -6,12 +6,19 @@ export interface LoginPayload {
 }
 
 export interface LoginResponse {
+  message: string;
   access_token: string;
+  payload: {
+    email: string;
+    sub: number;
+    roles: string[];
+  };
   user: {
     id: number;
     email: string;
-    nombre: string;
-    apellidos: string;
+    name: string;
+    lastname: string;
+    cycle: string;
   };
 }
 
