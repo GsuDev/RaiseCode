@@ -1,19 +1,25 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Flex, Button, IconButton, Text, HStack, VStack, Image, Tooltip } from "@chakra-ui/react"
-import { Trophy, BookOpen, PlusCircle, User, Menu, X, LogIn } from "lucide-react"
+import {
+  Box, Flex, Button, IconButton, Text, HStack, VStack,
+  Image, Tooltip, Avatar, Menu, Portal,
+} from "@chakra-ui/react"
+import { Trophy, BookOpen, PlusCircle, Menu as MenuIcon, X, LogIn, LogOut, User, ChevronDown } from "lucide-react"
 import { ColorModeToggle } from "../ui/color-mode"
 import LogoSrc from "src/assets/Logo.svg"
+import { useAuth } from "@/auth/context/AuthContext"
+import { useNavigate } from "react-router"
 
 interface NavigationProps {
   currentPage: string
   onNavigate: (page: string) => void
-  isLoggedIn?: boolean
 }
 
-export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }: NavigationProps) {
+export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isLoggedIn, user, logout } = useAuth()
+  const navigate = useNavigate()
 
   const navItems = [
     { id: "/", label: "Inicio", icon: Trophy },
@@ -22,6 +28,16 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
   ]
 
   const isAuthPage = currentPage === "/login" || currentPage === "/registro"
+
+  const handleLogout = () => {
+    logout()
+    navigate("/")
+    setMobileMenuOpen(false)
+  }
+
+  const initials = user
+    ? `${user.name.charAt(0)}${user.lastname.charAt(0)}`.toUpperCase()
+    : "?"
 
   return (
     <Box
@@ -72,7 +88,6 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                         bg={currentPage === item.id ? "surface.secondary" : "transparent"}
                         color={currentPage === item.id ? "surface.bg" : "fg"}
                         size="sm"
-                        aria-label="En desarrollo"
                         onClick={() => onNavigate(item.id)}
                         _hover={{ bg: "bg.subtle", color: "fg" }}
                       >
@@ -81,15 +96,7 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                       </Button>
                     </Tooltip.Trigger>
                     <Tooltip.Positioner>
-                      <Tooltip.Content
-                        bg="bg.canvas"
-                        color="fg"
-                        borderColor="border"
-                        borderWidth="1px"
-                        borderRadius="md"
-                        p="2"
-                        zIndex="popover"
-                      >
+                      <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
                         <Tooltip.Arrow />
                         En desarrollo
                       </Tooltip.Content>
@@ -102,94 +109,139 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
         </Box>
 
         {/* Desktop Auth */}
-        <Box>
-          <HStack gap="2" display={{ base: "none", md: "flex" }}>
-            {isLoggedIn ? (
+        <HStack gap="2" display={{ base: "none", md: "flex" }}>
+          {isLoggedIn && user ? (
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  color="fg"
+                  px="2"
+                  _hover={{ bg: "bg.subtle" }}
+                >
+                  <Avatar.Root size="xs" bg="brand.500">
+                    <Avatar.Fallback color="white" fontWeight="bold" fontSize="xs">
+                      {initials}
+                    </Avatar.Fallback>
+                  </Avatar.Root>
+                  <Box textAlign="left" display={{ base: "none", lg: "block" }}>
+                    <Text fontSize="sm" fontWeight="semibold" lineHeight="1.2">
+                      {user.name}
+                    </Text>
+                    <Text fontSize="xs" color="fg.muted" lineHeight="1.2">
+                      {user.email}
+                    </Text>
+                  </Box>
+                  <ChevronDown size={14} />
+                </Button>
+              </Menu.Trigger>
+              <Portal>
+                <Menu.Positioner>
+                  <Menu.Content
+                    bg="bg.canvas"
+                    borderColor="border"
+                    borderWidth="1px"
+                    borderRadius="xl"
+                    minW="200px"
+                    shadow="lg"
+                    zIndex="popover"
+                  >
+                    {/* Cabecera del menú */}
+                    <Box px="3" py="2" borderBottom="1px solid" borderColor="border">
+                      <Text fontSize="sm" fontWeight="semibold">{user.name} {user.lastname}</Text>
+                      <Text fontSize="xs" color="fg.muted">{user.email}</Text>
+                      <Text fontSize="xs" color="brand.500" fontWeight="medium" mt="0.5">{user.cycle}</Text>
+                    </Box>
+
+                    <Menu.Item
+                      value="perfil"
+                      color="fg"
+                      _hover={{ bg: "bg.subtle" }}
+                      cursor="not-allowed"
+                      opacity={0.5}
+                    >
+                      <User size={14} />
+                      Mi Perfil
+                      <Text fontSize="xs" color="fg.muted" ml="auto">Pronto</Text>
+                    </Menu.Item>
+
+                    <Menu.Separator borderColor="border" />
+
+                    <Menu.Item
+                      value="logout"
+                      color="red.500"
+                      _hover={{ bg: "bg.subtle" }}
+                      onClick={handleLogout}
+                    >
+                      <LogOut size={14} />
+                      Cerrar Sesión
+                    </Menu.Item>
+                  </Menu.Content>
+                </Menu.Positioner>
+              </Portal>
+            </Menu.Root>
+          ) : (
+            <>
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <Button
-                    variant="ghost"
-                    color="fg"
-                    size="sm"
-                    onClick={() => onNavigate("/")}
-                    _hover={{ bg: "bg.subtle" }}
+                    variant="outline"
+                    bg="bg.canvas"
+                    borderColor="primary.solid"
+                    color="primary.solid"
+                    onClick={() => onNavigate("/login")}
+                    _hover={{ bg: "bg.subtle", color: "fg", borderColor: "bg.subtle" }}
                   >
-                    <User size={16} />
-                    Mi Perfil
+                    <LogIn size={16} />
+                    Iniciar Sesión
                   </Button>
                 </Tooltip.Trigger>
                 <Tooltip.Positioner>
                   <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
                     <Tooltip.Arrow />
-                    En desarrollo
+                    Acceder a mi cuenta
                   </Tooltip.Content>
                 </Tooltip.Positioner>
               </Tooltip.Root>
-            ) : (
-              <>
-                {/* Botón Iniciar Sesión → navega a /login */}
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <Button
-                      variant={"outline"}
-                      bg="bg.canvas"
-                      borderColor="primary.solid"
-                      color="primary.solid"
-                      onClick={() => onNavigate("/login")}
-                     _hover={{ bg: "bg.subtle" , color: "fg" , borderColor: "bg.subtle"}}
-                    >
-                      <LogIn size={16} />
-                      Iniciar Sesión
-                    </Button>
-                  </Tooltip.Trigger>
-                  <Tooltip.Positioner>
-                    <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
-                      <Tooltip.Arrow />
-                      Acceder a mi cuenta
-                    </Tooltip.Content>
-                  </Tooltip.Positioner>
-                </Tooltip.Root>
 
-                {/* Botón Registrarse → navega a /registro */}
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                <Button
-                  bg="brand.500"
-                  color="bg"
-                  size="sm"
-                  onClick={() => onNavigate("/registro")}
-                  _hover={{ bg: "bg.subtle", color: "fg" }}
-                >
-                  Registrarse
-                </Button>
-                 </Tooltip.Trigger>
-                  <Tooltip.Positioner>
-                    <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
-                      <Tooltip.Arrow />
-                      Crear una cuenta
-                    </Tooltip.Content>
-                  </Tooltip.Positioner>
-                </Tooltip.Root>
-              </>
-            )}
-            <ColorModeToggle />
-          </HStack>
-        </Box>
-
-        {/* Mobile Menu Button */}
-        <IconButton
-          display={{ base: "flex", md: "none" }}
-          variant="ghost"
-          color="fg"
-          aria-label="Menu"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          _hover={{ bg: "bg.subtle" }}
-        >
-          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </IconButton>
-        <Box display={{ base: "block", md: "none" }}>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Button
+                    bg="brand.500"
+                    color="bg"
+                    size="sm"
+                    onClick={() => onNavigate("/registro")}
+                    _hover={{ bg: "bg.subtle", color: "fg" }}
+                  >
+                    Registrarse
+                  </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Positioner>
+                  <Tooltip.Content bg="bg.canvas" color="fg" borderColor="border" borderWidth="1px" borderRadius="md" p="2" zIndex="popover">
+                    <Tooltip.Arrow />
+                    Crear una cuenta
+                  </Tooltip.Content>
+                </Tooltip.Positioner>
+              </Tooltip.Root>
+            </>
+          )}
           <ColorModeToggle />
-        </Box>
+        </HStack>
+
+        {/* Mobile buttons */}
+        <HStack display={{ base: "flex", md: "none" }} gap="1">
+          <ColorModeToggle />
+          <IconButton
+            variant="ghost"
+            color="fg"
+            aria-label="Menu"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            _hover={{ bg: "bg.subtle" }}
+          >
+            {mobileMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}
+          </IconButton>
+        </HStack>
       </Flex>
 
       {/* Mobile Menu */}
@@ -220,27 +272,57 @@ export function CustomJumbotron({ currentPage, onNavigate, isLoggedIn = false }:
                 </Button>
               )
             })}
+
             <Box borderTop="1px solid" borderColor="border" my="1" />
-            {isLoggedIn ? (
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                color="fg"
-                onClick={() => { onNavigate("/"); setMobileMenuOpen(false) }}
-                _hover={{ bg: "bg.subtle" }}
-              >
-                <User size={16} />
-                Mi Perfil
-              </Button>
+
+            {isLoggedIn && user ? (
+              <>
+                {/* Info usuario en móvil */}
+                <Box px="2" py="2" bg="bg.subtle" borderRadius="lg">
+                  <HStack gap="2">
+                    <Avatar.Root size="sm" bg="brand.500">
+                      <Avatar.Fallback color="white" fontWeight="bold" fontSize="xs">
+                        {initials}
+                      </Avatar.Fallback>
+                    </Avatar.Root>
+                    <Box>
+                      <Text fontSize="sm" fontWeight="semibold">{user.name} {user.lastname}</Text>
+                      <Text fontSize="xs" color="fg.muted">{user.email}</Text>
+                    </Box>
+                  </HStack>
+                </Box>
+
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  color="fg"
+                  opacity={0.5}
+                  cursor="not-allowed"
+                  _hover={{}}
+                >
+                  <User size={16} />
+                  Mi Perfil (Pronto)
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  color="red.500"
+                  onClick={handleLogout}
+                  _hover={{ bg: "bg.subtle" }}
+                >
+                  <LogOut size={16} />
+                  Cerrar Sesión
+                </Button>
+              </>
             ) : (
               <>
-                {/* Iniciar Sesión móvil → navega a /login */}
                 <Button
                   bg="bg.canvas"
                   borderColor="primary.solid"
                   color="primary.solid"
-                  onClick={() => onNavigate("/login")}
-                  _hover={{ bg: "bg.subtle" , color: "fg" , borderColor: "bg.subtle"}}
+                  onClick={() => { onNavigate("/login"); setMobileMenuOpen(false) }}
+                  _hover={{ bg: "bg.subtle", color: "fg", borderColor: "bg.subtle" }}
                   justifyContent="start"
                 >
                   <LogIn size={16} />

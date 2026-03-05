@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { VStack, Box } from '@chakra-ui/react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { RegisterInput } from '../../Register/components/RegisterInput'; 
-import { RegisterSubmitButton } from '../../Register/components/RegisterSubmitButton'; 
-import { RegisterErrorAlert } from '../../Register/components/RegisterErrorAlert'; 
+import { RegisterInput } from '../../Register/components/RegisterInput';
+import { RegisterErrorAlert } from '../../Register/components/RegisterErrorAlert';
 import { useLogin } from '../hooks/useLogin';
+import { LoginSubmitButton } from './LoginSubmitButton';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -15,18 +15,15 @@ export const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await login(formData);
-    if (result) {
-      localStorage.setItem('token', result.access_token);
-      navigate('/');
-    }
+    const ok = await login(formData);
+    if (ok) navigate('/');
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <VStack gap="4" align="stretch">
         {error && <RegisterErrorAlert message={error} />}
-        
+
         <RegisterInput
           label="Correo electrónico"
           type="email"
@@ -52,7 +49,7 @@ export const LoginForm = () => {
           />
         </Box>
 
-        <RegisterSubmitButton loading={loading} />
+        <LoginSubmitButton loading={loading} />
       </VStack>
     </form>
   );

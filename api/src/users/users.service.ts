@@ -1,7 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginDto } from '../auth/dto/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +19,8 @@ export class UsersService {
    * hashea la contraseña y asigna el rol USER por defecto.
    */
   async createUser(createUserDto: CreateUserDto) {
-    const { nombre, apellidos, email, password, passwordConfirm, cycle } = createUserDto;
+    const { nombre, apellidos, email, password, passwordConfirm, cycle } =
+      createUserDto;
 
     // Validar que las contraseñas coincidan
     if (password !== passwordConfirm) {
@@ -42,6 +49,37 @@ export class UsersService {
 
     // Asignar el rol USER por defecto
     await this.assignDefaultRole(user.id);
+
+    return user;
+  }
+
+  /**
+   * Valida las credenciales del usuario y devuelve el usuario con sus roles.
+   * Lanza UnauthorizedException si el email no existe o la contraseña no coincide.
+   */
+  async validateUser(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+
+    // Buscar el usuario incluyendo sus roles para el token
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        userRoles: {
+          include: { role: true },
+        },
+      },
+    });
+
+    // Mismo mensaje para email y contraseña incorrectos — no dar pistas
+    if (!user) {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
+
+    // Comparar contraseña en texto plano con el hash almacenado
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
 
     return user;
   }

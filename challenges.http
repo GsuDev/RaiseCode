@@ -1,0 +1,281 @@
+### ============================================================
+###  VARIABLES — edita aquí si cambias puerto o datos
+### ============================================================
+
+@baseUrl = http://localhost:3000/api
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhY29AdGVzdC5jb20iLCJzdWIiOjEsInJvbGVzIjpbIlVTRVIiXSwiaWF0IjoxNzcyNzAyNjAzLCJleHAiOjE3NzMzMDc0MDN9.lheKUFXZ49MWuwgsEyQvcqG61199CMi7pP3ugyoCKGA
+@adminToken = <pega_aquí_el_access_token_del_admin>
+@challengeId = 1
+
+
+### ============================================================
+###  0. AUTH — registro y login
+### ============================================================
+
+### 0.1 · Registrar usuario normal (solo si la BBDD está vacía, si usas el seed sáltate esto)
+# @name registerUser
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "nombre": "Paco",
+  "apellidos": "García López",
+  "email": "paco@test.com",
+  "password": "password123",
+  "passwordConfirm": "password123",
+  "cycle": "DAW"
+}
+
+###
+
+### 0.2 · Login usuario normal → copia el access_token en @userToken (línea 7)
+# @name loginUser
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "paco@test.com",
+  "password": "password123"
+}
+
+###
+
+### ROL ADMIN NO VA AUUUUUNNN
+
+### 0.3 · Login admin → copia el access_token en @adminToken (línea 8)
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "password123"
+}
+
+###
+
+### 0.4 · Login con contraseña incorrecta → debe devolver 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "paco@test.com",
+  "password": "contraseñaMal"
+}
+
+###
+
+### 0.5 · Login con email inexistente → debe devolver 401
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "noexiste@test.com",
+  "password": "password123"
+}
+
+###
+
+### 0.6 · Login con body incompleto → debe devolver 400
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "paco@test.com"
+}
+
+###
+
+### ============================================================
+###  1. GET /api/challenges — público con paginación
+### ============================================================
+
+### 1.1 · Todos los retos (página 1, 10 por defecto)
+GET {{baseUrl}}/challenges
+Content-Type: application/json
+
+###
+
+### 1.2 · Página 2 con 5 por página
+GET {{baseUrl}}/challenges?page=2&limit=5
+Content-Type: application/json
+
+###
+
+### 1.3 · Solo la primera página con 3 resultados
+GET {{baseUrl}}/challenges?page=1&limit=3
+Content-Type: application/json
+
+###
+
+### ============================================================
+###  2. GET /api/challenges/featured — público
+### ============================================================
+
+### 2.1 · Top 5 más completados (solo validados)
+GET {{baseUrl}}/challenges/featured
+Content-Type: application/json
+
+###
+
+### ============================================================
+###  3. GET /api/challenges/:id — protegido (JWT)
+### ============================================================
+
+### 3.1 · Obtener reto por ID
+GET {{baseUrl}}/challenges/{{challengeId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+###
+
+### 3.2 · Sin token → debe devolver 401
+GET {{baseUrl}}/challenges/{{challengeId}}
+Content-Type: application/json
+
+###
+
+### ============================================================
+###  4. POST /api/challenges — protegido (JWT), creatorId del token
+### ============================================================
+
+### 4.1 · Crear reto (el creatorId lo coge del token automáticamente)
+# @name createChallenge
+POST {{baseUrl}}/challenges
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Crear número de teléfono",
+  "statement": "Dada una lista de 10 dígitos, devuelve un string con formato de número de teléfono válido.",
+  "dificultyId": 1,
+  "languageId": 1,
+  "subjectId": 2,
+  "validate": false
+}
+
+### 👉 Copia el id de la respuesta y pégalo en @challengeId (línea 9)
+
+###
+
+### 4.2 · Sin token → debe devolver 401
+POST {{baseUrl}}/challenges
+Content-Type: application/json
+
+{
+  "title": "Sin auth",
+  "statement": "Esto no debería crearse.",
+  "dificultyId": 1,
+  "languageId": 1,
+  "subjectId": 1
+}
+
+###
+
+### 4.3 · Body incompleto → debe devolver 400
+POST {{baseUrl}}/challenges
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Solo título, falta todo lo demás"
+}
+
+###
+
+### ============================================================
+###  5. PATCH /api/challenges/:id — solo ADMIN
+### ============================================================
+
+### 5.1 · Admin valida el reto (validate: true)
+PATCH {{baseUrl}}/challenges/{{challengeId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "validate": true
+}
+
+###
+
+### 5.2 · Admin actualiza título y dificultad
+PATCH {{baseUrl}}/challenges/{{challengeId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Crear número de teléfono (v2)",
+  "dificultyId": 2
+}
+
+###
+
+### 5.3 · Usuario normal intenta hacer PATCH → debe devolver 403
+PATCH {{baseUrl}}/challenges/{{challengeId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "No debería poder editar"
+}
+
+###
+
+### 5.4 · Sin token → debe devolver 401
+PATCH {{baseUrl}}/challenges/{{challengeId}}
+Content-Type: application/json
+
+{
+  "title": "Tampoco"
+}
+
+###
+
+### ============================================================
+###  6. DELETE /api/challenges/:id — solo ADMIN
+### ============================================================
+
+### 6.1 · Crear un reto para borrar
+POST {{baseUrl}}/challenges
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "title": "Reto para borrar",
+  "statement": "Este reto se va a eliminar en la siguiente request.",
+  "dificultyId": 1,
+  "languageId": 1,
+  "subjectId": 1
+}
+
+###
+
+### 6.2 · Admin borra el reto
+DELETE {{baseUrl}}/challenges/{{challengeId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+###
+
+### 6.3 · Borrar reto inexistente → debe devolver 404
+DELETE {{baseUrl}}/challenges/9999
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+###
+
+### 6.4 · Usuario normal intenta borrar → debe devolver 403
+DELETE {{baseUrl}}/challenges/{{challengeId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+###
+
+### ============================================================
+###  7. FLUJO COMPLETO — prueba de featured tras validar
+### ============================================================
+
+GET {{baseUrl}}/challenges/featured
+Content-Type: application/json
+
+###
