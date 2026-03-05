@@ -7,7 +7,7 @@ export const useChallengeSolver = () => {
   const [challenge, setChallenge] = useState<ChallengeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   
-  const [code, setCode] = useState<string>('// Escribe tu solución aquí...\n\nfunction solución() {\n  \n}');
+  const [code, setCode] = useState<string>('// Escribe tu solución aquí...\n\nfunction solucion() {\n  \n}');
   const [isRunning, setIsRunning] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
 

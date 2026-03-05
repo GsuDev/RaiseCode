@@ -1,4 +1,5 @@
-import { Box, Card, Heading } from '@chakra-ui/react';
+import { Card, Heading, Box } from '@chakra-ui/react';
+import ReactMarkdown from 'react-markdown';
 
 interface Props {
   statement: string;
@@ -12,20 +13,20 @@ export const ChallengeStatementPanel = ({ statement }: Props) => {
       borderColor="bg.subtle" 
       borderRadius="xl" 
       w="full"
+      shadow="sm"
     >
       <Card.Header pb="2">
         <Heading size="md" color="fg">Enunciado del Reto</Heading>
       </Card.Header>
       <Card.Body>
-        {/* Placeholder hasta integrar react-markdown */}
         <Box 
-          fontFamily="mono" 
-          whiteSpace="pre-wrap" 
           color="fg.muted"
           fontSize="md"
-          lineHeight="tall"
+          lineHeight="relaxed"
+          className="markdown-container"
         >
-          {statement}
+          {/* Aquí ocurre la magia del Markdown */}
+          <ReactMarkdown>{statement}</ReactMarkdown>
         </Box>
       </Card.Body>
     </Card.Root>
