@@ -8,18 +8,22 @@ import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ChallengesModule } from './challenges/challenges.module';
+import { LanguagesModule } from './languages/languages.module';
+import { DifficultiesModule } from './difficulties/difficulties.module';
+import { CoursesModule } from './courses/courses.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true, // Carga automáticamente el .env y lo hace disponible en toda la app
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     MongooseModule,
     HealthModule,
     UsersModule,
     AuthModule,
     ChallengesModule,
+    LanguagesModule,
+    DifficultiesModule,
+    CoursesModule,
   ],
   controllers: [],
   providers: [PrismaService, MongooseService],
