@@ -158,12 +158,10 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                       value="perfil"
                       color="fg"
                       _hover={{ bg: "bg.subtle" }}
-                      cursor="not-allowed"
-                      opacity={0.5}
+                      onClick={() => onNavigate("/perfil")}
                     >
                       <User size={14} />
                       Mi Perfil
-                      <Text fontSize="xs" color="fg.muted" ml="auto">Pronto</Text>
                     </Menu.Item>
 
                     <Menu.Separator borderColor="border" />
@@ -296,12 +294,11 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                   variant="ghost"
                   justifyContent="flex-start"
                   color="fg"
-                  opacity={0.5}
-                  cursor="not-allowed"
-                  _hover={{}}
+                  _hover={{bg: "bg.subtle"}}
+                  onClick={() => {onNavigate("/perfil"); setMobileMenuOpen(false)}}
                 >
                   <User size={16} />
-                  Mi Perfil (Pronto)
+                  Mi Perfil
                 </Button>
 
                 <Button
