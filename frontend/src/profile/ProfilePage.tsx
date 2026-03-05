@@ -1,28 +1,55 @@
-import { Box, Grid, Text, VStack } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { Box, Grid, Text, VStack, Center, Spinner } from "@chakra-ui/react";
 import { Flame, Target, Clock, TrendingUp } from "lucide-react";
 import { ProfileStatCard } from "./components/ProfileStatCard";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { useAuth } from "@/auth/context/AuthContext";
 import { ProfileLanguageChart } from "./components/ProfileLanguageChart";
 import { ProfileRecentActivity } from "./components/ProfileRecentActivity";
+import { useProfile } from "./hooks/useProfile"; 
 
 export const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
 
-  // Uso datos mockeados para comprobar como se ve, en el futuro se cambiaran por datos reales
+  const { data, loading, error } = useProfile();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  }, [isLoggedIn, navigate]);
+
+  if (!isLoggedIn || !user) return null;
+
+  if (loading) {
+    return (
+      <Center h="60vh">
+        <VStack gap={4}>
+          <Spinner size="xl" color="brand.500" borderWidth="4px" />
+          <Text color="fg.muted">Cargando tu perfil...</Text>
+        </VStack>
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Center h="60vh">
+        <Box bg="red.500" p={6} borderRadius="xl" color="white" textAlign="center">
+          <Text fontWeight="bold" fontSize="lg" mb={2}>Algo salio mal</Text>
+          <Text>{error}</Text>
+        </Box>
+      </Center>
+    );
+  }
+
   const mockStats = {
-    completedCount: 45,
     currentStreak: "7 dias",
     avgTime: "125ms",
     bestStreak: "15 dias",
   };
-
-  const mockLanguages = [
-    { languageName: "JavaScript", count: 28 },
-    { languageName: "PHP", count: 8 },
-    { languageName: "Java", count: 5 },
-    { languageName: "Python", count: 4 },
-  ];
 
   const mockActivity = [
     {
@@ -55,8 +82,6 @@ export const ProfilePage = () => {
     },
   ];
 
-  if (!user) return null;
-
   return (
     <Box maxW="7xl" mx="auto" p={{ base: 4, md: 8 }} mt={4}>
       <VStack align="stretch" gap={8}>
@@ -78,7 +103,7 @@ export const ProfilePage = () => {
         >
           <ProfileStatCard
             icon={<Target size={24} />}
-            value={mockStats.completedCount}
+            value={data?.stats.completedCount || 0}
             label="Retos Completados"
             iconColor="green.500"
             boxBg="rgba(72, 187, 120, 0.15)"
@@ -107,7 +132,8 @@ export const ProfilePage = () => {
         </Grid>
 
         <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={4}>
-          <ProfileLanguageChart byLanguage={mockLanguages} />
+          <ProfileLanguageChart byLanguage={data?.languages || []} />
+          
           <ProfileRecentActivity recentActivity={mockActivity} />
         </Grid>
       </VStack>
