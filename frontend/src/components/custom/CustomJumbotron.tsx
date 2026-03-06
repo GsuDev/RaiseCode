@@ -127,10 +127,15 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                       <Text fontSize="sm" fontWeight="semibold">{user.name} {user.lastname}</Text>
                       <Text fontSize="xs" color="fg.muted">{user.email}</Text>
                     </Box>
-                    <Menu.Item value="perfil" color="fg" _hover={{ bg: "bg.subtle" }} cursor="not-allowed" opacity={0.5}>
+
+                    <Menu.Item
+                      value="perfil"
+                      color="fg"
+                      _hover={{ bg: "bg.subtle" }}
+                      onClick={() => onNavigate("/perfil")}
+                    >
                       <User size={14} />
                       Mi Perfil
-                      <Text fontSize="xs" color="fg.muted" ml="auto">Pronto</Text>
                     </Menu.Item>
                     <Menu.Separator borderColor="border" />
                     <Menu.Item value="logout" color="red.500" _hover={{ bg: "bg.subtle" }} onClick={handleLogout}>
@@ -208,9 +213,16 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                     </Box>
                   </HStack>
                 </Box>
-                <Button variant="ghost" justifyContent="flex-start" color="fg" opacity={0.5} cursor="not-allowed" _hover={{}}>
+
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  color="fg"
+                  _hover={{bg: "bg.subtle"}}
+                  onClick={() => {onNavigate("/perfil"); setMobileMenuOpen(false)}}
+                >
                   <User size={16} />
-                  Mi Perfil (Pronto)
+                  Mi Perfil
                 </Button>
                 <Button variant="ghost" justifyContent="flex-start" color="red.500" onClick={handleLogout} _hover={{ bg: "bg.subtle" }}>
                   <LogOut size={16} />

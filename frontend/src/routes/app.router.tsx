@@ -5,6 +5,7 @@ import { LoginPage } from '@/auth/Login/LoginPage';
 import { CreateChallengePage } from '@/challenges/create/CreateChallengePage';
 import { createBrowserRouter } from 'react-router';
 import { SubjectsPage } from '@/raiseCode/pages/Subjects/SubjectsPage';
+import { ProfilePage } from '@/profile/ProfilePage';
 
 export const appRouter = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ export const appRouter = createBrowserRouter([
       },
       { path: 'asignaturas', 
         element: <SubjectsPage /> },
+      {
+        path: 'perfil',
+        element: <ProfilePage />
+      }
     ],
   },
 ]);
