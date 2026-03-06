@@ -7,6 +7,9 @@ export class CreateChallengeDto {
   @IsString()
   statement: string;
 
+  @IsString()
+  description: string;
+
   @IsInt()
   dificultyId: number;
 

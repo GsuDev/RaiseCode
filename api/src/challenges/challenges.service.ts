@@ -11,6 +11,7 @@ import { UpdateChallengeDto } from './dto/update-challenge.dto';
 const challengeSelect = {
   id: true,
   title: true,
+  description: true,
   statement: true,
   dificulty: { select: { id: true, name: true } },
   language: { select: { id: true, name: true } },
@@ -22,6 +23,7 @@ function mapChallenge(challenge: any) {
   return {
     id: challenge.id,
     title: challenge.title,
+    description: challenge.description,
     statement: challenge.statement,
     dificulty: challenge.dificulty,
     language: challenge.language,
@@ -42,6 +44,7 @@ export class ChallengesService {
     const challenge = await this.prisma.challenge.create({
       data: {
         title: dto.title,
+        description: dto.description,
         statement: dto.statement,
         dificultyId: dto.dificultyId,
         languageId: dto.languageId,
