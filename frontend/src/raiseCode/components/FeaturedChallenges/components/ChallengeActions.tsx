@@ -17,7 +17,7 @@ export const ChallengeActions = ({id} : Props) => {
             <Button
            bg="primary.solid"
            // Añadir id al handleNavigate cuando este hecho el back
-           onClick={() => handleNavigate("/")}
+           onClick={() => handleNavigate("/retos")}
            _hover={{ bg: "bg.subtle" , color: "fg" }}
            >
             Acceder al reto

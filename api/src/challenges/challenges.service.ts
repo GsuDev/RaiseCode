@@ -34,7 +34,7 @@ function mapChallenge(challenge: any) {
 
 @Injectable()
 export class ChallengesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   /**
    * Crea un nuevo reto. El creatorId se extrae del token JWT.
@@ -99,9 +99,13 @@ export class ChallengesService {
   async findOne(id: number) {
     const challenge = await this.prisma.challenge.findUnique({
       where: { id },
-      select: {
-        ...challengeSelect,
-        _count: { select: { completedChallenges: true } },
+      include: {
+        creator: {
+          select: { name: true, lastname: true }
+        },
+        dificulty: true,
+        language: true,
+        subject: true,
       },
     });
 
@@ -109,7 +113,10 @@ export class ChallengesService {
       throw new NotFoundException(`Reto con ID ${id} no encontrado`);
     }
 
-    return mapChallenge(challenge);
+    return {
+      ...challenge,
+      creatorName: `${challenge.creator.name} ${challenge.creator.lastname}`
+    };
   }
 
   /**
