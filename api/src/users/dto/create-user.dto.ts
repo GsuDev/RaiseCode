@@ -1,5 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { Cycle } from 'generated/client/client';
+import { IsInt, IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -24,7 +23,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'La confirmación de contraseña es obligatoria' })
   passwordConfirm: string;
 
-  @IsEnum(Cycle, { message: 'El ciclo debe ser DAW, DAM o ASIR' })
-  @IsNotEmpty({ message: 'El ciclo es obligatorio' })
-  cycle: Cycle;
+  @IsInt({ message: 'El ID del curso debe ser un número entero' })
+  @IsNotEmpty({ message: 'El curso es obligatorio' })
+  courseId: number;
 }
