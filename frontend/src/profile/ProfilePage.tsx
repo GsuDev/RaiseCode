@@ -12,7 +12,6 @@ import { useProfile } from "./hooks/useProfile";
 export const ProfilePage = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-
   const { data, loading, error } = useProfile();
 
   useEffect(() => {
@@ -45,47 +44,16 @@ export const ProfilePage = () => {
     );
   }
 
+  // TODO: Conectar cuando exista HU de rachas
   const mockStats = {
     currentStreak: "7 dias",
     avgTime: "125ms",
     bestStreak: "15 dias",
   };
 
-  const mockActivity = [
-    {
-      id: "1",
-      challengeTitle: "Crear numero de telefono",
-      languageName: "JavaScript",
-      time: "Hoy",
-      points: 100,
-    },
-    {
-      id: "2",
-      challengeTitle: "Suma de numeros en string",
-      languageName: "JavaScript",
-      time: "Ayer",
-      points: 80,
-    },
-    {
-      id: "3",
-      challengeTitle: "Validar email con regex",
-      languageName: "PHP",
-      time: "Hace 2 días",
-      points: 50,
-    },
-    {
-      id: "4",
-      challengeTitle: "Fibonacci recursivo",
-      languageName: "Java",
-      time: "Hace 3 días",
-      points: 250,
-    },
-  ];
-
   return (
     <Box maxW="7xl" mx="auto" p={{ base: 4, md: 8 }} mt={4}>
       <VStack align="stretch" gap={8}>
-        {/* Cabecera del perfil */}
         <ProfileHeader
           name={user.name}
           lastname={user.lastname}
@@ -132,9 +100,8 @@ export const ProfilePage = () => {
         </Grid>
 
         <Grid templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }} gap={4}>
-          <ProfileLanguageChart byLanguage={data?.languages || []} />
-          
-          <ProfileRecentActivity recentActivity={mockActivity} />
+          <ProfileLanguageChart byLanguage={data?.stats.byLanguage || []} />
+          <ProfileRecentActivity recentActivity={data?.recentActivity || []} />
         </Grid>
       </VStack>
     </Box>
