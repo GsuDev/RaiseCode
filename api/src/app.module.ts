@@ -11,6 +11,7 @@ import { ChallengesModule } from './challenges/challenges.module';
 import { LanguagesModule } from './languages/languages.module';
 import { DifficultiesModule } from './difficulties/difficulties.module';
 import { CoursesModule } from './courses/courses.module';
+import { SubjectsModule } from './subjects/subjects.module';
 import { ExecutionModule } from './execution/execution.module';
 
 @Module({
@@ -25,6 +26,7 @@ import { ExecutionModule } from './execution/execution.module';
     LanguagesModule,
     DifficultiesModule,
     CoursesModule,
+    SubjectsModule,
     ExecutionModule,
   ],
   controllers: [],
