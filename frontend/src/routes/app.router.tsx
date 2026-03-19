@@ -9,6 +9,7 @@ import { SubjectDetailPage } from '@/raiseCode/pages/Subjects/SubjectDetailPage'
 import { ChallengeDetailPage } from '@/Challenges/detail/ChallengeDetailPage';
 import { ChallengeSolverPage } from '@/Challenges/solver/ChallengeSolverPage';
 import { ProfilePage } from '@/profile/ProfilePage';
+import { PrivateRoute } from './PrivateRoute';
 
 export const appRouter = createBrowserRouter([
   {
@@ -28,10 +29,6 @@ export const appRouter = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: 'crear-reto',
-        element: <CreateChallengePage />,
-      },
-      {
         path: 'asignaturas',
         element: <SubjectsPage />
       },
@@ -44,14 +41,22 @@ export const appRouter = createBrowserRouter([
         element: <ChallengeDetailPage />
       },
       {
-        path: 'retos/:id/resolver',
-        element: <ChallengeSolverPage/>
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: 'retos/:id/resolver',
+            element: <ChallengeSolverPage />,
+          },
+          {
+            path: 'crear-reto',
+            element: <CreateChallengePage />,
+          },
+          {
+            path: 'perfil',
+            element: <ProfilePage />,
+          },
+        ],
       },
-      {
-        path: 'perfil',
-        element: <ProfilePage />
-
-      }
     ],
   },
 ]);
