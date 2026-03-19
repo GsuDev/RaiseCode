@@ -5,18 +5,22 @@ export interface LanguageStat {
   count: number;
 }
 
+export interface RecentActivity {
+  challengeId: number;
+  challengeTitle: string;
+  languageName: string;
+  time: number;
+}
+
 export interface ProfileResponse {
   stats: {
     completedCount: number;
+    byLanguage: LanguageStat[];
   };
-  languages: LanguageStat[];
+  recentActivity: RecentActivity[];
 }
 
 export const getProfileService = async (token: string): Promise<ProfileResponse> => {
-
-  // DESCOMENTAR ESTO CUANDO EL BACKEND ESTÉ LISTO
-
-  /*
   const response = await fetch(`${API_URL}/users/me`, {
     method: 'GET',
     headers: {
@@ -32,25 +36,4 @@ export const getProfileService = async (token: string): Promise<ProfileResponse>
   }
 
   return json;
-  */
-
-
-  // MOCK TEMPORAL
-
-  return new Promise((resolve) => {
-    // Simulamos que el backend tarda 1 segundo en responder para ver el Spinner
-    setTimeout(() => {
-      resolve({
-        stats: {
-          completedCount: 45 
-        },
-        languages: [
-          { languageName: "JavaScript", count: 28 },
-          { languageName: "PHP", count: 8 },
-          { languageName: "Java", count: 5 },
-          { languageName: "Python", count: 4 },
-        ]
-      });
-    }, 1000); 
-  });
 };
