@@ -14,9 +14,13 @@ const mockSubjects: Subject[] = [
   { id: '8', title: 'Implantación de Sistemas Operativos', cycle: 'ASIR', challenges: 1 }
 ];
 
-export const SubjectSection = () => {
+interface Props {
+  initialCycle?: 'ALL' | 'DAW' | 'DAM' | 'ASIR';
+}
+
+export const SubjectSection = ({ initialCycle = 'ALL' }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCycle, setSelectedCycle] = useState<'ALL' | 'DAW' | 'DAM' | 'ASIR'>('ALL');
+  const [selectedCycle, setSelectedCycle] = useState<'ALL' | 'DAW' | 'DAM' | 'ASIR'>(initialCycle);
 
   const filteredSubjects = mockSubjects.filter(subject => {
     const matchesSearch = subject.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -47,27 +51,38 @@ export const SubjectSection = () => {
         </Box>
 
         <HStack gap="2" wrap="wrap">
-          {(['ALL', 'DAW', 'DAM', 'ASIR'] as const).map((cycle) => (
-            <Button
-              key={cycle}
-              size="sm"
-              variant={selectedCycle === cycle ? 'solid' : 'outline'}
-              colorPalette={selectedCycle === cycle ? 'green' : 'gray'}
-              onClick={() => setSelectedCycle(cycle)}
-              borderRadius="full"
-              px="4"
-              border="1px solid"
-              borderColor="bg.subtle" 
-              _hover={{ bg: "bg.subtle" }}
-            >
-              {cycle === 'ALL' && (
-                <Box as="span" display="inline-flex" mr="2">
-                  <Filter size={14} />
-                </Box>
-              )}
-              {cycle === 'ALL' ? 'Todos' : cycle}
-            </Button>
-          ))}
+          {(['ALL', 'DAW', 'DAM', 'ASIR'] as const).map((cycle) => {
+            const cycleColor: Record<string, string> = {
+              DAW:  '#f59e0b',
+              DAM:  '#22c55e',
+              ASIR: '#06b6d4',
+            };
+            const color = cycleColor[cycle];
+            const isSelected = selectedCycle === cycle;
+
+            return (
+              <Button
+                key={cycle}
+                size="sm"
+                onClick={() => setSelectedCycle(cycle)}
+                borderRadius="full"
+                px="4"
+                border="1px solid"
+                borderColor={isSelected && color ? color : 'bg.subtle'}
+                bg={isSelected ? (color ? `${color}22` : 'bg.subtle') : 'transparent'}
+                color={isSelected && color ? color : 'fg.muted'}
+                fontWeight={isSelected ? 'bold' : 'normal'}
+                _hover={{ borderColor: color ?? 'border', bg: color ? `${color}15` : 'bg.subtle' }}
+              >
+                {cycle === 'ALL' && (
+                  <Box as="span" display="inline-flex" mr="2">
+                    <Filter size={14} />
+                  </Box>
+                )}
+                {cycle === 'ALL' ? 'Todos' : cycle}
+              </Button>
+            );
+          })}
         </HStack>
       </Flex>
 

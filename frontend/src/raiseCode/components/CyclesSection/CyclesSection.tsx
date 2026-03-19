@@ -1,5 +1,6 @@
 import { Box, Grid, Text, VStack } from "@chakra-ui/react";
 import { Code2, Zap, Users } from "lucide-react";
+import { useNavigate } from "react-router";
 import { CycleCard } from "./components/CycleCard";
 
 interface Cycle {
@@ -66,6 +67,8 @@ const getIconByCode = (code: string) => {
 };
 
 export const CyclesSection = () => {
+  const navigate = useNavigate();
+
   return (
     <Box as="section" mt={10} w="75%">
       <VStack mb="8" gap={1}>
@@ -93,6 +96,7 @@ export const CyclesSection = () => {
               gradient={fixedColor.gradient}
               borderClr={fixedColor.borderClr}
               bgClr={fixedColor.bgClr}
+              onClick={() => navigate(`/asignaturas?curso=${cycle.code}`)}
             />
           );
         })}

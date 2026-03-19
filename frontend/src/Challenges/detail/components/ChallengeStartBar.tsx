@@ -21,32 +21,36 @@ export const ChallengeStartBar = () => {
   };
 
   return (
-    <Box 
-      position="sticky" 
-      bottom="0" 
-      w="full" 
-      bg="bg.panel" 
-      borderTopWidth="1px" 
-      borderColor="bg.subtle" 
-      py="4" 
-      zIndex="10"
+    <Box
+      w="full"
+      bg="bg.panel"
+      borderTopWidth="1px"
+      borderColor="bg.subtle"
+      py="4"
       boxShadow="0 -4px 12px rgba(0,0,0,0.05)"
+      flexShrink={0}
     >
       <Container maxW="7xl">
-        <Flex justify="space-between" align="center">
-          <VStack align="start" gap="0">
+        <Flex
+          justify="space-between"
+          align="center"
+          direction={{ base: 'column', sm: 'row' }}
+          gap={{ base: '3', sm: '0' }}
+        >
+          <VStack align={{ base: 'center', sm: 'start' }} gap="0">
             <Text fontWeight="bold" fontSize="lg">¿Listo para el desafío?</Text>
-            <Text fontSize="sm" color="fg.muted">
-              {isLoggedIn 
-                ? 'Demuestra tus habilidades y gana 100 puntos.' 
+            <Text fontSize="sm" color="fg.muted" textAlign={{ base: 'center', sm: 'left' }}>
+              {isLoggedIn
+                ? 'Demuestra tus habilidades y gana 100 puntos.'
                 : 'Inicia sesión para poder resolver este reto.'}
             </Text>
           </VStack>
-          <Button 
-            colorPalette="green" 
-            size="lg" 
-            px="8" 
+          <Button
+            colorPalette="green"
+            size="lg"
+            px="8"
             borderRadius="full"
+            w={{ base: 'full', sm: 'auto' }}
             onClick={handleStart}
           >
             <Box as="span" display="inline-flex" mr="2">

@@ -30,33 +30,30 @@ export const ChallengeDetailPage = () => {
   }
 
   return (
-    <Box position="relative" minH="100vh" bg="bg.canvas">
-      <Container maxW="7xl" py="8" pb="32">
-        <VStack gap="8" align="stretch">
+    <Box display="flex" flexDirection="column" h="calc(100vh - 64px)" bg="bg.canvas">
+      {/* Área scrollable */}
+      <Box flex="1" overflowY="auto">
+        <Container maxW="7xl" py="8">
+          <VStack gap="8" align="stretch">
+            <ChallengeDetailHeader challenge={challenge} />
+            <ChallengeStatCards challenge={challenge} />
+            <SimpleGrid
+              columns={{ base: 1, lg: 3 }}
+              gap="8"
+              alignItems={{ lg: 'start' }}
+            >
+              <Box gridColumn={{ lg: 'span 2' }}>
+                <ChallengeStatementPanel statement={challenge.statement} />
+              </Box>
+              <Box>
+                <ChallengeExampleTests tests={challenge.tests} />
+              </Box>
+            </SimpleGrid>
+          </VStack>
+        </Container>
+      </Box>
 
-          {/* Cabecera con título y badges */}
-          <ChallengeDetailHeader challenge={challenge} />
-
-          {/* Tarjetas de estadísticas */}
-          <ChallengeStatCards challenge={challenge} />
-
-          {/* Grid principal: Enunciado (izquierda) y Tests (derecha) */}
-          <SimpleGrid 
-            columns={{ base: 1, lg: 3 }} 
-            gap="8" 
-            alignItems={{ lg: 'start' }}
-          >
-            <Box gridColumn={{ lg: 'span 2' }}>
-              <ChallengeStatementPanel statement={challenge.statement} />
-            </Box>
-            <Box>
-              <ChallengeExampleTests />
-            </Box>
-          </SimpleGrid>
-        </VStack>
-      </Container>
-
-      {/* Barra fija inferior */}
+      {/* Footer fijo */}
       <ChallengeStartBar />
     </Box>
   );

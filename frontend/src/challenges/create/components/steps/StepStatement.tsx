@@ -1,5 +1,6 @@
-import { Box, Button, Flex, HStack, Text, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, HStack, Spinner, Text, VStack } from '@chakra-ui/react';
 import { Code2, ArrowLeft, ArrowRight } from 'lucide-react';
+import Editor from '@monaco-editor/react';
 import type { ChallengeFormState } from '../types';
 
 interface Props {
@@ -9,25 +10,6 @@ interface Props {
   onNext: () => void;
 }
 
-const STATEMENT_PLACEHOLDER = `## Título del problema
-
-Descripción detallada del problema a resolver...
-
-### Ejemplo
-
-\`\`\`javascript
-miFunction([1, 2, 3])
-// returns "resultado esperado"
-\`\`\`
-
-### Notas
-- Nota 1
-- Nota 2`;
-
-/**
- * Paso 2 — Enunciado completo del reto en formato Markdown.
- * Este campo se envía al backend como `statement`.
- */
 export const StepStatement = ({ form, updateField, onBack, onNext }: Props) => {
   const valid = form.statement.trim().length > 0;
 
@@ -45,25 +27,31 @@ export const StepStatement = ({ form, updateField, onBack, onNext }: Props) => {
       </Box>
 
       {/* Editor */}
-      <Box p="6" flex="1">
-        <Text mb="2" fontSize="sm" fontWeight="medium" color="fg">
-          Enunciado Completo
-        </Text>
-        <Textarea
+      <Box px="12" py="4" flex="1">
+      <Box bg="#1e1e1e" borderRadius="lg" overflow="hidden">
+        <Editor
+          height="420px"
+          language="markdown"
+          theme="vs-dark"
           value={form.statement}
-          onChange={(e) => updateField('statement', e.target.value)}
-          placeholder={STATEMENT_PLACEHOLDER}
-          fontFamily="mono"
-          fontSize="sm"
-          rows={18}
-          bg="bg.subtle"
-          border="1px solid"
-          borderColor="border"
-          color="fg"
-          resize="vertical"
-          _placeholder={{ color: 'fg.muted', opacity: 0.5 }}
-          _focus={{ borderColor: 'brand.500', outline: 'none' }}
+          onChange={(val) => updateField('statement', val ?? '')}
+          loading={
+            <Center h="full" bg="#1e1e1e">
+              <Spinner color="green.500" />
+            </Center>
+          }
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            automaticLayout: true,
+            padding: { top: 16 },
+            scrollBeyondLastLine: false,
+            wordWrap: 'on',
+            lineNumbers: 'off',
+            fixedOverflowWidgets: true,
+          }}
         />
+      </Box>
       </Box>
 
       {/* Footer */}
