@@ -200,68 +200,62 @@ export class UsersService {
   /**
   * Busca el perfil del usuario.
   */
-  async findProfile(id : number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        name: true,
-        lastname: true,
-        email: true,
-        password: false,
-        cycle : true,
-        userRoles: {
-          include: {
-            role: true
-          }
-        },
-        completedChallenges: {
-          include: {
-            challenge: {
-              include: { language: true }, 
-            },
-          }
-        } 
-      }});
-
-    if (!user) {
-      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-    }
-
-    
-    const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
-      const lang = curr.challenge.language; 
-      
-      if (lang) {
-        if (!acc[lang.id]) {
-          acc[lang.id] = { languageId: lang.id, languageName: lang.name, count: 0 };
-        }
-        acc[lang.id].count += 1;
-      }
-      return acc;
-    }, {});
-
-    const recentActivity = user.completedChallenges.map((cc) => ({
-      challengeId: cc.challengeId,
-      challengeTitle: cc.challenge.title,
-      languageName: cc.challenge.language.name,
-      time: Number(cc.time), 
-    }));
-
-    return {
-      id: user.id,
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email,
-      cycle: user.cycle,
-      roles: user.userRoles.map(ur => ur.role.name),
-      stats: {
-        completedCount: user.completedChallenges.length,
-        byLanguage: Object.values(languageStats),
+async findProfile(id: number) {
+  const user = await this.prisma.user.findUnique({
+    where: { id },
+    include: {
+      course: {
+        select: { id: true, name: true },
       },
-      recentActivity: recentActivity, 
-    };
+      userRoles: {
+        include: { role: true },
+      },
+      completedChallenges: {
+        include: {
+          challenge: {
+            include: { language: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
   }
+
+  const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
+    const lang = curr.challenge.language;
+    if (lang) {
+      if (!acc[lang.id]) {
+        acc[lang.id] = { languageId: lang.id, languageName: lang.name, count: 0 };
+      }
+      acc[lang.id].count += 1;
+    }
+    return acc;
+  }, {});
+
+  const recentActivity = user.completedChallenges.map((cc) => ({
+    challengeId: cc.challengeId,
+    challengeTitle: cc.challenge.title,
+    languageName: cc.challenge.language.name,
+    time: Number(cc.time),
+  }));
+
+  return {
+    id: user.id,
+    name: user.name,
+    lastname: user.lastname,
+    email: user.email,
+    course: user.course,
+    roles: user.userRoles.map(ur => ur.role.name),
+    stats: {
+      completedCount: user.completedChallenges.length,
+      byLanguage: Object.values(languageStats),
+    },
+    recentActivity,
+  };
+}
 
   /**
   * Actualiza los datos de un usuario.
