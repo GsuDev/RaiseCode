@@ -1,13 +1,10 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/client"
-  moduleFormat  = "cjs"
+  provider     = "prisma-client"
+  output       = "../generated/client"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -90,9 +87,9 @@ model UserRoles {
 }
 
 model UserAchievements {
-  user         User       @relation(fields: [userId], references: [id])
-  userId       Int
-  achivement   Achievement @relation(fields: [achievementId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  achivement    Achievement @relation(fields: [achievementId], references: [id])
   achievementId Int
 
   @@id([userId, achievementId])
@@ -112,8 +109,8 @@ model UserSubjects {
 model Challenge {
   id                  Int                   @id @default(autoincrement())
   title               String
-  description         String                // ← NUEVO: descripción breve para cards
-  statement           String                // enunciado completo en Markdown
+  description         String
+  statement           String                @db.VarChar(1500)
   dificulty           Dificulty             @relation(fields: [dificultyId], references: [id])
   dificultyId         Int
   language            Language              @relation(fields: [languageId], references: [id])
@@ -126,6 +123,18 @@ model Challenge {
   validatorId         Int
   validate            Boolean
   completedChallenges CompletedChallenges[]
+  tests               ChallengeTest[]       // ← NUEVO
+}
+
+// Modelo de ChallengeTest — tests de validación del reto
+
+model ChallengeTest {
+  id             Int       @id @default(autoincrement())
+  challenge      Challenge @relation(fields: [challengeId], references: [id])
+  challengeId    Int
+  input          String    @db.Text
+  expectedOutput String    @db.Text
+  hidden         Boolean   @default(false)
 }
 
 // Modelo de CompletedChallenges
