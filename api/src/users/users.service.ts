@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,10 +9,12 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from '../auth/dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private jwtService : JwtService) {}
 
   /**
    * Crea un nuevo usuario en la base de datos.
@@ -145,5 +148,165 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  /**
+   * Busca un todos los usuarios.
+   */
+  async findAll(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          name: true,
+          lastname: true,
+          email: true,
+          password: false,
+          userRoles: {
+            include: {
+              role: true
+            }
+          },
+        },
+        orderBy: { id: 'desc' },
+      }),
+      this.prisma.challenge.count(),
+    ]);
+
+    // Transformar la salida para que roles sea un array de strings
+    const formattedUsers = users.map(user => ({
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      roles: user.userRoles.map(ur => ur.role.name),
+    }));
+
+    return {
+      data: formattedUsers,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    }
+  }
+
+  /**
+  * Busca el perfil del usuario.
+  */
+  async findProfile(id : number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        lastname: true,
+        email: true,
+        password: false,
+        cycle : true,
+        userRoles: {
+          include: {
+            role: true
+          }
+        },
+        completedChallenges: {
+          include: {
+            challenge: {
+              include: { language: true }, 
+            },
+          }
+        } 
+      }});
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    
+    const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
+      const lang = curr.challenge.language; 
+      
+      if (lang) {
+        if (!acc[lang.id]) {
+          acc[lang.id] = { languageId: lang.id, languageName: lang.name, count: 0 };
+        }
+        acc[lang.id].count += 1;
+      }
+      return acc;
+    }, {});
+
+    const recentActivity = user.completedChallenges.map((cc) => ({
+      challengeId: cc.challengeId,
+      challengeTitle: cc.challenge.title,
+      languageName: cc.challenge.language.name,
+      time: Number(cc.time), 
+    }));
+
+    return {
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      cycle: user.cycle,
+      roles: user.userRoles.map(ur => ur.role.name),
+      stats: {
+        completedCount: user.completedChallenges.length,
+        byLanguage: Object.values(languageStats),
+      },
+      recentActivity: recentActivity, 
+    };
+  }
+
+  /**
+  * Actualiza los datos de un usuario.
+  */
+  async update(id : number,  updateUserDto : UpdateUserDto) {
+    this.findOne(id)
+
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+      select : {
+        id : true,
+        name: true,
+        lastname: true,
+        email: true,
+        password: false,
+        userRoles: {
+          include: {
+            role: true
+          }
+        }
+    }});
+
+    return updated
+  }
+
+  /**
+  * Eliminia un usuario.
+  */
+  async remove(id : number, userId : number) {
+    this.findOne(id)
+
+    if (userId === id) {
+      throw new NotAcceptableException(`No puede borrarse a si mismo`);
+    }
+
+    await this.prisma.userRoles.deleteMany({ where: { userId: id } });
+    await this.prisma.userAchievements.deleteMany({ where: { userId: id } });
+    await this.prisma.userSubjects.deleteMany({ where: { userId: id } });
+    await this.prisma.completedChallenges.deleteMany({ where: { userId: id } });
+
+    const deleted = await this.prisma.user.delete({
+      where : {id}
+    })
+
+    return deleted
   }
 }
