@@ -5,6 +5,7 @@ import { LoginPage } from '@/auth/Login/LoginPage';
 import { CreateChallengePage } from '@/Challenges/create/CreateChallengePage';
 import { createBrowserRouter } from 'react-router';
 import { SubjectsPage } from '@/raiseCode/pages/Subjects/SubjectsPage';
+import { SubjectDetailPage } from '@/raiseCode/pages/Subjects/SubjectDetailPage';
 import { ChallengeDetailPage } from '@/Challenges/detail/ChallengeDetailPage';
 import { ChallengeSolverPage } from '@/Challenges/solver/ChallengeSolverPage';
 import { ProfilePage } from '@/profile/ProfilePage';
@@ -33,6 +34,10 @@ export const appRouter = createBrowserRouter([
       {
         path: 'asignaturas',
         element: <SubjectsPage />
+      },
+      {
+        path: 'asignaturas/:id',
+        element: <SubjectDetailPage />
       },
       {
         path: 'retos/:id',
