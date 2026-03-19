@@ -6,7 +6,7 @@ export const HomePage = () => {
   return (
     <>
         <VStack justifyContent="center" m={5}>
-            <HeroSection />
+            <HeroSection btn1link="/asignaturas" btn2link="/crear-reto" />
             <FeaturedChallenges />
             <CyclesSection />
 
