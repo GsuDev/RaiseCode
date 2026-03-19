@@ -10,9 +10,9 @@ export class CoursesService {
    * Usado por el formulario de creación de retos y de registro.
    */
   async findAll() {
-    return this.prisma.subject.findMany({
-      select: { id: true, name: true },
-      orderBy: { name: 'asc' },
-    });
+  return this.prisma.course.findMany({ 
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
+  });
   }
 }

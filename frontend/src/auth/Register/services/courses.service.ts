@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost/api';
 export interface Course {
   id: number;
   name: string;
@@ -8,8 +9,6 @@ export interface Course {
  * GET /api/courses
  */
 export const getCourses = async (): Promise<Course[]> => {
-  const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost/api';
-  
   const response = await fetch(`${API_URL}/courses`);
   
   if (!response.ok) {
