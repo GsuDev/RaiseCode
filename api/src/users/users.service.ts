@@ -291,6 +291,11 @@ export class UsersService {
       throw new NotAcceptableException(`No puede borrarse a si mismo`);
     }
 
+    await this.prisma.userRoles.deleteMany({ where: { userId: id } });
+    await this.prisma.userAchievements.deleteMany({ where: { userId: id } });
+    await this.prisma.userSubjects.deleteMany({ where: { userId: id } });
+    await this.prisma.completedChallenges.deleteMany({ where: { userId: id } });
+
     const deleted = await this.prisma.user.delete({
       where : {id}
     })
