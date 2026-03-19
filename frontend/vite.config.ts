@@ -24,7 +24,14 @@ export default defineConfig({
       usePolling: true, // CRÍTICO: Para hot-reload en Docker
     },
     hmr: {
-      clientPort: 5173,
+      // Usamos el host del navegador para que el HMR funcione correctamente
+      // en Docker. Si hay un proxy/reverse proxy, ajusta 'host' y 'port'.
+      clientPort: parseInt(process.env.VITE_HMR_CLIENT_PORT || "5173"),
+      // Aumentar el timeout de reconexión para evitar spam de errores
+      // cuando el contenedor queda en standby
+      timeout: 5000,
+      // Reintentos de overlay sin bloquear la UI
+      overlay: false,
     },
   },
 });

@@ -89,6 +89,7 @@ services:
       - JWT_EXPIRATION=${JWT_EXPIRATION:-7d}
       # Worker
       - WORKER_URL=http://worker:${WORKER_PORT:-4000}
+      - WORKER_SECRET=${WORKER_SECRET:-dev_worker_secret_not_for_production}
     volumes:
       - ./api:/app
       - api_node_modules:/app/node_modules
@@ -138,6 +139,8 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - FLASK_ENV=development
       - FLASK_DEBUG=1
+      - WORKER_SECRET=${WORKER_SECRET:-dev_worker_secret_not_for_production}
+      - REDIS_URL=redis://${REDIS_HOST:-redis}:${REDIS_PORT:-6379}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./worker:/app
