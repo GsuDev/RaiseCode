@@ -22,7 +22,7 @@ export class UsersService {
    * hashea la contraseña y asigna el rol USER por defecto.
    */
   async createUser(createUserDto: CreateUserDto) {
-    const { nombre, apellidos, email, password, passwordConfirm, cycle } =
+    const { name, lastname, email, password, passwordConfirm, courseId } =
       createUserDto;
 
     // Validar que las contraseñas coincidan
@@ -42,11 +42,11 @@ export class UsersService {
     // Crear el usuario en base de datos
     const user = await this.prisma.user.create({
       data: {
-        name: nombre,
-        lastname: apellidos,
+        name,
+        lastname,
         email,
         password: hashedPassword,
-        cycle,
+        courseId,
       },
     });
 
@@ -123,13 +123,20 @@ export class UsersService {
   }
 
   /**
-   * Busca un usuario por id incluyendo sus roles.
+   * Busca un usuario por id incluyendo sus roles y el curso.
    * Lanza excepción si no existe.
    */
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
+        // Añadimos el include de course para que se vea en el perfil
+        course: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         userRoles: {
           include: { role: true },
         },

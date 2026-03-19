@@ -3,6 +3,7 @@ import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { Check, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useRegisterUser } from '../hooks/useRegisterUser';
+import { useCourses } from '../hooks/useCourses';
 import { RegisterInput } from './RegisterInput';
 import { RegisterSubmitButton } from './RegisterSubmitButton';
 import { RegisterErrorAlert } from './RegisterErrorAlert';
@@ -14,12 +15,13 @@ import { RegisterErrorAlert } from './RegisterErrorAlert';
 export const RegisterForm = () => {
   const navigate = useNavigate();
   const { register, loading, error } = useRegisterUser();
+  const { courses, isLoading: isLoadingCourses } = useCourses();
 
   const [formData, setFormData] = useState({
-    nombre: '',
-    apellidos: '',
+    name: '',           
+    lastname: '',       
     email: '',
-    cycle: '',
+    courseId: '',       
     password: '',
     passwordConfirm: '',
   });
@@ -44,9 +46,15 @@ export const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await register(formData);
+    
+    
+    const payload = {
+      ...formData,
+      courseId: Number(formData.courseId)
+    };
+
+    const result = await register(payload);
     if (result) {
-      // TODO: Persistir el token cuando se implemente la HU de login (localStorage / contexto de auth)
       navigate('/');
     }
   };
@@ -62,8 +70,8 @@ export const RegisterForm = () => {
         <RegisterInput
           label="Nombre"
           placeholder="Tu nombre"
-          value={formData.nombre}
-          onChange={(v) => handleChange('nombre', v)}
+          value={formData.name}
+          onChange={(v) => handleChange('name', v)}
           leftIcon={<User size={16} />}
         />
 
@@ -71,8 +79,8 @@ export const RegisterForm = () => {
         <RegisterInput
           label="Apellidos"
           placeholder="Tus apellidos"
-          value={formData.apellidos}
-          onChange={(v) => handleChange('apellidos', v)}
+          value={formData.lastname}
+          onChange={(v) => handleChange('lastname', v)}
           leftIcon={<User size={16} />}
         />
 
@@ -86,7 +94,7 @@ export const RegisterForm = () => {
           leftIcon={<Mail size={16} />}
         />
 
-        {/* Ciclo formativo */}
+        {/* Ciclo formativo DINÁMICO */}
         <Box>
           <Text mb="2" fontSize="sm" fontWeight="medium" color="fg">
             Ciclo formativo
@@ -100,18 +108,22 @@ export const RegisterForm = () => {
             bg="bg.subtle"
             border="1px solid"
             borderColor="border"
-            color={formData.cycle ? 'fg' : 'fg.muted'}
-            value={formData.cycle}
+            color={formData.courseId ? 'fg' : 'fg.muted'}
+            value={formData.courseId}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              handleChange('cycle', e.target.value)
+              handleChange('courseId', e.target.value)
             }
+            disabled={isLoadingCourses}
             _focus={{ borderColor: 'brand.500', outline: 'none' }}
           >
-            <option value="">Selecciona tu ciclo</option>
-            <option value="DAW">DAW - Desarrollo de Aplicaciones Web</option>
-            <option value="DAM">DAM - Desarrollo de Aplicaciones Multiplataforma</option>
-            <option value="ASIR">ASIR - Administración de Sistemas</option>
-            {/* TODO: Gestionar el rol "profesor" cuando se implemente en el backend */}
+            <option value="">
+              {isLoadingCourses ? "Cargando cursos..." : "Selecciona tu ciclo"}
+            </option>
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.name}
+              </option>
+            ))}
           </Box>
         </Box>
 
@@ -137,7 +149,6 @@ export const RegisterForm = () => {
               </Box>
             }
           />
-          {/* Indicador de requisitos de contraseña */}
           {formData.password.length > 0 && (
             <VStack mt="2" gap="1" align="stretch">
               {passwordRequirements.map((req) => (

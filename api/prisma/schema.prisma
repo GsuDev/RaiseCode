@@ -14,16 +14,13 @@ datasource db {
   provider = "mysql"
 }
 
-// Enums
-
-enum Cycle {
-  DAW
-  DAM
-  ASIR
-}
-
-
 // Modelos sin Foreign keys
+
+model Course {
+  id    Int    @id @default(autoincrement())
+  name  String
+  users User[]
+}
 
 model Dificulty {
   id         Int         @id @default(autoincrement())
@@ -53,7 +50,10 @@ model User {
   name                 String
   lastname             String
   password             String
-  cycle                Cycle
+  
+  // Relación con Course
+  course               Course                @relation(fields: [courseId], references: [id])
+  courseId             Int
 
   // Relaciones de User
   createdChallenges    Challenge[]           @relation("ChallengeCreator")
