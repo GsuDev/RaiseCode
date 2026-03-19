@@ -1,13 +1,12 @@
-// URL base de la API leída desde las variables de entorno de Vite
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost/api';
 
 export interface RegisterPayload {
-  nombre: string;
-  apellidos: string;
+  name: string;      
+  lastname: string;  
   email: string;
   password: string;
   passwordConfirm: string;
-  cycle: string;
+  courseId: number; 
 }
 
 export interface RegisterResponse {
@@ -17,16 +16,14 @@ export interface RegisterResponse {
     name: string;
     lastname: string;
     email: string;
-    cycle: string;
+    course: {
+      id: number;
+      name: string;
+    };
   };
-  payload: object;
   access_token: string;
 }
 
-/**
- * Envía los datos de registro al backend y devuelve usuario + token.
- * Lanza un error con el mensaje del servidor si la respuesta no es OK.
- */
 export const registerUserService = async (data: RegisterPayload): Promise<RegisterResponse> => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
@@ -37,7 +34,6 @@ export const registerUserService = async (data: RegisterPayload): Promise<Regist
   const json = await response.json();
 
   if (!response.ok) {
-    // El backend devuelve { message: string } en los errores
     throw new Error(json.message ?? 'Error al registrar el usuario');
   }
 
