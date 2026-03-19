@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Roles } from '../auth/roles/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -21,11 +23,6 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     getProfile(@Req() req: Request & { user: any }) {
         const userId = req.user.id;
-        console.log('--- DEBUG INFO ---');
-        console.log('Objeto req.user completo:', req.user);
-        console.log('Tipo de dato del ID:', typeof req.user?.id);
-        console.log('Valor exacto del ID:', req.user?.id);
-        console.log('------------------');
         return this.usersService.findProfile(userId);
     }
 
@@ -34,13 +31,14 @@ export class UsersController {
     findOne(@Param('id') id: string) {
         return this.usersService.findOne(+id);
     }
-
     
-    
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    //     return this.usersService.update(+id, updateUserDto);
-    // }
+    @Patch(':id')
+    @UsePipes(ValidationPipe)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN')
+    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.update(+id, updateUserDto);
+    }
 
     // @Delete(':id')
     // remove(@Param('id') id: string) {

@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from '../auth/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -209,7 +210,6 @@ export class UsersService {
         completedChallenges: {
           include: {
             challenge: {
-              // Asumiendo que Challenge tiene un 'title' y una relación con 'Language'
               include: { language: true }, 
             },
           }
@@ -251,8 +251,29 @@ export class UsersService {
         completedCount: user.completedChallenges.length,
         byLanguage: Object.values(languageStats),
       },
-      // Puedes usar .slice(0, 5) si solo quieres los 5 más recientes
       recentActivity: recentActivity, 
     };
+  }
+
+  async update(id : number,  updateUserDto : UpdateUserDto) {
+    this.findOne(id)
+
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+      select : {
+        id : true,
+        name: true,
+        lastname: true,
+        email: true,
+        password: false,
+        userRoles: {
+          include: {
+            role: true
+          }
+        }
+    }});
+
+    return updated
   }
 }
