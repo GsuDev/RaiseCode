@@ -1,46 +1,8 @@
-import { Box, Grid, Text, VStack } from "@chakra-ui/react";
+import { Box, Grid, Skeleton, Text, VStack } from "@chakra-ui/react";
 import { Code2, Zap, Users } from "lucide-react";
 import { useNavigate } from "react-router";
 import { CycleCard } from "./components/CycleCard";
-
-interface Cycle {
-  id: string;
-  code: string;
-  title: string;
-  description: string;
-  subjects: number;
-  challenges: number;
-}
-
-const mockCycles: Cycle[] = [
-  {
-    id: "1",
-    code: "DAW",
-    title: "Desarrollo de Aplicaciones WEB",
-    description:
-      "Domina el desarrollo frontend y backend para crear aplicaciones web",
-    subjects: 3,
-    challenges: 4,
-  },
-  {
-    id: "2",
-    code: "DAM",
-    title: "Desarrollo de Aplicaciones Multiplataforma",
-    description:
-      "Aprende a crear aplicaciones nativas para moviles y escritorio",
-    subjects: 3,
-    challenges: 2,
-  },
-  {
-    id: "3",
-    code: "ASIR",
-    title: "Administracion de sistemas y redes",
-    description:
-      "Gestiona infraestructuras, servidores y seguridad informatica",
-    subjects: 2,
-    challenges: 2,
-  },
-];
+import { useCycles } from "./hooks/useCycles";
 
 const colorPalettes = [
   {
@@ -60,6 +22,21 @@ const colorPalettes = [
   },
 ];
 
+const cycleInfo: Record<string, { title: string; description: string }> = {
+  DAW: {
+    title: "Desarrollo de Aplicaciones WEB",
+    description: "Domina el desarrollo frontend y backend para crear aplicaciones web",
+  },
+  DAM: {
+    title: "Desarrollo de Aplicaciones Multiplataforma",
+    description: "Aprende a crear aplicaciones nativas para móviles y escritorio",
+  },
+  ASIR: {
+    title: "Administración de sistemas y redes",
+    description: "Gestiona infraestructuras, servidores y seguridad informática",
+  },
+};
+
 const getIconByCode = (code: string) => {
   if (code === "DAW") return Code2;
   if (code === "DAM") return Zap;
@@ -68,6 +45,7 @@ const getIconByCode = (code: string) => {
 
 export const CyclesSection = () => {
   const navigate = useNavigate();
+  const { courses, loading } = useCycles();
 
   return (
     <Box as="section" mt={10} w="75%">
@@ -79,27 +57,40 @@ export const CyclesSection = () => {
           Elige tu especialidad y comienza a resolver retos
         </Text>
       </VStack>
-      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap="6">
-        {mockCycles.map((cycle, index) => {
-          const fixedColor = colorPalettes[index % colorPalettes.length];
-          const iconComponent = getIconByCode(cycle.code);
 
-          return (
-            <CycleCard
-              key={cycle.id}
-              code={cycle.code}
-              title={cycle.title}
-              description={cycle.description}
-              subjects={cycle.subjects}
-              challenges={cycle.challenges}
-              icon={iconComponent}
-              gradient={fixedColor.gradient}
-              borderClr={fixedColor.borderClr}
-              bgClr={fixedColor.bgClr}
-              onClick={() => navigate(`/asignaturas?curso=${cycle.code}`)}
-            />
-          );
-        })}
+      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap="6">
+        {loading ? (
+          <>
+            <Skeleton h="220px" borderRadius="2xl" />
+            <Skeleton h="220px" borderRadius="2xl" />
+            <Skeleton h="220px" borderRadius="2xl" />
+          </>
+        ) : (
+          courses.map((course, index) => {
+            const fixedColor = colorPalettes[index % colorPalettes.length];
+            const iconComponent = getIconByCode(course.name);
+            const info = cycleInfo[course.name] ?? {
+              title: course.name,
+              description: "",
+            };
+
+            return (
+              <CycleCard
+                key={course.id}
+                code={course.name}
+                title={info.title}
+                description={info.description}
+                subjects={course.subjectCount}
+                challenges={course.challengeCount}
+                icon={iconComponent}
+                gradient={fixedColor.gradient}
+                borderClr={fixedColor.borderClr}
+                bgClr={fixedColor.bgClr}
+                onClick={() => navigate(`/asignaturas?curso=${course.name}`)}
+              />
+            );
+          })
+        )}
       </Grid>
     </Box>
   );
