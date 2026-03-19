@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import { useRegisterUser } from '../hooks/useRegisterUser';
 import { RegisterInput } from './RegisterInput';
 import { RegisterSubmitButton } from './RegisterSubmitButton';
-import { RegisterErrorAlert } from './RegisterErrorAlert';
+import { RegisterErrorAlert } from './RegisterErrorAlert'; 
 
 /**
  * Formulario de registro completo.
