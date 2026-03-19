@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -255,6 +256,9 @@ export class UsersService {
     };
   }
 
+  /**
+  * Actualiza los datos de un usuario.
+  */
   async update(id : number,  updateUserDto : UpdateUserDto) {
     this.findOne(id)
 
@@ -275,5 +279,22 @@ export class UsersService {
     }});
 
     return updated
+  }
+
+  /**
+  * Eliminia un usuario.
+  */
+  async remove(id : number, userId : number) {
+    this.findOne(id)
+
+    if (userId === id) {
+      throw new NotAcceptableException(`No puede borrarse a si mismo`);
+    }
+
+    const deleted = await this.prisma.user.delete({
+      where : {id}
+    })
+
+    return deleted
   }
 }

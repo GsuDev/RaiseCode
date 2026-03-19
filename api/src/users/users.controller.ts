@@ -40,8 +40,11 @@ export class UsersController {
         return this.usersService.update(+id, updateUserDto);
     }
 
-    // @Delete(':id')
-    // remove(@Param('id') id: string) {
-    //     return this.usersService.remove(+id);
-    // }
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN')
+    remove(@Param('id') id: string, @Req() req: Request & { user: any }) {
+        const userId = req.user.id;
+        return this.usersService.remove(+id, userId);
+    }
 }
