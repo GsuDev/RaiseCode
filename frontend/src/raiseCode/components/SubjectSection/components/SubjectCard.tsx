@@ -12,41 +12,42 @@ interface Props {
   subject: Subject;
 }
 
+const CYCLE_COLORS: Record<string, { color: string; border: string; bg: string }> = {
+  DAW:  { color: '#f59e0b', border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.08)' },
+  DAM:  { color: '#22c55e', border: 'rgba(34,197,94,0.3)',   bg: 'rgba(34,197,94,0.08)'  },
+  ASIR: { color: '#06b6d4', border: 'rgba(6,182,212,0.3)',   bg: 'rgba(6,182,212,0.08)'  },
+};
+
 export const SubjectCard = ({ subject }: Props) => {
-  const cycleColors = {
-    DAW: 'blue',
-    DAM: 'purple',
-    ASIR: 'orange',
-  };
+  const palette = CYCLE_COLORS[subject.cycle];
 
   return (
-    <Card.Root 
-      bg="bg.panel" 
-      borderWidth="1px"
-      borderColor="bg.subtle" 
+    <Card.Root
+      bg="bg.panel"
+      borderWidth="2px"
+      borderColor={palette.border}
       borderRadius="xl"
       overflow="hidden"
-      _hover={{ borderColor: 'brand.500', transform: 'translateY(-4px)', shadow: 'xl' }} 
+      _hover={{ borderColor: palette.color, transform: 'translateY(-4px)', shadow: 'xl' }}
       transition="all 0.3s ease"
     >
       <Card.Body p="6">
         <VStack align="start" gap="5">
           <Flex justify="space-between" w="full" align="center">
-            <Box 
-              p="2.5" 
-              borderRadius="lg" 
-              bg={`${cycleColors[subject.cycle]}.500/10`} 
-              color={`${cycleColors[subject.cycle]}.500`}
+            <Box
+              p="2.5"
+              borderRadius="lg"
+              bg={palette.bg}
+              color={palette.color}
             >
-              {/* Icono de libro abierto */}
               <BookOpen size={22} />
             </Box>
-            <Badge 
-              colorPalette={cycleColors[subject.cycle]} 
-              variant="solid" 
-              borderRadius="full" 
+            <Badge
+              borderRadius="full"
               px="3"
               size="sm"
+              bg={palette.color}
+              color="white"
             >
               {subject.cycle}
             </Badge>

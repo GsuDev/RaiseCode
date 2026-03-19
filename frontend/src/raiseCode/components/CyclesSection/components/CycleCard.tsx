@@ -11,6 +11,7 @@ interface Props {
   gradient: string;
   borderClr: string;
   bgClr: string;
+  onClick?: () => void;
 }
 
 export const CycleCard = ({
@@ -23,11 +24,13 @@ export const CycleCard = ({
   gradient,
   borderClr,
   bgClr,
+  onClick,
 }: Props) => {
   return (
     <Box
       as="button"
       textAlign="left"
+      onClick={onClick}
       position="relative"
       overflow="hidden"
       borderRadius="2xl"

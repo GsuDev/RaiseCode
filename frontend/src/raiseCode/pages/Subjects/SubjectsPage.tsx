@@ -1,11 +1,11 @@
 import { Container, Heading, Text, VStack } from '@chakra-ui/react';
+import { useSearchParams } from 'react-router';
 import { SubjectSection } from '../../components/SubjectSection/SubjectSection';
 
-/**
- * Página de Exploración de Asignaturas.
- * Muestra el catálogo de asignaturas con sus respectivos retos.
- */
 export const SubjectsPage = () => {
+  const [searchParams] = useSearchParams();
+  const curso = searchParams.get('curso') as 'DAW' | 'DAM' | 'ASIR' | null;
+
   return (
     <Container maxW="7xl" py="10">
       <VStack align="start" gap="2" mb="10">
@@ -17,7 +17,7 @@ export const SubjectsPage = () => {
         </Text>
       </VStack>
 
-      <SubjectSection />
+      <SubjectSection initialCycle={curso ?? 'ALL'} />
     </Container>
   );
 };
