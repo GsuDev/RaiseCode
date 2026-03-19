@@ -35,15 +35,15 @@ export const SolverTestsPanel = ({ tests }: Props) => {
           borderLeftWidth="3px"
           borderColor="blue.500"
         >
-          <VStack align="stretch" gap="1" fontFamily="mono" fontSize="xs">
-            <HStack justifyContent="space-between">
+          <VStack align="stretch" gap="2" fontFamily="mono" fontSize="xs">
+            <VStack align="stretch" gap="0.5">
               <Text color="blue.400" fontWeight="bold">Test {i + 1} — Input:</Text>
-              <Text color="fg">{test.input}</Text>
-            </HStack>
-            <HStack justifyContent="space-between">
+              <Text color="fg" wordBreak="break-all">{test.input}</Text>
+            </VStack>
+            <VStack align="stretch" gap="0.5">
               <Text color="green.400" fontWeight="bold">Output esperado:</Text>
-              <Text color="fg">{test.expectedOutput}</Text>
-            </HStack>
+              <Text color="fg" wordBreak="break-all">{test.expectedOutput}</Text>
+            </VStack>
           </VStack>
         </Box>
       ))}

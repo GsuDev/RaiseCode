@@ -1,4 +1,5 @@
 import { Box, Center, Grid, GridItem, Spinner, Text, VStack } from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
 import { useChallengeSolver } from './hooks/useChallengeSolver';
 import { useExecution } from './hooks/useExecution';
 import { ChallengeCodeEditor } from './components/ChallengeCodeEditor';
@@ -6,10 +7,16 @@ import { ChallengeEditorToolbar } from './components/ChallengeEditorToolbar';
 import { ChallengeStatementPanel } from '../detail/components/ChallengeStatementPanel';
 import { SolverResultsPanel } from './components/SolverResultsPanel';
 import { SolverTestsPanel } from './components/SolverTestsPanel';
+import { ChallengeSuccessModal } from './components/ChallengeSuccessModal';
 
 export const ChallengeSolverPage = () => {
   const { challenge, loading, code, setCode } = useChallengeSolver();
   const { submit, status, result, error } = useExecution();
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (result?.status === 'accepted') setShowSuccess(true);
+  }, [result]);
 
   if (loading) {
     return (
@@ -70,6 +77,11 @@ export const ChallengeSolverPage = () => {
           />
         </GridItem>
       </Grid>
+
+      <ChallengeSuccessModal
+        isOpen={showSuccess}
+        onClose={() => setShowSuccess(false)}
+      />
     </Box>
   );
 };

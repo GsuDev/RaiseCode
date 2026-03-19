@@ -31,26 +31,28 @@ export const ChallengeExampleTests = ({ tests }: Props) => {
       <Card.Body>
         <VStack align="stretch" gap="4">
           {visibleTests.map((test, index) => (
-            <Box 
-              key={test.id} 
-              p="3" 
-              bg="bg.canvas" 
-              borderRadius="md" 
-              borderWidth="1px" 
+            <Box
+              key={test.id}
+              p="3"
+              bg="bg.canvas"
+              borderRadius="md"
+              borderWidth="1px"
               borderColor="bg.subtle"
+              overflow="hidden"
+              minW="0"
             >
-              <VStack align="start" gap="1">
+              <VStack align="start" gap="1" w="full" minW="0">
                 <Text fontWeight="bold" fontSize="xs" color="fg.muted">
                   Test {index + 1}
                 </Text>
-                <HStack>
+                <VStack align="start" gap="0" w="full" minW="0">
                   <Text fontWeight="bold" fontSize="xs" color="fg.muted">INPUT:</Text>
-                  <Text fontFamily="mono" fontSize="sm">{test.input}</Text>
-                </HStack>
-                <HStack>
+                  <Text fontFamily="mono" fontSize="sm" w="full" overflowWrap="break-word" wordBreak="break-all">{test.input}</Text>
+                </VStack>
+                <VStack align="start" gap="0" w="full" minW="0">
                   <Text fontWeight="bold" fontSize="xs" color="fg.muted">EXPECTED:</Text>
-                  <Text fontFamily="mono" fontSize="sm" color="green.500">{test.expectedOutput}</Text>
-                </HStack>
+                  <Text fontFamily="mono" fontSize="sm" color="green.500" w="full" overflowWrap="break-word" wordBreak="break-all">{test.expectedOutput}</Text>
+                </VStack>
               </VStack>
             </Box>
           ))}
