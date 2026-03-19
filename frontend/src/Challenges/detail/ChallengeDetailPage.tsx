@@ -50,7 +50,8 @@ export const ChallengeDetailPage = () => {
               <ChallengeStatementPanel statement={challenge.statement} />
             </Box>
             <Box>
-              <ChallengeExampleTests />
+              {/* Pasamos los tests reales — solo los visibles (hidden=false) */}
+              <ChallengeExampleTests tests={challenge.tests} />
             </Box>
           </SimpleGrid>
         </VStack>

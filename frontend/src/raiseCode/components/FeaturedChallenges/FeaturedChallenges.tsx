@@ -1,4 +1,4 @@
-import { Carousel, IconButton, HStack, Box, VStack, Stack } from '@chakra-ui/react';
+import { Carousel, IconButton, HStack, Box, VStack, Stack, Spinner, Text, Center } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import { FeaturedChallengeTitle } from './components/FeaturedChallengeTitle';
 import { useFeaturedChallenges } from './hooks/useFeaturedChallenges';
@@ -15,7 +15,44 @@ interface Props {
 }
 
 export const FeaturedChallenges = ({ title }: Props) => {
-    const { featuredChallenges } = useFeaturedChallenges(); 
+    const { featuredChallenges, loading, error } = useFeaturedChallenges();
+
+    if (loading) {
+        return (
+            <Box mx="auto" width="75%" mt={3}>
+                <FeaturedChallengeTitle title={title} />
+                <Center py={12}>
+                    <Spinner size="lg" color="green.500" />
+                </Center>
+            </Box>
+        );
+    }
+
+    if (error || featuredChallenges.length === 0) {
+        return (
+            <Box mx="auto" width="75%" mt={3}>
+                <FeaturedChallengeTitle title={title} />
+                <Center
+                    py={12}
+                    borderWidth="1px"
+                    borderColor="border"
+                    borderRadius="lg"
+                    borderStyle="dashed"
+                    mt={4}
+                    bg="bg.panel"
+                >
+                    <VStack gap={2}>
+                        <Text fontSize="3xl">🏆</Text>
+                        <Text fontWeight="semibold" color="fg">Aún no hay retos destacados</Text>
+                        <Text fontSize="sm" color="fg.muted">
+                            Los retos validados por el equipo aparecerán aquí
+                        </Text>
+                    </VStack>
+                </Center>
+            </Box>
+        );
+    }
+
     return (
         <>
             <Carousel.Root
@@ -54,11 +91,10 @@ export const FeaturedChallenges = ({ title }: Props) => {
                         textAlign="center"
                         bgColor="bg.panel"
                         position="relative"
-                
                         >
                             <HStack justifyContent={{base:"center",md:"start", lg:"start"}} alignItems="center" w="full" h="full" gap={4} >
                                 <VStack alignItems={{ base: "center", md: "flex-start" }} gap={2} flex={1}>
-                                    <Stack direction={{ base: "column", md: "row" }} align={{ base: "center", md: "start" } } mb={1} mx={{base: 0, md: 3}} w="full">
+                                    <Stack direction={{ base: "column", md: "row" }} align={{ base: "center", md: "start" }} mb={1} mx={{base: 0, md: 3}} w="full">
                                         <ChallengeLanguage language={challenge.language.name} />
                                         <ChallengeDifficulty difficulty={challenge.dificulty.name} />
                                         <ChallengeSubject subject={challenge.subject.name} />
@@ -67,7 +103,7 @@ export const FeaturedChallenges = ({ title }: Props) => {
                                     <ChallengeStatement statement={challenge.statement} />
                                     <ChallengeNumCompleted users={challenge.completedCount} />
                                     <Box display={{base:'flex', md:'none'}} justifyContent={'center'} w="full">
-                                        <ChallengeActions id={`${i}`} />
+                                        <ChallengeActions id={challenge.id.toString()} />
                                     </Box> 
                                 </VStack>
                                 <Box display={{ base: "none", md: "flex" }} alignItems="center" height="full" flexShrink={0}>

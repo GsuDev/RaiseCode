@@ -1,9 +1,17 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
+export interface ChallengeTest {
+  id: number;
+  input: string;
+  expectedOutput: string;
+  hidden: boolean;
+}
+
 export interface ChallengeDetail {
   id: number;
   title: string;
   statement: string;
+  description: string;
   creatorName: string;
   completedCount: number;
   dificulty: { 
@@ -18,6 +26,7 @@ export interface ChallengeDetail {
     id: number;
     name: string; 
   };
+  tests?: ChallengeTest[];
 }
 
 export const getChallengeById = async (id: string): Promise<ChallengeDetail> => {
@@ -39,5 +48,11 @@ export const getChallengeById = async (id: string): Promise<ChallengeDetail> => 
     throw new Error('No se pudo cargar la información del reto');
   }
 
-  return response.json();
+  const data = await response.json();
+
+  // El backend devuelve completedChallenges._count — lo normalizamos
+  return {
+    ...data,
+    completedCount: data._count?.completedChallenges ?? data.completedCount ?? 0,
+  };
 };
