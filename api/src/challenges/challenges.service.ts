@@ -1,7 +1,6 @@
 import {
   Injectable,
   NotFoundException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
@@ -94,18 +93,26 @@ export class ChallengesService {
   }
 
   /**
-   * Devuelve un reto por id. Lanza 404 si no existe.
+   * Devuelve un reto por id incluyendo tests públicos y completedCount.
+   * Lanza 404 si no existe.
    */
   async findOne(id: number) {
     const challenge = await this.prisma.challenge.findUnique({
       where: { id },
       include: {
         creator: {
-          select: { name: true, lastname: true }
+          select: { name: true, lastname: true },
         },
         dificulty: true,
         language: true,
         subject: true,
+        tests: {
+          select: { id: true, input: true, expectedOutput: true, hidden: true },
+          orderBy: { id: 'asc' },
+        },
+        _count: {
+          select: { completedChallenges: true },
+        },
       },
     });
 
@@ -114,8 +121,16 @@ export class ChallengesService {
     }
 
     return {
-      ...challenge,
-      creatorName: `${challenge.creator.name} ${challenge.creator.lastname}`
+      id: challenge.id,
+      title: challenge.title,
+      description: challenge.description,
+      statement: challenge.statement,
+      dificulty: challenge.dificulty,
+      language: challenge.language,
+      subject: challenge.subject,
+      creatorName: `${challenge.creator.name} ${challenge.creator.lastname}`,
+      completedCount: challenge._count.completedChallenges,
+      tests: challenge.tests,
     };
   }
 

@@ -11,6 +11,7 @@ import { ChallengesModule } from './challenges/challenges.module';
 import { LanguagesModule } from './languages/languages.module';
 import { DifficultiesModule } from './difficulties/difficulties.module';
 import { CoursesModule } from './courses/courses.module';
+import { ExecutionModule } from './execution/execution.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CoursesModule } from './courses/courses.module';
     LanguagesModule,
     DifficultiesModule,
     CoursesModule,
+    ExecutionModule,
   ],
   controllers: [],
   providers: [PrismaService, MongooseService],
