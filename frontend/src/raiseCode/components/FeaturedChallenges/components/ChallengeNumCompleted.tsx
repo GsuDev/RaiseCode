@@ -22,7 +22,7 @@ export const ChallengeNumCompleted = ({ users }: Props) => {
             wordBreak="normal"    
             fontFamily="var(--chakra-fonts-body)"
             >   
-                {users || <SkeletonText width="200px" noOfLines={1}/>}
+                {users != null ? users : <SkeletonText width="200px" noOfLines={1}/>}
             </Text>
         </Flex>
     </>      

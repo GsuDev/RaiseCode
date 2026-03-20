@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 export interface FeaturedChallenge {
   id: number;
   title: string;
+  description: string;
   statement: string;
   dificulty: { id: number; name: string };
   language: { id: number; name: string };

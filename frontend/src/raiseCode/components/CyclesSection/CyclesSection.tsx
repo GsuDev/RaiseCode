@@ -45,7 +45,7 @@ const getIconByCode = (code: string) => {
 
 export const CyclesSection = () => {
   const navigate = useNavigate();
-  const { courses, loading } = useCycles();
+  const { courses, loading, error } = useCycles();
 
   return (
     <Box as="section" mt={10} w="75%">
@@ -59,7 +59,7 @@ export const CyclesSection = () => {
       </VStack>
 
       <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap="6">
-        {loading ? (
+        {loading || error ? (
           <>
             <Skeleton h="220px" borderRadius="2xl" />
             <Skeleton h="220px" borderRadius="2xl" />

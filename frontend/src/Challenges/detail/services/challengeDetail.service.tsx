@@ -30,19 +30,10 @@ export interface ChallengeDetail {
 }
 
 export const getChallengeById = async (id: string): Promise<ChallengeDetail> => {
-  const token = localStorage.getItem('token'); 
-
   const response = await fetch(`${API_URL}/challenges/${id}`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` 
-    },
+    headers: { 'Content-Type': 'application/json' },
   });
-
-  if (response.status === 401) {
-    throw new Error('Sesión expirada o no autorizada. Por favor, inicia sesión.');
-  }
 
   if (!response.ok) {
     throw new Error('No se pudo cargar la información del reto');

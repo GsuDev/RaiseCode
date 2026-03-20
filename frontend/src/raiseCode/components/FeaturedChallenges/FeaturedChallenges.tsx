@@ -100,7 +100,7 @@ export const FeaturedChallenges = ({ title }: Props) => {
                                         <ChallengeSubject subject={challenge.subject.name} />
                                     </Stack>
                                     <ChallengeTitle title={challenge.title} />
-                                    <ChallengeStatement statement={challenge.statement} />
+                                    <ChallengeStatement statement={challenge.description} />
                                     <ChallengeNumCompleted users={challenge.completedCount} />
                                     <Box display={{base:'flex', md:'none'}} justifyContent={'center'} w="full">
                                         <ChallengeActions id={challenge.id.toString()} />

@@ -1,12 +1,7 @@
-import { Badge, Box, Card, Flex, Text, VStack } from '@chakra-ui/react';
-import { BookOpen } from 'lucide-react'; 
-
-export interface Subject {
-  id: string;
-  title: string;
-  cycle: 'DAW' | 'DAM' | 'ASIR';
-  challenges: number;
-}
+import { Badge, Box, Button, Card, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { BookOpen, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import type { Subject } from '../types';
 
 interface Props {
   subject: Subject;
@@ -19,7 +14,9 @@ const CYCLE_COLORS: Record<string, { color: string; border: string; bg: string }
 };
 
 export const SubjectCard = ({ subject }: Props) => {
-  const palette = CYCLE_COLORS[subject.cycle];
+  const navigate = useNavigate();
+  const primaryCourse = subject.courses[0]?.name ?? '';
+  const palette = CYCLE_COLORS[primaryCourse] ?? { color: 'var(--chakra-colors-brand-500)', border: 'rgba(34,177,87,0.3)', bg: 'rgba(34,177,87,0.08)' };
 
   return (
     <Card.Root
@@ -28,39 +25,44 @@ export const SubjectCard = ({ subject }: Props) => {
       borderColor={palette.border}
       borderRadius="xl"
       overflow="hidden"
+      cursor="pointer"
       _hover={{ borderColor: palette.color, transform: 'translateY(-4px)', shadow: 'xl' }}
       transition="all 0.3s ease"
+      onClick={() => navigate(`/asignaturas/${subject.id}`)}
     >
       <Card.Body p="6">
-        <VStack align="start" gap="5">
+        <VStack align="start" gap="4">
           <Flex justify="space-between" w="full" align="center">
-            <Box
-              p="2.5"
-              borderRadius="lg"
-              bg={palette.bg}
-              color={palette.color}
-            >
+            <Box p="2.5" borderRadius="lg" bg={palette.bg} color={palette.color}>
               <BookOpen size={22} />
             </Box>
-            <Badge
-              borderRadius="full"
-              px="3"
-              size="sm"
-              bg={palette.color}
-              color="white"
-            >
-              {subject.cycle}
-            </Badge>
+            <HStack gap="1">
+              {subject.courses.map((c) => (
+                <Badge key={c.id} borderRadius="full" px="3" size="sm" bg={CYCLE_COLORS[c.name]?.color ?? palette.color} color="white">
+                  {c.name}
+                </Badge>
+              ))}
+            </HStack>
           </Flex>
 
-          <VStack align="start" gap="1">
-            <Text fontWeight="bold" fontSize="xl" color="fg" letterSpacing="tight">
-              {subject.title}
+          <VStack align="start" gap="1" flex="1">
+            <Text fontWeight="bold" fontSize="md" color="fg" letterSpacing="tight">
+              {subject.name}
             </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {subject.challenges} {subject.challenges === 1 ? 'reto disponible' : 'retos disponibles'}
+            <Text fontSize="sm" color="fg.muted" lineClamp={2}>
+              {subject.description || 'Sin descripción'}
             </Text>
           </VStack>
+
+          <Flex justify="space-between" w="full" align="center">
+            <Text fontSize="sm" color="fg.muted">
+              <Text as="span" fontWeight="bold" color="fg">{subject.challengeCount}</Text>{' '}
+              {subject.challengeCount === 1 ? 'reto' : 'retos'}
+            </Text>
+            <Button size="xs" variant="ghost" color={palette.color} px="0" _hover={{ bg: 'transparent', opacity: 0.8 }}>
+              Ver retos <ArrowRight size={14} />
+            </Button>
+          </Flex>
         </VStack>
       </Card.Body>
     </Card.Root>

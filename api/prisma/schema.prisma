@@ -14,9 +14,10 @@ datasource db {
 // Modelos sin Foreign keys
 
 model Course {
-  id    Int    @id @default(autoincrement())
-  name  String
-  users User[]
+  id             Int             @id @default(autoincrement())
+  name           String
+  users          User[]
+  subjectCourses SubjectCourse[]
 }
 
 model Dificulty {
@@ -34,11 +35,22 @@ model Language {
 }
 
 model Subject {
-  id           Int            @id @default(autoincrement())
-  name         String
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String           @default("")
   // Relaciones de Subject
-  challenges   Challenge[]
-  userSubjects UserSubjects[]
+  challenges     Challenge[]
+  userSubjects   UserSubjects[]
+  subjectCourses SubjectCourse[]
+}
+
+model SubjectCourse {
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  course    Course  @relation(fields: [courseId], references: [id])
+  courseId  Int
+
+  @@id([subjectId, courseId])
 }
 
 model User {

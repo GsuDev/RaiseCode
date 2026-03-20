@@ -67,7 +67,7 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
         px={{ base: "4", sm: "6", lg: "8" }}
       >
         {/* Logo */}
-        <Flex as="button" alignItems="center" gap="2" onClick={() => onNavigate("/")} cursor="pointer">
+        <Flex as="button" flex="1" alignItems="center" gap="2" onClick={() => onNavigate("/")} cursor="pointer">
           <Flex h="9" w="9" alignItems="center" justifyContent="center" borderRadius="lg">
             <Image src={LogoSrc} alt="RaiseCode" w="full" h="full" scale={1.2} />
           </Flex>
@@ -103,7 +103,7 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
         </Box>
 
         {/* Desktop Auth */}
-        <HStack gap="2" display={{ base: "none", md: "flex" }}>
+        <HStack flex="1" gap="2" justifyContent="flex-end" display={{ base: "none", md: "flex" }}>
           {isLoggedIn && user ? (
             <Menu.Root>
               <Menu.Trigger asChild>

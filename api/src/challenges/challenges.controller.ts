@@ -44,9 +44,8 @@ export class ChallengesController {
   }
 
   /**
-   * GET /api/challenges/:id — protegido, requiere token válido.
+   * GET /api/challenges/:id — público.
    */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.challengesService.findOne(id);
