@@ -31,8 +31,8 @@ build-runners: ## Construir solo las imágenes de los runners
 up: ## Levantar todos los servicios
 	@echo "$(GREEN)Iniciando servicios...$(NC)"
 	@if [ ! -f nginx/certs/cert.pem ] || [ ! -f nginx/certs/key.pem ]; then \
-		echo "$(YELLOW)⚠ Certificados SSL no encontrados. Ejecuta 'make ssl-certs' primero.$(NC)"; \
-		$(MAKE) ssl-certs; \
+		echo "$(YELLOW)⚠ Certificados SSL no encontrados. Generando...$(NC)"; \
+		$(MAKE) ssl-certs-docker; \
 	fi
 	docker-compose up -d
 	@echo "$(GREEN)✓ Servicios iniciados$(NC)"
@@ -205,9 +205,19 @@ health: ## Verificar salud de los servicios
 	@curl -sfk https://localhost/api/health || echo "$(YELLOW)API no responde$(NC)"
 	@curl -sf http://localhost:4000/health || echo "$(YELLOW)Worker no responde$(NC)"
 
-ssl-certs: ## Generar certificado SSL autofirmado para desarrollo local
+ssl-certs: ## Generar certificado SSL autofirmado para desarrollo local (Linux/Mac)
 	@echo "$(GREEN)Generando certificados SSL autofirmados para localhost...$(NC)"
 	@bash nginx/certs/generate-certs.sh
+	@echo "$(GREEN)✓ Certificados listos en nginx/certs/$(NC)"
+
+ssl-certs-docker: ## Generar certificado SSL via Docker (Windows/Linux/Mac)
+	@echo "$(GREEN)Generando certificados SSL autofirmados usando Docker...$(NC)"
+	@docker run --rm -v "$(PWD)/nginx/certs:/certs" alpine/openssl \
+		req -x509 -nodes -days 365 -newkey rsa:2048 \
+		-keyout /certs/key.pem \
+		-out /certs/cert.pem \
+		-subj "/C=ES/ST=Local/L=Local/O=RaiseCode/CN=localhost" \
+		-addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 	@echo "$(GREEN)✓ Certificados listos en nginx/certs/$(NC)"
 
 images: ## Listar imágenes del proyecto
