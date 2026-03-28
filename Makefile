@@ -30,10 +30,14 @@ build-runners: ## Construir solo las imágenes de los runners
 
 up: ## Levantar todos los servicios
 	@echo "$(GREEN)Iniciando servicios...$(NC)"
+	@if [ ! -f nginx/certs/cert.pem ] || [ ! -f nginx/certs/key.pem ]; then \
+		echo "$(YELLOW)⚠ Certificados SSL no encontrados. Ejecuta 'make ssl-certs' primero.$(NC)"; \
+		$(MAKE) ssl-certs; \
+	fi
 	docker-compose up -d
 	@echo "$(GREEN)✓ Servicios iniciados$(NC)"
-	@echo "$(YELLOW)Frontend: http://localhost$(NC)"
-	@echo "$(YELLOW)API: http://localhost/api$(NC)"
+	@echo "$(YELLOW)Frontend: https://localhost$(NC)"
+	@echo "$(YELLOW)API: https://localhost/api$(NC)"
 
 down: ## Detener todos los servicios
 	@echo "$(YELLOW)Deteniendo servicios...$(NC)"
@@ -196,9 +200,15 @@ stats: ## Ver estadísticas de recursos
 
 health: ## Verificar salud de los servicios
 	@echo "$(GREEN)Verificando salud de los servicios...$(NC)"
-	@curl -sf http://localhost/health || echo "$(YELLOW)Nginx no responde$(NC)"
-	@curl -sf http://localhost/api/health || echo "$(YELLOW)API no responde$(NC)"
+	@curl -sf http://localhost/health || echo "$(YELLOW)Nginx HTTP no responde$(NC)"
+	@curl -sfk https://localhost/health || echo "$(YELLOW)Nginx HTTPS no responde$(NC)"
+	@curl -sfk https://localhost/api/health || echo "$(YELLOW)API no responde$(NC)"
 	@curl -sf http://localhost:4000/health || echo "$(YELLOW)Worker no responde$(NC)"
+
+ssl-certs: ## Generar certificado SSL autofirmado para desarrollo local
+	@echo "$(GREEN)Generando certificados SSL autofirmados para localhost...$(NC)"
+	@bash nginx/certs/generate-certs.sh
+	@echo "$(GREEN)✓ Certificados listos en nginx/certs/$(NC)"
 
 images: ## Listar imágenes del proyecto
 	@docker images | grep -E "code_judge|mariadb|mongo|redis|nginx|python"
