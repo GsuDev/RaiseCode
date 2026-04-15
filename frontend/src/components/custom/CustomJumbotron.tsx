@@ -82,7 +82,7 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
             <HStack gap="1" display={{ base: "none", md: "flex" }}>
               {navItems.map((item) => {
                 const Icon = item.icon
-                const isActive = currentPage === item.id && item.id !== "/"
+                const isActive = currentPage === item.id
                 return (
                   <Button
                     key={item.label}

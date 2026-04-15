@@ -1,0 +1,189 @@
+name: Project Automation
+
+on:
+  issues:
+    types: [assigned]
+  pull_request:
+    types: [opened, ready_for_review, closed]
+  push:
+    branches-ignore:
+      - main
+      - dev
+
+env:
+  PROJECT_ID: PVT_kwHOCU0IFs4BOHwc
+  STATUS_FIELD_ID: PVTSSF_lAHOCU0IFs4BOHwczg86m_E
+  STATUS_READY: "61e4505c"
+  STATUS_IN_PROGRESS: "47fc9ee4"
+  STATUS_IN_REVIEW: "df73e18b"
+  STATUS_DONE: "98236657"
+
+jobs:
+  # Issue asignada → Ready
+  issue-assigned:
+    if: github.event_name == 'issues' && github.event.action == 'assigned'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add issue to project and get item ID
+        id: get-item
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            mutation {
+              addProjectV2ItemById(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                contentId: "${{ github.event.issue.node_id }}"
+              }) {
+                item { id }
+              }
+            }
+          ' --jq '.data.addProjectV2ItemById.item.id')
+          echo "item_id=$ITEM_ID" >> $GITHUB_OUTPUT
+
+      - name: Move to Ready
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                itemId: "${{ steps.get-item.outputs.item_id }}"
+                fieldId: "${{ env.STATUS_FIELD_ID }}"
+                value: { singleSelectOptionId: "${{ env.STATUS_READY }}" }
+              }) {
+                projectV2Item { id }
+              }
+            }
+          '
+
+  # Push a rama de feature → In Progress
+  branch-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract issue number from branch name
+        id: extract
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          # Busca patrón tipo feature/hu-17-... o fix/123-...
+          ISSUE_NUM=$(echo "$BRANCH" | grep -oP '(?<=hu-)\d+|(?<=\/)\d+' | head -1)
+          echo "issue_num=$ISSUE_NUM" >> $GITHUB_OUTPUT
+
+      - name: Get issue node ID
+        if: steps.extract.outputs.issue_num != ''
+        id: get-issue
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          NODE_ID=$(gh api repos/${{ github.repository }}/issues/${{ steps.extract.outputs.issue_num }} --jq '.node_id')
+          echo "node_id=$NODE_ID" >> $GITHUB_OUTPUT
+
+      - name: Add issue to project and get item ID
+        if: steps.get-issue.outputs.node_id != ''
+        id: get-item
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          ITEM_ID=$(gh api graphql -f query='
+            mutation {
+              addProjectV2ItemById(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                contentId: "${{ steps.get-issue.outputs.node_id }}"
+              }) {
+                item { id }
+              }
+            }
+          ' --jq '.data.addProjectV2ItemById.item.id')
+          echo "item_id=$ITEM_ID" >> $GITHUB_OUTPUT
+
+      - name: Move to In Progress
+        if: steps.get-item.outputs.item_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                itemId: "${{ steps.get-item.outputs.item_id }}"
+                fieldId: "${{ env.STATUS_FIELD_ID }}"
+                value: { singleSelectOptionId: "${{ env.STATUS_IN_PROGRESS }}" }
+              }) {
+                projectV2Item { id }
+              }
+            }
+          '
+
+  # PR abierta → In Review
+  pr-opened:
+    if: >
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'ready_for_review')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add PR to project and move to In Review
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          PR_NODE_ID="${{ github.event.pull_request.node_id }}"
+
+          ITEM_ID=$(gh api graphql -f query='
+            mutation {
+              addProjectV2ItemById(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                contentId: "'"$PR_NODE_ID"'"
+              }) {
+                item { id }
+              }
+            }
+          ' --jq '.data.addProjectV2ItemById.item.id')
+
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                itemId: "'"$ITEM_ID"'"
+                fieldId: "${{ env.STATUS_FIELD_ID }}"
+                value: { singleSelectOptionId: "${{ env.STATUS_IN_REVIEW }}" }
+              }) {
+                projectV2Item { id }
+              }
+            }
+          '
+
+  # PR cerrada (merged o no) → Done
+  pr-closed:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move PR to Done
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          PR_NODE_ID="${{ github.event.pull_request.node_id }}"
+
+          ITEM_ID=$(gh api graphql -f query='
+            mutation {
+              addProjectV2ItemById(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                contentId: "'"$PR_NODE_ID"'"
+              }) {
+                item { id }
+              }
+            }
+          ' --jq '.data.addProjectV2ItemById.item.id')
+
+          gh api graphql -f query='
+            mutation {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: "${{ env.PROJECT_ID }}"
+                itemId: "'"$ITEM_ID"'"
+                fieldId: "${{ env.STATUS_FIELD_ID }}"
+                value: { singleSelectOptionId: "${{ env.STATUS_DONE }}" }
+              }) {
+                projectV2Item { id }
+              }
+            }
+          '

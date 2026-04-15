@@ -70,6 +70,10 @@ web_modules/
 .env.*
 !.env.example
 
+# Certificados SSL (generados localmente con make ssl-certs)
+nginx/certs/*.pem
+nginx/certs/*.key
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
