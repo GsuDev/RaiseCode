@@ -2,19 +2,20 @@ import { PrismaClient } from '../generated/client/client';
 import { seedCatalogues } from './seeds/seedCatalogues';
 import { seedSubjects } from './seeds/seedSubjects';
 import { seedUsers } from './seeds/seedUsers';
+import { seedChallenges } from './seeds/seedChallenges';
 
 const prisma = new PrismaClient();
 
 async function main() {
     console.log('Limpiando base de datos...');
     // Limpieza en orden inverso a las dependencias
-    await prisma.completedChallenge.deleteMany();
+    await prisma.completedChallenges.deleteMany();
     await prisma.challengeTest.deleteMany();
     await prisma.challenge.deleteMany();
     await prisma.subjectCourse.deleteMany();
-    await prisma.userSubject.deleteMany();
-    await prisma.userAchievement.deleteMany();
-    await prisma.userRole.deleteMany();
+    await prisma.userSubjects.deleteMany();
+    await prisma.userAchievements.deleteMany();
+    await prisma.userRoles.deleteMany();
     await prisma.user.deleteMany();
     await prisma.subject.deleteMany();
     await prisma.course.deleteMany();
@@ -27,6 +28,7 @@ async function main() {
     await seedCatalogues(prisma);
     await seedSubjects(prisma);
     await seedUsers(prisma);
+    await seedChallenges(prisma);
     console.log('Seeding completado con éxito');
 }
 
