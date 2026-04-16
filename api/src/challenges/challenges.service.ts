@@ -186,7 +186,8 @@ export class ChallengesService {
    * Método para obtener retos pendientes
    */
   async findPending() {
-    return this.prisma.challenge.findMany({
+  try {
+    return await this.prisma.challenge.findMany({
       where: { validate: false },
       include: {
         subject: true,
@@ -200,7 +201,11 @@ export class ChallengesService {
         },
       },
     });
+  } catch (error) {
+    console.error("Error en findPending:", error);
+    throw error;
   }
+}
 
   /**
    * Método para validar (aprobar/rechazar)

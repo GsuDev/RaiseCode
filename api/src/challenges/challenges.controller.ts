@@ -73,19 +73,6 @@ export class ChallengesController {
   }
 
   /**
-   * PATCH /api/challenges/:id — solo admins.
-   */
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateChallengeDto,
-  ) {
-    return this.challengesService.update(id, dto);
-  }
-
-  /**
    * PATCH /api/challenges/:id/validate — solo admins.
    * Aprobar o rechazar un reto.
    */
@@ -98,6 +85,19 @@ export class ChallengesController {
     @Request() req: any,
   ) {
     return this.challengesService.validate(id, validationDto.approved, req.user.id);
+  }
+
+  /**
+   * PATCH /api/challenges/:id — solo admins.
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateChallengeDto,
+  ) {
+    return this.challengesService.update(id, dto);
   }
 
   /**
