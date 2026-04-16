@@ -1,12 +1,15 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 
-export const ProfileXPBar = () => {
-  //Los datos son mockeados, los cambiare cuando haga el bacb es para probar que funciona
-  const currentXP = 3250;
-  const nextLevelXP = 4000;
-  const currentLevel = 12;
+interface Props {
+  xp: number;
+}
 
-  const percentage = (currentXP / nextLevelXP) * 100;
+const XP_PER_LEVEL = 100;
+
+export const ProfileXPBar = ({ xp }: Props) => {
+  const currentLevel = Math.floor(xp / XP_PER_LEVEL);
+  const currentLevelXP = xp % XP_PER_LEVEL;
+  const percentage = (currentLevelXP / XP_PER_LEVEL) * 100;
 
   return (
     <Box w="full" mt={6}>
@@ -16,9 +19,9 @@ export const ProfileXPBar = () => {
         </Text>
         <Text fontSize="sm" color="fg.muted">
           <Text as="span" color="fg" fontWeight="medium">
-            {currentXP}
+            {currentLevelXP}
           </Text>{" "}
-          / {nextLevelXP} XP
+          / {XP_PER_LEVEL} XP
         </Text>
       </Flex>
 

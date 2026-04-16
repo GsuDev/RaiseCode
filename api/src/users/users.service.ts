@@ -247,6 +247,7 @@ async findProfile(id: number) {
     name: user.name,
     lastname: user.lastname,
     email: user.email,
+    xp: user.xp,
     course: user.course,
     roles: user.userRoles.map(ur => ur.role.name),
     stats: {

@@ -118,3 +118,11 @@ UNION ALL
 SELECT id, '"hello"',   'false', 0 FROM Challenge WHERE title='Palíndromo'
 UNION ALL
 SELECT id, '"A man a plan a canal Panama"', 'true', 1 FROM Challenge WHERE title='Palíndromo';
+
+-- ─── LOGROS ───────────────────────────────────────────────────────────────────
+INSERT INTO Achievement (name, description, xpReward) VALUES
+  ('Primer Paso',  'Completa tu primer reto',                          10),
+  ('En Racha',     'Completa 5 retos',                                 25),
+  ('Especialista', 'Completa 10 retos en la misma asignatura',         50),
+  ('Explorador',   'Completa retos en 3 asignaturas distintas',        30),
+  ('Centurión',    'Acumula 100 XP',                                   50);

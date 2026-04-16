@@ -7,12 +7,13 @@ import { ProfileHeader } from "./components/ProfileHeader";
 import { useAuth } from "@/auth/context/AuthContext";
 import { ProfileLanguageChart } from "./components/ProfileLanguageChart";
 import { ProfileRecentActivity } from "./components/ProfileRecentActivity";
-import { useProfile } from "./hooks/useProfile"; 
+import { ProfileAchievements } from "./components/ProfileAchievements";
+import { useProfile } from "./hooks/useProfile";
 
 export const ProfilePage = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const { data, loading, error } = useProfile();
+  const { data, loading, error, achievements, userAchievements } = useProfile();
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -59,6 +60,7 @@ export const ProfilePage = () => {
           lastname={user.lastname}
           email={user.email}
           cycle={user.cycle}
+          xp={data?.xp ?? 0}
         />
 
         <Grid
@@ -103,6 +105,11 @@ export const ProfilePage = () => {
           <ProfileLanguageChart byLanguage={data?.stats.byLanguage || []} />
           <ProfileRecentActivity recentActivity={data?.recentActivity || []} />
         </Grid>
+
+        <ProfileAchievements
+          achievements={achievements}
+          userAchievements={userAchievements}
+        />
       </VStack>
     </Box>
   );
