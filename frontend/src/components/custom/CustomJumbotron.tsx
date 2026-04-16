@@ -5,7 +5,7 @@ import {
   Box, Flex, Button, IconButton, Text, HStack, VStack,
   Image, Tooltip, Avatar, Menu, Portal,
 } from "@chakra-ui/react"
-import { Trophy, BookOpen, PlusCircle, Menu as MenuIcon, X, LogIn, LogOut, User, ChevronDown } from "lucide-react"
+import { Trophy, BookOpen, PlusCircle, Menu as MenuIcon, X, LogIn, LogOut, User, ChevronDown, Shield } from "lucide-react"
 import { ColorModeToggle } from "../ui/color-mode"
 import LogoSrc from "src/assets/Logo.svg"
 import { useAuth } from "@/auth/context/AuthContext"
@@ -137,6 +137,17 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                       <User size={14} />
                       Mi Perfil
                     </Menu.Item>
+                    {user?.roles.includes('ADMIN') && (
+                      <Menu.Item
+                        value="admin"
+                        color="fg"
+                        _hover={{ bg: "bg.subtle" }}
+                        onClick={() => onNavigate("/admin")}
+                      >
+                        <Shield size={14} />
+                        Admin
+                      </Menu.Item>
+                    )}
                     <Menu.Separator borderColor="border" />
                     <Menu.Item value="logout" color="red.500" _hover={{ bg: "bg.subtle" }} onClick={handleLogout}>
                       <LogOut size={14} />
