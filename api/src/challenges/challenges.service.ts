@@ -181,4 +181,37 @@ export class ChallengesService {
 
     return { message: `Reto con ID ${id} eliminado correctamente` };
   }
+
+  /**
+   * Método para obtener retos pendientes
+   */
+  async findPending() {
+    return this.prisma.challenge.findMany({
+      where: { validate: false },
+      include: {
+        subject: true,
+        dificulty: true,
+        language: true,
+        creator: {
+          select: {
+            name: true,
+            lastname: true,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * Método para validar (aprobar/rechazar)
+   */
+  async validate(id: number, approved: boolean, adminId: number) {
+    return this.prisma.challenge.update({
+      where: { id },
+      data: {
+        validate: approved,
+        validatorId: adminId // Asignamos el ID del admin que realiza la acción
+      },
+    });
+  }
 }
