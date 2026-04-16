@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ExecutionGateway } from './execution.gateway';
 import { SubmitCodeDto } from './dto/submit-code.dto';
 import { ExecutionResultDto } from './dto/execution-result.dto';
+import { AchievementsService } from 'src/achievements/achievements.service';
 
 
 @Injectable()
@@ -15,6 +16,7 @@ export class ExecutionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly gateway: ExecutionGateway,
+    private readonly achievementsService: AchievementsService,
   ) {}
 
   /**
@@ -112,6 +114,28 @@ export class ExecutionService {
           Code: dto.stdout.slice(0, 1500),
         },
       });
+    }
+
+    // Obtener XP segun la dificultad
+    const challenge = await this.prisma.challenge.findUnique({
+      where: { id: dto.challengeId },
+      include: { dificulty: true },
+    });
+
+    if (challenge) {
+      const xpMap: Record<string, number> = {
+        Easy: 10,
+        Medium: 25,
+        Hard: 50,
+      };
+      const xpToAdd = xpMap[challenge.dificulty.name] ?? 10;
+
+      await this.prisma.user.update({
+        where: { id: dto.userId },
+        data: { xp: { increment: xpToAdd }},
+      });
+
+      await this.achievementsService.evaluateForUser(dto.userId);
     }
 
     // 3. Emitir resultado por WebSocket al cliente que está escuchando este jobId
