@@ -10,6 +10,12 @@ import { ChallengeDetailPage } from '@/Challenges/detail/ChallengeDetailPage';
 import { ChallengeSolverPage } from '@/Challenges/solver/ChallengeSolverPage';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { PrivateRoute } from './PrivateRoute';
+import { AdminRoute } from './AdminRoute';
+import { AdminChallengesPage } from '@/admin/pages/challenges/AdminChallengesPage';
+import { AdminLayout } from '@/admin/layouts/AdminLayout';
+import { AdminDashboardPage } from '@/admin/pages/dashboard/AdminDashboardPage';
+import { AdminUsersPage } from '@/admin/pages/users/AdminUsersPage';
+import { AdminSubjectsPage } from '@/admin/pages/subjects/AdminSubjectsPage';
 
 export const appRouter = createBrowserRouter([
   {
@@ -55,6 +61,18 @@ export const appRouter = createBrowserRouter([
             path: 'perfil',
             element: <ProfilePage />,
           },
+          {
+            path: 'admin',
+            element: <AdminRoute />,
+            children: [
+              { element: <AdminLayout />, children: [
+                { index: true,              element: <AdminDashboardPage /> },
+                { path: 'challenges',       element: <AdminChallengesPage /> },
+                { path: 'users',            element: <AdminUsersPage /> },
+                { path: 'subjects',         element: <AdminSubjectsPage /> },
+              ]}
+            ]
+          }
         ],
       },
     ],
