@@ -171,6 +171,11 @@ export class UsersService {
               role: true
             }
           },
+          course: {
+            select: {
+              name: true,
+            }
+          }
         },
         orderBy: { id: 'desc' },
       }),
@@ -184,6 +189,7 @@ export class UsersService {
       lastname: user.lastname,
       email: user.email,
       roles: user.userRoles.map(ur => ur.role.name),
+      course: user.course,
     }));
 
     return {
