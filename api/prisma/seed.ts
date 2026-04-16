@@ -3,8 +3,18 @@ import { seedCatalogues } from './seeds/seedCatalogues';
 import { seedSubjects } from './seeds/seedSubjects';
 import { seedUsers } from './seeds/seedUsers';
 import { seedChallenges } from './seeds/seedChallenges';
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaMariaDb(
+        {
+            host: process.env.DB_HOST,
+            port: Number(process.env.DB_PORT),
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+        }
+    )
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
     console.log('Limpiando base de datos...');
