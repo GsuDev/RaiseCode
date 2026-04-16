@@ -6,11 +6,13 @@ interface Props {
   lastname: string;
   email: string;
   cycle: string;
+  xp: number;
 }
 
-export const ProfileHeader = ({ name, lastname, email, cycle }: Props) => {
+export const ProfileHeader = ({ name, lastname, email, cycle, xp }: Props) => {
   // Saco las iniciales para el avatar
   const initials = `${name.charAt(0)}${lastname.charAt(0)}`.toUpperCase();
+  const currentLevel = Math.floor(xp / 100);
 
   return (
     <Box bg="bg.panel" p={{ base: 5, md: 8 }} borderRadius="xl" border="1px solid" borderColor="border">
@@ -39,7 +41,7 @@ export const ProfileHeader = ({ name, lastname, email, cycle }: Props) => {
               </Box>
               {/* Badge del nivel */}
               <Box px={2} py={0.5} bg="brand.500" color="white" borderRadius="md" fontSize="xs" fontWeight="bold">
-                Nivel 12
+                Nivel {currentLevel}
               </Box>
             </Flex>
           </Box>
@@ -48,7 +50,7 @@ export const ProfileHeader = ({ name, lastname, email, cycle }: Props) => {
         {/* Puntos totales */}
         <Box textAlign={{ base: "left", sm: "right" }}>
           <Text fontSize="3xl" fontWeight="bold" color="brand.500">
-            3250
+            {xp}
           </Text>
           <Text fontSize="sm" color="fg.muted">
             Puntos totales
@@ -58,7 +60,7 @@ export const ProfileHeader = ({ name, lastname, email, cycle }: Props) => {
       </Flex>
 
       {/* Inserto la barra de XP */}
-      <ProfileXPBar />
+      <ProfileXPBar xp={xp} />
     </Box>
   );
 };

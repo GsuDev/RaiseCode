@@ -71,6 +71,8 @@ model User {
   userRoles            UserRoles[]
   userAchievements     UserAchievements[]
   userSubjects         UserSubjects[]
+
+  xp                   Int                   @default(0)
 }
 
 model Role {
@@ -85,6 +87,8 @@ model Achievement {
   name             String
   // Relaciones de Achievement
   userAchievements UserAchievements[]
+  description      String
+  xpReward         Int                @default(0)
 }
 
 // Modelos de las tablas intermedias de User
@@ -103,6 +107,7 @@ model UserAchievements {
   userId        Int
   achivement    Achievement @relation(fields: [achievementId], references: [id])
   achievementId Int
+  unlockedAt    DateTime    @default(now())
 
   @@id([userId, achievementId])
 }

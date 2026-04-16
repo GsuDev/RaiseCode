@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3000/api';
 
 export interface LanguageStat {
   languageName: string;
@@ -10,6 +10,19 @@ export interface RecentActivity {
   challengeTitle: string;
   languageName: string;
   time: number;
+}
+
+export interface Achievement {
+  id: number;
+  name: string;
+  description: string;
+  xpReward: number;
+}
+
+export interface UserAchievement {
+  achievementId: number,
+  unlockedAt: string;
+  achivement: Achievement; // deberia ser achievement pero hay error de tipeo en el schema 
 }
 
 export interface ProfileResponse {
@@ -37,3 +50,21 @@ export const getProfileService = async (token: string): Promise<ProfileResponse>
 
   return json;
 };
+
+export const getAllAchievementsService = async (): Promise<Achievement[]> => {
+  const response = await fetch(`${API_URL}/achievements`);
+  const json = await response.json();
+  if (!response.ok) {
+    throw new Error(json.message ?? 'Error al obtener los logros');
+  }
+  return json;
+}
+
+export const getUserAchievementsService = async (userId: number, token: string): Promise<UserAchievement[]> => {
+  const response = await fetch(`${API_URL}/users/${userId}/achievements`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  const json = await response.json();
+  if (!response.ok) throw new Error(json.message ?? 'Error al obtener los logros del usuario');
+  return json;  
+}
