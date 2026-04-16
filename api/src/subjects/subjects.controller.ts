@@ -1,4 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Roles } from '../auth/roles/roles.decorator';
+import { RolesGuard } from '../auth/roles/roles.guard';
+import { CreateSubjectDto } from './dto/create-subject.dto';
+import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { SubjectsService } from './subjects.service';
 
 @Controller('subjects')
@@ -8,6 +24,13 @@ export class SubjectsController {
   @Get()
   findAll() {
     return this.subjectsService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Post()
+  create(@Body() dto: CreateSubjectDto) {
+    return this.subjectsService.create(dto);
   }
 
   @Get(':id')
@@ -26,5 +49,19 @@ export class SubjectsController {
       parseInt(page),
       parseInt(limit),
     );
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateSubjectDto) {
+    return this.subjectsService.update(id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.subjectsService.remove(id);
   }
 }
