@@ -10,11 +10,16 @@ import {
   Badge,
   Flex,
   IconButton,
+  Tabs,
 } from '@chakra-ui/react';
 import { Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { adminUsersService } from './service/adminUsers.service';
 import { CreateUserModal, EditUserModal } from './components';
+import { BulkUserForm } from './components/BulkUserForm';
+import { GeneratedCredentialsTable } from './components/GeneratedCredentialsTable';
+import { useBulkUserCreation } from './hooks/useBulkUserCreation';
+import { exportCredentialsCSV } from './utils/exportCredentialsCSV';
 
 interface User {
   id: number;
@@ -47,6 +52,7 @@ export const AdminUsersPage = () => {
     totalPages: 0,
   });
   const [error, setError] = useState<string | null>(null);
+  const { credentials, isLoading: isBulkLoading, createBulkUsers } = useBulkUserCreation();
 
   // Cargar usuarios cuando cambia la página
   useEffect(() => {
@@ -144,10 +150,12 @@ export const AdminUsersPage = () => {
             Administra los usuarios del sistema
           </Text>
         </VStack>
-        <Button colorScheme="brand" gap={2} onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} />
-          Nuevo Usuario
-        </Button>
+        <HStack gap={2}>
+          <Button colorScheme="brand" gap={2} onClick={() => setIsModalOpen(true)}>
+            <Plus size={18} />
+            Nuevo Usuario
+          </Button>
+        </HStack>
       </Flex>
 
       {/* Error message */}
@@ -155,6 +163,25 @@ export const AdminUsersPage = () => {
         <Box bg="red.50" borderRadius="lg" p={4} borderWidth="1px" borderColor="red.200">
           <Text color="red.700">{error}</Text>
         </Box>
+      )}
+
+      {/* Bulk User Generation */}
+      <Box>
+        <BulkUserForm
+          onSubmit={createBulkUsers}
+          isLoading={isBulkLoading}
+        />
+      </Box>
+
+      {/* Generated Credentials */}
+      {credentials.length > 0 && (
+        <GeneratedCredentialsTable
+          credentials={credentials}
+          onDownloadCSV={() => {
+            const prefix = credentials[0].username.match(/^([a-z]+)/i)?.[1] || 'usuarios';
+            exportCredentialsCSV(credentials, prefix);
+          }}
+        />
       )}
 
       {/* Tabla */}

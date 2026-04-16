@@ -33,6 +33,16 @@ interface UpdateUserDto {
   courseId?: number;
 }
 
+interface CreateBulkGenericUsersDto {
+  prefix: string;
+  count: number;
+}
+
+export interface GeneratedUserCredentials {
+  username: string;
+  password: string;
+}
+
 interface UsersResponse {
   data: User[];
   meta: {
@@ -66,23 +76,6 @@ export const adminUsersService = {
       throw new Error('Error al obtener usuarios');
     }
 
-    return response.json();
-  },
-
-  /**
-   * Obtiene un usuario específico por ID
-   */
-  getUserById: async (id: number): Promise<User> => {
-    const response = await fetch(`${API_URL}/users/${id}`, {
-      method: 'GET',
-      headers: getAuthHeader(),
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error al obtener usuario ${id}`);
-    }
-    
     return response.json();
   },
 
@@ -157,5 +150,27 @@ export const adminUsersService = {
     const data = await response.json();
     // El endpoint puede devolver { data: [...] } o directamente [...]
     return Array.isArray(data) ? data : data.data || [];
+  },
+
+  /**
+   * Crea un lote de usuarios genéricos con contraseñas auto-generadas
+   */
+  createBulkGenericUsers: async (
+    prefix: string,
+    count: number
+  ): Promise<GeneratedUserCredentials[]> => {
+    const response = await fetch(`${API_URL}/users/bulk-generic`, {
+      method: 'POST',
+      headers: getAuthHeader(),
+      credentials: 'include',
+      body: JSON.stringify({ prefix, count }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al generar usuarios en lote');
+    }
+
+    return response.json();
   },
 };
