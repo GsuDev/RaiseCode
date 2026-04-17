@@ -32,6 +32,17 @@ export class ChallengesController {
   }
 
   /**
+   * GET /api/challenges/pending — solo admins.
+   * Lista retos con validate: false.
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get('pending')
+  findPending() {
+    return this.challengesService.findPending();
+  }
+
+  /**
    * GET /api/challenges — público con paginación.
    * Query params: ?page=1&limit=10
    */
@@ -59,6 +70,21 @@ export class ChallengesController {
   create(@Body() dto: CreateChallengeDto, @Request() req: any) {
     const creatorId: number = req.user.id; // inyectado por JwtAuthGuard desde payload.sub
     return this.challengesService.create(dto, creatorId);
+  }
+
+  /**
+   * PATCH /api/challenges/:id/validate — solo admins.
+   * Aprobar o rechazar un reto.
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Patch(':id/validate')
+  validate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() validationDto: { approved: boolean; comment?: string },
+    @Request() req: any,
+  ) {
+    return this.challengesService.validate(id, validationDto.approved, req.user.id);
   }
 
   /**
