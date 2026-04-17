@@ -186,25 +186,14 @@ export class ChallengesService {
    * Método para obtener retos pendientes
    */
   async findPending() {
-  try {
-    return await this.prisma.challenge.findMany({
-      where: { validate: false },
-      include: {
-        subject: true,
-        dificulty: true,
-        language: true,
-        creator: {
-          select: {
-            name: true,
-            lastname: true,
-          },
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Error en findPending:", error);
-    throw error;
-  }
+  const challenges = await this.prisma.challenge.findMany({
+    where: { validate: false },
+    select: {
+      ...challengeSelect, // Usa el selector común
+      _count: { select: { completedChallenges: true } },
+    },
+  });
+  return challenges.map(mapChallenge); // Usa el mapeador común
 }
 
   /**
