@@ -11,6 +11,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from '../auth/dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateBulkGenericUsersDto, GeneratedUserCredentials } from './dto/create-bulk-generic-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -171,6 +172,11 @@ export class UsersService {
               role: true
             }
           },
+          course: {
+            select: {
+              name: true,
+            }
+          }
         },
         orderBy: { id: 'desc' },
       }),
@@ -184,6 +190,7 @@ export class UsersService {
       lastname: user.lastname,
       email: user.email,
       roles: user.userRoles.map(ur => ur.role.name),
+      course: user.course,
     }));
 
     return {
@@ -303,5 +310,80 @@ async findProfile(id: number) {
     })
 
     return deleted
+  }
+
+  /**
+   * Genera un lote de usuarios genéricos con credenciales auto-generadas
+   * Las contraseñas se devuelven en claro una única vez
+   */
+  async createBulkGenericUsers(
+    bulkDto: CreateBulkGenericUsersDto,
+  ): Promise<GeneratedUserCredentials[]> {
+    const { prefix, count } = bulkDto;
+
+    // Obtener el primer curso disponible como curso por defecto
+    const defaultCourse = await this.prisma.course.findFirst();
+    if (!defaultCourse) {
+      throw new BadRequestException('No hay cursos disponibles para asignar a los usuarios');
+    }
+
+    // Obtener el rol USER
+    const userRole = await this.prisma.role.findFirst({
+      where: { name: 'USER' },
+    });
+    if (!userRole) {
+      throw new BadRequestException('No existe el rol USER en la base de datos');
+    }
+
+    const generatedCredentials: GeneratedUserCredentials[] = [];
+
+    for (let i = 1; i <= count; i++) {
+      // Generar username con ceros a la izquierda si es necesario
+      const paddingLength = count <= 99 ? 2 : count <= 999 ? 3 : 4;
+      const username = `${prefix}${String(i).padStart(paddingLength, '0')}`;
+      
+      // Email ficticio no contactable
+      const email = `${username}@raisecode.local`;
+      
+      // Contraseña aleatoria de 10 caracteres (letras + números)
+      const password = this.generateRandomPassword(10);
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Crear usuario
+      await this.prisma.user.create({
+        data: {
+          name: 'Alumno',
+          lastname: `${prefix}${i}`,
+          email,
+          password: hashedPassword,
+          courseId: defaultCourse.id,
+          userRoles: {
+            create: {
+              roleId: userRole.id,
+            },
+          },
+        },
+      });
+
+      // Guardar credenciales en claro para devolverlas
+      generatedCredentials.push({
+        email,
+        password,
+      });
+    }
+
+    return generatedCredentials;
+  }
+
+  /**
+   * Genera una contraseña aleatoria con letras y números
+   */
+  private generateRandomPassword(length: number): string {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
   }
 }

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Re
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateBulkGenericUsersDto } from './dto/create-bulk-generic-users.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles/roles.guard';
 import { Roles } from '../auth/roles/roles.decorator';
@@ -24,6 +25,14 @@ export class UsersController {
     getProfile(@Req() req: Request & { user: any }) {
         const userId = req.user.id;
         return this.usersService.findProfile(userId);
+    }
+
+    @Post('bulk-generic')
+    @UsePipes(ValidationPipe)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN')
+    createBulkGenericUsers(@Body() bulkDto: CreateBulkGenericUsersDto) {
+        return this.usersService.createBulkGenericUsers(bulkDto);
     }
 
     @Get(':id')
