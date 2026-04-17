@@ -39,7 +39,7 @@ interface CreateBulkGenericUsersDto {
 }
 
 export interface GeneratedUserCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 

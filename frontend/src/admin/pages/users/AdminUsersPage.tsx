@@ -52,13 +52,8 @@ export const AdminUsersPage = () => {
     totalPages: 0,
   });
   const [error, setError] = useState<string | null>(null);
-  const { credentials, isLoading: isBulkLoading, createBulkUsers } = useBulkUserCreation();
 
-  // Cargar usuarios cuando cambia la página
-  useEffect(() => {
-    loadUsers();
-  }, [pagination.page, pagination.limit]);
-
+  // Definir loadUsers antes de usarlo en el hook
   const loadUsers = async () => {
     try {
       setIsLoading(true);
@@ -95,6 +90,22 @@ export const AdminUsersPage = () => {
       setIsLoading(false);
     }
   };
+
+  const { credentials, isLoading: isBulkLoading, createBulkUsers } = useBulkUserCreation({
+    onSuccess: loadUsers,
+  });
+
+  // Cargar usuarios cuando cambia la página
+  useEffect(() => {
+    loadUsers();
+  }, [pagination.page, pagination.limit]);
+
+  // Volver a la primera página cuando se generen usuarios en lote exitosamente
+  useEffect(() => {
+    if (credentials.length > 0 && pagination.page !== 1) {
+      setPagination(prev => ({ ...prev, page: 1 }));
+    }
+  }, [credentials.length]);
 
   const handleNextPage = () => {
     if (pagination.page < pagination.totalPages) {
@@ -178,7 +189,7 @@ export const AdminUsersPage = () => {
         <GeneratedCredentialsTable
           credentials={credentials}
           onDownloadCSV={() => {
-            const prefix = credentials[0].username.match(/^([a-z]+)/i)?.[1] || 'usuarios';
+            const prefix = credentials[0].email.match(/^([a-z]+)/i)?.[1] || 'usuarios';
             exportCredentialsCSV(credentials, prefix);
           }}
         />

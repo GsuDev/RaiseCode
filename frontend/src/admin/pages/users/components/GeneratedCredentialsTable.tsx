@@ -23,7 +23,7 @@ export const GeneratedCredentialsTable: React.FC<
   const [copied, setCopied] = useState(false);
 
   const handleCopyAll = () => {
-    const text = credentials.map((c) => `${c.username},${c.password}`).join('\n');
+    const text = credentials.map((c) => `${c.email},${c.password}`).join('\n');
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -93,7 +93,7 @@ export const GeneratedCredentialsTable: React.FC<
             <Table.Header>
               <Table.Row>
                 <Table.ColumnHeader>#</Table.ColumnHeader>
-                <Table.ColumnHeader>Usuario</Table.ColumnHeader>
+                <Table.ColumnHeader>Correo</Table.ColumnHeader>
                 <Table.ColumnHeader>Contraseña</Table.ColumnHeader>
                 <Table.ColumnHeader textAlign="center">Acciones</Table.ColumnHeader>
               </Table.Row>
@@ -124,12 +124,12 @@ export const GeneratedCredentialsTable: React.FC<
                     </Table.Cell>
                     <Table.Cell fontFamily="mono" fontSize="sm">
                       <HStack gap={2}>
-                        <Text>{cred.username}</Text>
+                        <Text>{cred.email}</Text>
                         <Button
                           size="xs"
                           variant="ghost"
                           onClick={() =>
-                            navigator.clipboard.writeText(cred.username)
+                            navigator.clipboard.writeText(cred.email)
                           }
                         >
                           <CopyIcon size={14} />
@@ -155,7 +155,7 @@ export const GeneratedCredentialsTable: React.FC<
                         size="xs"
                         colorScheme="blue"
                         onClick={() => {
-                          const text = `${cred.username}\t${cred.password}`;
+                          const text = `${cred.email}\t${cred.password}`;
                           navigator.clipboard.writeText(text);
                         }}
                       >

@@ -31,9 +31,11 @@ export const AdminSidebar = () => {
       borderColor="border"
       display="flex"
       flexDirection="column"
-      h={{ base: '100%' }}
-      overflowY={{ base: 'hidden', md: 'auto' }}
+      h="100%"
+      overflowY="auto"
       p={4}
+      position="sticky"
+      top={0}
     >
 
       <Box pb={3} mb={3} borderBottomWidth="1px" borderColor="border">

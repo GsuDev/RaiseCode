@@ -10,8 +10,8 @@ export const exportCredentialsCSV = (
   prefix: string
 ): void => {
   // Crear contenido CSV
-  const headers = ['Username,Password'];
-  const rows = credentials.map((c) => `${c.username},${c.password}`);
+  const headers = ['Email,Password'];
+  const rows = credentials.map((c) => `${c.email},${c.password}`);
   const csvContent = [headers, ...rows].join('\n');
 
   // Crear blob y descarga

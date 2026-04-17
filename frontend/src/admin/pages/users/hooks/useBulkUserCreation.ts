@@ -15,7 +15,11 @@ interface UseBulkUserCreationState {
   success: boolean;
 }
 
-export const useBulkUserCreation = () => {
+interface UseBulkUserCreationOptions {
+  onSuccess?: () => void | Promise<void>;
+}
+
+export const useBulkUserCreation = (options?: UseBulkUserCreationOptions) => {
   const [state, setState] = useState<UseBulkUserCreationState>({
     credentials: [],
     isLoading: false,
@@ -49,6 +53,11 @@ export const useBulkUserCreation = () => {
         description: `${result.length} usuarios generados correctamente`,
         type: 'success',
       });
+
+      // Ejecutar callback de éxito si se proporciona
+      if (options?.onSuccess) {
+        await options.onSuccess();
+      }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Error desconocido';

@@ -367,7 +367,7 @@ async findProfile(id: number) {
 
       // Guardar credenciales en claro para devolverlas
       generatedCredentials.push({
-        username,
+        email,
         password,
       });
     }
