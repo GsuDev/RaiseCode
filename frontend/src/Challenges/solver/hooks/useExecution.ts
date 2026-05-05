@@ -81,7 +81,7 @@ export const useExecution = () => {
     socketRef.current?.disconnect();
 
     const socket = io(WS_URL, {
-      transports: ['polling', 'websocket'],
+      transports: ['websocket'],
       path: '/socket.io/',
       reconnection: false,
     });
