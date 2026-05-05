@@ -81,8 +81,7 @@ export const useExecution = () => {
     socketRef.current?.disconnect();
 
     const socket = io(WS_URL, {
-      transports: ['websocket'],
-      // socket.io path por defecto: /socket.io/ — coincide con la location de nginx
+      transports: ['polling', 'websocket'],
       path: '/socket.io/',
       reconnection: false,
     });
