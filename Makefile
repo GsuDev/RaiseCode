@@ -209,6 +209,21 @@ ssl-certs: ## Generar certificado SSL autofirmado para desarrollo local (Linux/M
 	@echo "$(GREEN)Generando certificados SSL autofirmados para localhost...$(NC)"
 	@bash nginx/certs/generate-certs.sh
 	@echo "$(GREEN)✓ Certificados listos en nginx/certs/$(NC)"
+	@echo "$(YELLOW)→ Ejecuta 'make trust-cert' para que WebSocket (wss://) funcione en el navegador$(NC)"
+
+trust-cert: ## Agregar el cert SSL al keychain de macOS (necesario para wss:// en Safari/Chrome)
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		if [ ! -f nginx/certs/cert.pem ]; then \
+			echo "$(YELLOW)⚠ Certificado no encontrado. Ejecuta 'make ssl-certs' primero.$(NC)"; \
+			exit 1; \
+		fi; \
+		echo "$(GREEN)Agregando certificado al keychain de macOS (requiere contraseña)...$(NC)"; \
+		sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain nginx/certs/cert.pem; \
+		echo "$(GREEN)✓ Certificado de confianza. Reinicia el navegador y ya funcionará wss://$(NC)"; \
+	else \
+		echo "$(YELLOW)Este comando es solo para macOS.$(NC)"; \
+		echo "En Linux: copia nginx/certs/cert.pem a /usr/local/share/ca-certificates/ y ejecuta update-ca-certificates"; \
+	fi
 
 ssl-certs-docker: ## Generar certificado SSL via Docker (Windows/Linux/Mac)
 	@echo "$(GREEN)Generando certificados SSL autofirmados usando Docker...$(NC)"

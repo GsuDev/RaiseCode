@@ -82,7 +82,6 @@ export const useExecution = () => {
 
     const socket = io(WS_URL, {
       transports: ['websocket'],
-      // socket.io path por defecto: /socket.io/ — coincide con la location de nginx
       path: '/socket.io/',
       reconnection: false,
     });
