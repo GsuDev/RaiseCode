@@ -92,3 +92,38 @@ docker run --rm -v "${PWD}/nginx/certs:/certs" alpine/openssl `
 | API | https://localhost/api |
 | API (directo) | http://localhost:3000 |
 | Worker | http://localhost:4000 |
+
+---
+
+## Solución de problemas
+
+### La ejecución de retos no funciona (WebSocket bloqueado)
+
+**Síntoma:** Al pulsar "Ejecutar" no aparecen resultados. En la consola del navegador se ve algo como:
+
+```
+WebSocket connection to 'wss://localhost/socket.io/...' failed: The certificate is invalid
+```
+o
+```
+[blocked] The page requested insecure content from ws://localhost...
+```
+
+**Causa:** El WebSocket usa `wss://` (WebSocket seguro) a través de nginx. Los navegadores, especialmente Safari, rechazan conexiones `wss://` con certificados autofirmados que no estén en el keychain del sistema. Aceptar la advertencia en el navegador solo sirve para la página HTTPS, no para WebSocket.
+
+**Fix en macOS:**
+
+```bash
+make trust-cert
+```
+
+Pide contraseña de administrador. Después reinicia el navegador completamente. El certificado queda como confiable a nivel de sistema y `wss://` funciona sin advertencias.
+
+**Fix en Linux:** Añadir el cert al almacén de confianza del sistema:
+
+```bash
+sudo cp nginx/certs/cert.pem /usr/local/share/ca-certificates/raisecode-dev.crt
+sudo update-ca-certificates
+```
+
+**Fix en Windows:** Doble clic en `nginx/certs/cert.pem` → Instalar certificado → Almacén "Entidades de certificación raíz de confianza".
