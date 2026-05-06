@@ -42,7 +42,6 @@ services:
       - NODE_ENV=development
       # VITE_ prefix es obligatorio para que Vite exponga la variable al cliente
       - VITE_API_URL=${FRONTEND_API_URL:-http://localhost/api}
-      - VITE_WS_URL=${FRONTEND_WS_URL:-http://localhost:3000}
       - VITE_PORT=${FRONTEND_INTERNAL_PORT:-5173}
     volumes:
       - ./frontend:/app

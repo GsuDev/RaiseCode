@@ -33,10 +33,13 @@ La aplicación estará disponible en **https://localhost**
 
 El proyecto usa HTTPS. Antes de levantar los servicios por primera vez hay que generar un certificado SSL autofirmado para `localhost`.
 
+> **Importante:** Para que la ejecución de retos funcione (WebSocket `wss://`), el certificado tiene que ser de confianza en el sistema. En macOS ejecuta `make trust-cert` después de generarlo. Sin este paso el navegador bloqueará la conexión WebSocket.
+
 ### Linux / Mac
 
 ```bash
 make ssl-certs
+make trust-cert   # necesario para WebSocket (wss://)
 ```
 
 ### Windows (PowerShell)
@@ -77,6 +80,7 @@ docker run --rm -v "${PWD}/nginx/certs:/certs" alpine/openssl `
 | `make logs-nginx` | Logs de Nginx |
 | `make health` | Verificar salud de los servicios |
 | `make ssl-certs` | Generar certificado SSL (Linux/Mac) |
+| `make trust-cert` | Agregar el cert al keychain de macOS (necesario para WebSocket) |
 | `make ssl-certs-docker` | Generar certificado SSL vía Docker (todos los SO) |
 | `make clean` | Limpiar contenedores y volúmenes |
 
