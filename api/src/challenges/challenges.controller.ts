@@ -43,6 +43,20 @@ export class ChallengesController {
   }
 
   /**
+   * GET /api/challenges/admin/all - solo admins
+   * Lista todos los retos de cualquier estado por paginacion
+   */
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get('admin/all')
+  findAllAdmin(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.challengesService.findAllAdmin(
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 10,
+    );
+  }
+
+  /**
    * GET /api/challenges — público con paginación.
    * Query params: ?page=1&limit=10
    */
