@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Grid, VStack } from '@chakra-ui/react';
 import { Award, Zap, CheckCircle, Stars } from 'lucide-react';
 import {
@@ -7,35 +6,10 @@ import {
   ActivityChart,
   DashboardHeader,
 } from './components';
-
-interface DashboardData {
-  totalUsers: number;
-  totalChallenges: number;
-  pendingChallenges: number;
-  totalCompletions: number;
-  topChallenge: {
-    id: number;
-    title: string;
-    completedCount: number;
-  };
-  topUser: {
-    username: string;
-    xp: number;
-  };
-  activityLast7Days: Array<{
-    date: string;
-    completions: number;
-  }>;
-}
+import { useAdminDashboard } from './hooks/useAdminDashboard';
 
 export const AdminDashboardPage = () => {
-  // Hay que realizar un service y un hook para esto, pero por ahora lo dejo hardcodeado
-  const [dashboard] = useState<DashboardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
+  const { dashboard, isLoading } = useAdminDashboard();
 
   return (
     <VStack gap={8} align="stretch">
@@ -103,7 +77,7 @@ export const AdminDashboardPage = () => {
           items={[
             {
               label: 'Usuario',
-              value: dashboard?.topUser.username ?? 'N/A',
+              value: dashboard?.topUser.name ?? 'N/A',
               highlight: true,
             },
             {
