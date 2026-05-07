@@ -17,6 +17,15 @@ class BaseRunner(ABC):
     # Imagen Docker que usa este runner
     image: str
 
+    # Timeout en segundos (None = usar RUNNER_TIMEOUT global)
+    timeout: int | None = None
+
+    # Fracción de CPU (None = usar RUNNER_CPU_LIMIT global)
+    cpu_limit: float | None = None
+
+    # Límite de memoria Docker (None = usar RUNNER_MEMORY_LIMIT global)
+    mem_limit: str | None = None
+
     @abstractmethod
     def build_container_config(self, code: str, base_config: Dict) -> Dict:
         """
