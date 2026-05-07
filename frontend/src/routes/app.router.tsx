@@ -9,6 +9,7 @@ import { SubjectDetailPage } from '@/raiseCode/pages/Subjects/SubjectDetailPage'
 import { ChallengeDetailPage } from '@/Challenges/detail/ChallengeDetailPage';
 import { ChallengeSolverPage } from '@/Challenges/solver/ChallengeSolverPage';
 import { ProfilePage } from '@/profile/ProfilePage';
+import { RankingPage } from '@/ranking/RankingPage'; 
 import { PrivateRoute } from './PrivateRoute';
 import { AdminRoute } from './AdminRoute';
 import { AdminChallengesPage } from '@/admin/pages/challenges/AdminChallengesPage';
@@ -45,6 +46,10 @@ export const appRouter = createBrowserRouter([
       {
         path: 'retos/:id',
         element: <ChallengeDetailPage />
+      },
+      {
+        path: 'ranking', 
+        element: <RankingPage />
       },
       {
         element: <PrivateRoute />,
