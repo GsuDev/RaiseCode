@@ -1,5 +1,6 @@
 import { VStack } from '@chakra-ui/react';
 import { HeroSection } from '../../components/HeroSection/HeroSection';
+import { HeroVideo } from '@/raiseCode/components/HeroSection/components/HeroVideo';
 import { CyclesSection } from '@/raiseCode/components/CyclesSection/CyclesSection';
 import { FeaturedChallenges } from '@/raiseCode/components/FeaturedChallenges/FeaturedChallenges';
 export const HomePage = () => {
@@ -9,7 +10,7 @@ export const HomePage = () => {
             <HeroSection btn1link="/asignaturas" btn2link="/crear-reto" />
             <FeaturedChallenges />
             <CyclesSection />
-
+            <HeroVideo />
         </VStack>
     </>      
   );
