@@ -220,9 +220,10 @@ async findProfile(id: number) {
       completedChallenges: {
         include: {
           challenge: {
-            include: { language: true },
+            include: { language: true, dificulty: true },
           },
         },
+        orderBy: { completedAt: 'desc' },
       },
     },
   });
@@ -231,11 +232,13 @@ async findProfile(id: number) {
     throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
   }
 
+  const xpMap: Record<string, number> = { Easy: 10, Medium: 25, Hard: 50 };
+
   const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
     const lang = curr.challenge.language;
     if (lang) {
       if (!acc[lang.id]) {
-        acc[lang.id] = { languageId: lang.id, languageName: lang.name, count: 0 };
+        acc[lang.id] = { languageName: lang.name, count: 0 };
       }
       acc[lang.id].count += 1;
     }
@@ -246,7 +249,9 @@ async findProfile(id: number) {
     challengeId: cc.challengeId,
     challengeTitle: cc.challenge.title,
     languageName: cc.challenge.language.name,
-    time: Number(cc.time),
+    executionTime: Number(cc.time),
+    completedAt: cc.completedAt.toISOString(),
+    xpEarned: xpMap[cc.challenge.dificulty.name] ?? 10,
   }));
 
   return {

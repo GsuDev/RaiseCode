@@ -163,7 +163,11 @@ model CompletedChallenges {
   challengeId Int
   time        BigInt
   Code        String    @db.VarChar(1500)
+<<<<<<< feature/hu-27-soporte-java-estadisticas-ejecucion
+  completedAt DateTime  @default(now())
+=======
   createdAt   DateTime  @default(now())
+>>>>>>> dev
 
   @@id([userId, challengeId])
 }
