@@ -14,6 +14,7 @@ import { CoursesModule } from './courses/courses.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { ExecutionModule } from './execution/execution.module';
 import { AchievementsModule } from './achievements/achievements.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AchievementsModule } from './achievements/achievements.module';
     SubjectsModule,
     ExecutionModule,
     AchievementsModule,
+    AdminModule,
   ],
   controllers: [],
   providers: [PrismaService, MongooseService],
