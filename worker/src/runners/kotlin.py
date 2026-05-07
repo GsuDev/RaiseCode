@@ -12,7 +12,7 @@ MAIN_CLASS = "Main"
 
 
 class KotlinRunner(BaseRunner):
-    image = "zenika/kotlin:1.9-jdk17"
+    image = "zenika/kotlin:latest"
 
     def wrap_with_inputs(self, code: str, inputs: list) -> str:
         calls = "\n".join(
