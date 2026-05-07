@@ -13,6 +13,8 @@ MAIN_CLASS = "Main"
 
 class KotlinRunner(BaseRunner):
     image = "zenika/kotlin:latest"
+    timeout = 60
+    cpu_limit = 1.0
 
     def wrap_with_inputs(self, code: str, inputs: list) -> str:
         calls = "\n".join(
