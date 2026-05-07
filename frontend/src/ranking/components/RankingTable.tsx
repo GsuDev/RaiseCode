@@ -1,5 +1,5 @@
 import { Table, Box, Text, Center, VStack } from "@chakra-ui/react";
-import { RankingRow } from "./rankingRow.tsx";
+import { RankingRow } from "./RankingRow.tsx";
 import type { RankingUser } from "../services/ranking.service";
 
 interface RankingTableProps {

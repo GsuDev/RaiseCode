@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export interface RankingUser {
@@ -11,11 +9,21 @@ export interface RankingUser {
 }
 
 export const getGlobalRanking = async (): Promise<RankingUser[]> => {
-  const { data } = await axios.get(`${API_URL}/ranking/global`);
-  return data;
+  const response = await fetch(`${API_URL}/ranking/global`);
+  
+  if (!response.ok) {
+    throw new Error('Error al obtener el ranking global');
+  }
+  
+  return await response.json();
 };
 
 export const getSubjectRanking = async (subjectId: number): Promise<RankingUser[]> => {
-  const { data } = await axios.get(`${API_URL}/ranking/subjects/${subjectId}`);
-  return data;
+  const response = await fetch(`${API_URL}/ranking/subjects/${subjectId}`);
+  
+  if (!response.ok) {
+    throw new Error('Error al obtener el ranking por asignatura');
+  }
+  
+  return await response.json();
 };

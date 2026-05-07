@@ -24,6 +24,7 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
   const navItems = [
     { id: "/",           label: "Inicio",      icon: Trophy },
     { id: "/asignaturas",           label: "Asignaturas", icon: BookOpen },
+    { id: "/ranking",           label: "Ranking",     icon: Trophy }, // Nuevo: Acceso al ranking
     { id: "/crear-reto", label: "Crear Reto",  icon: PlusCircle, requiresAuth: true },
   ]
 
