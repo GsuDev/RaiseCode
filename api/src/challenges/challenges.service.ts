@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -173,9 +174,21 @@ export class ChallengesService {
 
   /**
    * Elimina un reto. Solo accesible por admins (controlado en el controller con @Roles).
+   * Lanza 400 si el reto tiene soluciones enviadas
    */
   async remove(id: number) {
-    await this.findOne(id); // Lanza 404 si no existe
+    const challenge = await this.prisma.challenge.findUnique({
+      where: { id },
+      include: { _count: { select: { completedChallenges: true } } },
+    });
+
+    if (!challenge) {
+      throw new NotFoundException(`Reto con ID ${id} no encontrado`);
+    }
+
+    if (challenge._count.completedChallenges > 0) {
+      throw new BadRequestException('No se puede eliminar un reto con soluciones enviadas');
+    }
 
     await this.prisma.challenge.delete({ where: { id } });
 
@@ -207,5 +220,52 @@ export class ChallengesService {
         validatorId: adminId // Asignamos el ID del admin que realiza la acción
       },
     });
+  }
+
+  /**
+   * Devuelve todos los retos para el panel de admin con paginacion,
+   * incluye retos de cualquier estado,
+   * solo accesible por admins (controlado en el controller con @Roles)
+   */
+  async findAllAdmin(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const [challenges, total] = await this.prisma.$transaction([
+      this.prisma.challenge.findMany({
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          title: true,
+          validate: true,
+          dificulty: { select: { id: true, name: true } },
+          language: { select: { id: true, name: true } },
+          subject: { select: { id: true, name: true } },
+          creator: { select: { name: true, lastname: true } },
+          _count: { select: { completedChallenges: true } },
+        },
+        orderBy: { id: 'desc' },
+      }),
+      this.prisma.challenge.count(),
+    ]);
+
+    return {
+      data: challenges.map((c) => ({
+        id: c.id,
+        title: c.title,
+        validate: c.validate,
+        language: c.language,
+        subject: c.subject,
+        dificulty: c.dificulty,
+        author: `${c.creator.name} ${c.creator.lastname}`,
+        submissionsCount: c._count.completedChallenges,
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      }
+    }
   }
 }
