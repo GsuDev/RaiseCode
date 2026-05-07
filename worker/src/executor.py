@@ -26,12 +26,13 @@ docker_client = docker.from_env()
 # CONFIG BASE DEL CONTENEDOR
 # Límites de seguridad comunes a todos los runners.
 # ============================================================================
-def _base_container_config(image: str, cpu_limit: float | None = None) -> Dict:
+def _base_container_config(image: str, cpu_limit: float | None = None, mem_limit: str | None = None) -> Dict:
     cpu = cpu_limit if cpu_limit is not None else RUNNER_CPU_LIMIT
+    mem = mem_limit if mem_limit is not None else RUNNER_MEMORY_LIMIT
     return {
         "image":        image,
         "network_mode": "none",          # sin acceso a red
-        "mem_limit":    RUNNER_MEMORY_LIMIT,
+        "mem_limit":    mem,
         "nano_cpus":    int(cpu * 1e9),
         "pids_limit":   50,              # evita fork bombs
         "remove":       True,
@@ -171,7 +172,7 @@ def execute_code(language: str, code: str, test_cases: List[Dict]) -> Dict:
 
     try:
         timeout          = runner.timeout if runner.timeout is not None else RUNNER_TIMEOUT
-        base_config      = _base_container_config(runner.image, runner.cpu_limit)
+        base_config      = _base_container_config(runner.image, runner.cpu_limit, runner.mem_limit)
         container_config = runner.build_container_config(code, base_config)
 
         # Si todos los tests tienen input → modo parametrizado:

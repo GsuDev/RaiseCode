@@ -15,6 +15,7 @@ class KotlinRunner(BaseRunner):
     image = "zenika/kotlin:latest"
     timeout = 60
     cpu_limit = 1.0
+    mem_limit = "512m"
 
     def wrap_with_inputs(self, code: str, inputs: list) -> str:
         calls = "\n".join(
