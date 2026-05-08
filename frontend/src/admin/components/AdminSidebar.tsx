@@ -1,5 +1,5 @@
 import { VStack, Box, Text, Button } from '@chakra-ui/react';
-import { BookOpen, ChartColumnBig, Target, UserCog } from 'lucide-react';
+import { BookOpen, ChartColumnBig, Target, UserCog , GraduationCap} from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 
 interface SidebarItem {
@@ -21,6 +21,7 @@ export const AdminSidebar = ({ onClose }: AdminSidebarProps) => {
     { label: 'Usuarios', path: '/admin/users', icon: UserCog },
     { label: 'Retos', path: '/admin/challenges', icon: Target },
     { label: 'Asignaturas', path: '/admin/subjects', icon: BookOpen },
+    { label: 'Ciclos', path: '/admin/courses', icon: GraduationCap},
   ];
 
   const isActive = (path: string) => location.pathname === path;
