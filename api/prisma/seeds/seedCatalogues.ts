@@ -10,7 +10,7 @@ export async function seedCatalogues(prisma: PrismaClient) {
 
     // Lenguajes predefinidos para los retos
     await prisma.language.createMany({
-        data: [{ name: 'JavaScript' }, { name: 'Python' }, { name: 'Java' }, { name: 'TypeScript' }],
+        data: [{ name: 'JavaScript' }, { name: 'Python' }, { name: 'Java' }, { name: 'TypeScript' }, { name: 'Kotlin' }],
     });
 
     // Roles predefinidos para los usuarios

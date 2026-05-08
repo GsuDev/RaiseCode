@@ -95,7 +95,19 @@ export class ExecutionService {
     }
 
     // 2. Si fue accepted, guardar en CompletedChallenges (upsert para evitar duplicados)
+    let isFirstCompletion = false;
     if (dto.status === 'accepted') {
+      const existing = await this.prisma.completedChallenges.findUnique({
+        where: {
+          userId_challengeId: {
+            userId: dto.userId,
+            challengeId: dto.challengeId,
+          },
+        },
+      });
+
+      isFirstCompletion = !existing;
+
       await this.prisma.completedChallenges.upsert({
         where: {
           userId_challengeId: {
@@ -106,6 +118,7 @@ export class ExecutionService {
         update: {
           time: BigInt(Math.round(dto.execution_time * 1000)),
           Code: dto.stdout.slice(0, 1500),
+          completedAt: new Date(),
         },
         create: {
           userId: dto.userId,
@@ -116,13 +129,13 @@ export class ExecutionService {
       });
     }
 
-    // Obtener XP segun la dificultad
+    // Obtener XP segun la dificultad — solo en la primera resolución
     const challenge = await this.prisma.challenge.findUnique({
       where: { id: dto.challengeId },
       include: { dificulty: true },
     });
 
-    if (challenge) {
+    if (challenge && isFirstCompletion) {
       const xpMap: Record<string, number> = {
         Easy: 10,
         Medium: 25,

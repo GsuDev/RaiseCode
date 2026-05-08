@@ -10,7 +10,10 @@ function getInitialCode(title: string, language: string): string {
     return `# Reto: ${title}\n\ndef solution(n):\n    # Tu código aquí\n    pass\n`;
   }
   if (lang === 'java') {
-    return `// Reto: ${title}\n\npublic class Solution {\n    public static Object solution(Object n) {\n        // Tu código aquí\n        return null;\n    }\n}\n`;
+    return `// Reto: ${title}\n\nstatic Object solution(Object n) {\n    // Tu código aquí\n    return null;\n}\n`;
+  }
+  if (lang === 'kotlin') {
+    return `// Reto: ${title}\n\nfun solution(n: Any): Any {\n    // Tu código aquí\n    return Unit\n}\n`;
   }
   // Default: JavaScript / Node.js / TypeScript
   return `// Reto: ${title}\n\nfunction solution(n) {\n  // Tu código aquí\n}\n`;

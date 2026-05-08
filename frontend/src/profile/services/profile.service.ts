@@ -9,7 +9,9 @@ export interface RecentActivity {
   challengeId: number;
   challengeTitle: string;
   languageName: string;
-  time: number;
+  executionTime: number;
+  completedAt: string;
+  xpEarned: number;
 }
 
 export interface Achievement {

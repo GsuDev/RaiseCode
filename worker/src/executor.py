@@ -26,12 +26,14 @@ docker_client = docker.from_env()
 # CONFIG BASE DEL CONTENEDOR
 # Límites de seguridad comunes a todos los runners.
 # ============================================================================
-def _base_container_config(image: str) -> Dict:
+def _base_container_config(image: str, cpu_limit: float | None = None, mem_limit: str | None = None) -> Dict:
+    cpu = cpu_limit if cpu_limit is not None else RUNNER_CPU_LIMIT
+    mem = mem_limit if mem_limit is not None else RUNNER_MEMORY_LIMIT
     return {
         "image":        image,
         "network_mode": "none",          # sin acceso a red
-        "mem_limit":    RUNNER_MEMORY_LIMIT,
-        "nano_cpus":    int(RUNNER_CPU_LIMIT * 1e9),
+        "mem_limit":    mem,
+        "nano_cpus":    int(cpu * 1e9),
         "pids_limit":   50,              # evita fork bombs
         "remove":       True,
         "detach":       False,
@@ -43,7 +45,7 @@ def _base_container_config(image: str) -> Dict:
 # ============================================================================
 # EJECUCIÓN EN DOCKER
 # ============================================================================
-def _run_container(config: Dict) -> tuple[str, str, int]:
+def _run_container(config: Dict, timeout: int = RUNNER_TIMEOUT) -> tuple[str, str, int]:
     """
     Lanza el contenedor con la config dada.
     Devuelve (stdout, stderr, exit_code).
@@ -58,7 +60,7 @@ def _run_container(config: Dict) -> tuple[str, str, int]:
         container = docker_client.containers.run(**cfg)
 
         try:
-            result = container.wait(timeout=RUNNER_TIMEOUT)
+            result = container.wait(timeout=timeout)
             exit_code = result.get("StatusCode", 1)
         except Exception:
             # Timeout: matar el contenedor y devolver exit_code especial
@@ -169,7 +171,8 @@ def execute_code(language: str, code: str, test_cases: List[Dict]) -> Dict:
     logger.info(f"Ejecutando código en {language}")
 
     try:
-        base_config    = _base_container_config(runner.image)
+        timeout          = runner.timeout if runner.timeout is not None else RUNNER_TIMEOUT
+        base_config      = _base_container_config(runner.image, runner.cpu_limit, runner.mem_limit)
         container_config = runner.build_container_config(code, base_config)
 
         # Si todos los tests tienen input → modo parametrizado:
@@ -183,9 +186,9 @@ def execute_code(language: str, code: str, test_cases: List[Dict]) -> Dict:
         else:
             run_config   = container_config
 
-        start_time             = time.time()
-        stdout, stderr, exit_code = _run_container(run_config)
-        execution_time         = time.time() - start_time
+        start_time                = time.time()
+        stdout, stderr, exit_code = _run_container(run_config, timeout)
+        execution_time            = time.time() - start_time
 
         # Validar tests o simplemente comprobar que no hay error
         if test_cases:

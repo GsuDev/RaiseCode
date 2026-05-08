@@ -201,9 +201,10 @@ export const AdminUsersPage = () => {
         borderRadius="lg"
         borderWidth="1px"
         borderColor="border"
-        overflow="hidden"
+        overflow={{ base: 'auto', md: 'hidden' }}
       >
-        <Table.Root size="md" variant="line">
+        <Box overflowX={{ base: 'auto', md: 'visible' }}>
+          <Table.Root size="md" variant="line" minW={{ base: '900px', md: 'auto' }}>
           <Table.Header bg="bg.subtle">
             <Table.Row>
               <Table.ColumnHeader color="fg" fontWeight="600">
@@ -305,11 +306,12 @@ export const AdminUsersPage = () => {
                 ))}
           </Table.Body>
         </Table.Root>
+        </Box>
       </Box>
 
       {/* Paginación */}
-      <HStack gap={4} justify="space-between" align="center">
-        <HStack gap={2}>
+      <VStack gap={4} align="center">
+        <HStack gap={2} wrap="wrap" justify="center">
           <Text fontSize="sm" color="fg.muted">
             Mostrar
           </Text>
@@ -331,7 +333,7 @@ export const AdminUsersPage = () => {
           </Text>
         </HStack>
 
-        <Text fontSize="sm" color="fg.muted">
+        <Text fontSize="sm" color="fg.muted" textAlign={{ base: 'center', md: 'left' }}>
           {isLoading
             ? 'Cargando...'
             : `${(pagination.page - 1) * pagination.limit + 1}-${Math.min(
@@ -340,7 +342,7 @@ export const AdminUsersPage = () => {
               )} de ${pagination.total} usuarios`}
         </Text>
 
-        <HStack gap={2}>
+        <HStack gap={2} justify="center">
           <IconButton
             aria-label="Página anterior"
             variant="outline"
@@ -350,7 +352,7 @@ export const AdminUsersPage = () => {
           >
             <ChevronLeft size={18} />
           </IconButton>
-          <Text fontSize="sm" color="fg.muted" minW="50px" textAlign="center">
+          <Text fontSize="sm" color="fg.muted" minW="120px" textAlign="center">
             Página {pagination.page} de {pagination.totalPages}
           </Text>
           <IconButton
@@ -363,7 +365,7 @@ export const AdminUsersPage = () => {
             <ChevronRight size={18} />
           </IconButton>
         </HStack>
-      </HStack>
+      </VStack>
 
       {/* Modal para crear usuario */}
       <CreateUserModal

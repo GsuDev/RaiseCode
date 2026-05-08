@@ -8,6 +8,7 @@ Para añadir un lenguaje nuevo: crear su fichero y registrarlo aquí. Nada más.
 from .javascript import JavaScriptRunner
 from .python import PythonRunner
 from .java import JavaRunner
+from .kotlin import KotlinRunner
 from .base import BaseRunner
 from typing import Optional
 
@@ -16,6 +17,7 @@ _REGISTRY: dict[str, BaseRunner] = {
     "javascript": JavaScriptRunner(),
     "python":     PythonRunner(),
     "java":       JavaRunner(),
+    "kotlin":     KotlinRunner(),
 }
 
 

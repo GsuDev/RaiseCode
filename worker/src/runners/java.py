@@ -34,6 +34,22 @@ class JavaRunner(BaseRunner):
     # Sin Alpine: la imagen alpine de temurin no soporta ARM64
     image = "eclipse-temurin:17-jdk"
 
+    def wrap_with_inputs(self, code: str, inputs: list) -> str:
+        calls = "\n".join(
+            f"        System.out.println(solution({inp}));"
+            for inp in inputs
+        )
+        indented_code = "\n".join("    " + line for line in code.splitlines())
+        return (
+            f"public class {MAIN_CLASS} {{\n"
+            f"    public static void main(String[] args) {{\n"
+            f"{calls}\n"
+            f"    }}\n"
+            f"\n"
+            f"{indented_code}\n"
+            f"}}\n"
+        )
+
     def build_container_config(self, code: str, base_config: Dict) -> Dict:
         final_code = _wrap_in_class(code)
         # Escapar comillas simples en el código para el heredoc

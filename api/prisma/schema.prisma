@@ -163,6 +163,8 @@ model CompletedChallenges {
   challengeId Int
   time        BigInt
   Code        String    @db.VarChar(1500)
+  completedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
 
   @@id([userId, challengeId])
 }
