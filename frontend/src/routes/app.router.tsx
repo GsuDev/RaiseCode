@@ -16,6 +16,7 @@ import { AdminLayout } from '@/admin/layouts/AdminLayout';
 import { AdminDashboardPage } from '@/admin/pages/dashboard/AdminDashboardPage';
 import { AdminUsersPage } from '@/admin/pages/users/AdminUsersPage';
 import { AdminSubjectsPage } from '@/admin/pages/subjects/AdminSubjectsPage';
+import { AdminCoursesPage } from '@/admin/pages/courses/AdminCoursesPage';
 
 export const appRouter = createBrowserRouter([
   {
@@ -70,6 +71,7 @@ export const appRouter = createBrowserRouter([
                 { path: 'challenges',       element: <AdminChallengesPage /> },
                 { path: 'users',            element: <AdminUsersPage /> },
                 { path: 'subjects',         element: <AdminSubjectsPage /> },
+                { path: 'courses',          element: <AdminCoursesPage />},
               ]}
             ]
           }
