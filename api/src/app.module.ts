@@ -14,6 +14,7 @@ import { CoursesModule } from './courses/courses.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import { ExecutionModule } from './execution/execution.module';
 import { AchievementsModule } from './achievements/achievements.module';
+import { RankingModule } from './ranking/ranking.module';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
@@ -31,6 +32,7 @@ import { AdminModule } from './admin/admin.module';
     SubjectsModule,
     ExecutionModule,
     AchievementsModule,
+    RankingModule,
     AdminModule,
   ],
   controllers: [],
