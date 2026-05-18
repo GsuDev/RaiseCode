@@ -28,6 +28,7 @@ export interface UserAchievement {
 }
 
 export interface ProfileResponse {
+  xp: number;
   stats: {
     completedCount: number;
     byLanguage: LanguageStat[];

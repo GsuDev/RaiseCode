@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs clean build-runners test-runner
+.PHONY: help build up down restart logs clean build-runners test-runner prod prod-down prod-logs prod-build
 
 # Colores para output
 GREEN  := \033[0;32m
@@ -6,12 +6,28 @@ YELLOW := \033[0;33m
 NC     := \033[0m
 
 help: ## Muestra esta ayuda
-	@echo "$(GREEN)Code Judge Platform - Comandos disponibles:$(NC)"
+	@echo "$(GREEN)RaiseCode - Comandos disponibles:$(NC)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(YELLOW)%-20s$(NC) %s\n", $$1, $$2}'
 
 # ==============================================================================
 # CONSTRUCCIÓN Y DESPLIEGUE
 # ==============================================================================
+
+prod: ## Levantar stack de PRODUCCIÓN (docker-compose.prod.yml)
+	@echo "$(GREEN)Construyendo y levantando entorno de producción...$(NC)"
+	docker compose -f docker-compose.prod.yml up --build -d
+	@echo "$(GREEN)✓ Producción iniciada$(NC)"
+	@echo "$(YELLOW)Frontend: https://localhost$(NC)"
+	@echo "$(YELLOW)API:      https://localhost/api$(NC)"
+
+prod-build: ## Construir imágenes de producción sin levantar
+	docker compose -f docker-compose.prod.yml build
+
+prod-down: ## Parar y eliminar contenedores de producción
+	docker compose -f docker-compose.prod.yml down
+
+prod-logs: ## Ver logs de producción
+	docker compose -f docker-compose.prod.yml logs -f
 
 build: ## Construir todas las imágenes (servicios + runners)
 	@echo "$(GREEN)Construyendo servicios principales...$(NC)"
@@ -21,11 +37,11 @@ build: ## Construir todas las imágenes (servicios + runners)
 
 build-runners: ## Construir solo las imágenes de los runners
 	@echo "$(GREEN)Construyendo runner de JavaScript...$(NC)"
-	docker build -t code_judge_runner_js:latest ./runners/javascript
+	docker build -t raisecode_runner_js:latest ./runners/javascript
 	@echo "$(GREEN)Construyendo runner de Python...$(NC)"
-	docker build -t code_judge_runner_python:latest ./runners/python
+	docker build -t raisecode_runner_python:latest ./runners/python
 	@echo "$(GREEN)Construyendo runner de Java...$(NC)"
-	docker build -t code_judge_runner_java:latest ./runners/java
+	docker build -t raisecode_runner_java:latest ./runners/java
 	@echo "$(GREEN)✓ Runners construidos exitosamente$(NC)"
 
 up: ## Levantar todos los servicios
@@ -78,18 +94,18 @@ logs-nginx: ## Ver logs de Nginx
 
 test-runner-js: ## Probar el runner de JavaScript
 	@echo "$(GREEN)Probando runner de JavaScript...$(NC)"
-	@echo 'console.log("Hola desde JavaScript");' | docker run --rm -i --network none --memory="128m" --cpus="0.5" code_judge_runner_js:latest
+	@echo 'console.log("Hola desde JavaScript");' | docker run --rm -i --network none --memory="128m" --cpus="0.5" raisecode_runner_js:latest
 
 test-runner-python: ## Probar el runner de Python
 	@echo "$(GREEN)Probando runner de Python...$(NC)"
-	@echo 'print("Hola desde Python")' | docker run --rm -i --network none --memory="128m" --cpus="0.5" code_judge_runner_python:latest
+	@echo 'print("Hola desde Python")' | docker run --rm -i --network none --memory="128m" --cpus="0.5" raisecode_runner_python:latest
 
 test-runner-java: ## Probar el runner de Java (requiere archivo Main.java)
 	@echo "$(GREEN)Probando runner de Java...$(NC)"
 	@echo "Creando archivo temporal..."
 	@mkdir -p /tmp/java-test
 	@echo 'public class Main { public static void main(String[] args) { System.out.println("Hola desde Java"); } }' > /tmp/java-test/Main.java
-	@docker run --rm -v /tmp/java-test:/code:ro --network none --memory="256m" --cpus="0.5" code_judge_runner_java:latest
+	@docker run --rm -v /tmp/java-test:/code:ro --network none --memory="256m" --cpus="0.5" raisecode_runner_java:latest
 	@rm -rf /tmp/java-test
 
 test-runners: test-runner-js test-runner-python test-runner-java ## Probar todos los runners
@@ -160,13 +176,13 @@ shell-worker: ## Abrir shell en el contenedor de Worker
 	docker-compose exec worker bash
 
 shell-db: ## Abrir MySQL CLI en MariaDB
-	docker-compose exec mariadb mysql -u ${DB_USER:-code_judge_user} -p${DB_PASSWORD:-change_this_password} ${DB_NAME:-code_judge}
+	docker-compose exec mariadb mysql -u ${DB_USER:-raisecode_user} -p${DB_PASSWORD:-change_this_password} ${DB_NAME:-raisecode}
 
 shell-db-root: ## Abrir MySQL CLI como root
 	docker-compose exec mariadb mysql -u root -p${DB_ROOT_PASSWORD:-root_password_change_me}
 
 shell-mongo: ## Abrir MongoDB CLI
-	docker-compose exec mongodb mongosh ${MONGO_DATABASE:-code_judge_logs}
+	docker-compose exec mongodb mongosh ${MONGO_DATABASE:-raisecode_logs}
 
 # Comandos específicos de Python
 worker-install: ## Instalar dependencias del Worker
@@ -236,7 +252,7 @@ ssl-certs-docker: ## Generar certificado SSL via Docker (Windows/Linux/Mac)
 	@echo "$(GREEN)✓ Certificados listos en nginx/certs/$(NC)"
 
 images: ## Listar imágenes del proyecto
-	@docker images | grep -E "code_judge|mariadb|mongo|redis|nginx|python"
+	@docker images | grep -E "raisecode|mariadb|mongo|redis|nginx|python"
 
 network-test: ## Verificar que runners NO tienen acceso a red
 	@echo "$(GREEN)Verificando aislamiento de red...$(NC)"
@@ -251,15 +267,15 @@ check-python: ## Verificar que Python está instalado en el Worker
 # Backup y restore
 backup-db: ## Crear backup de MariaDB
 	@echo "$(GREEN)Creando backup de MariaDB...$(NC)"
-	docker-compose exec mariadb mysqldump -u root -p${DB_ROOT_PASSWORD:-root_password_change_me} ${DB_NAME:-code_judge} > backup_$(shell date +%Y%m%d_%H%M%S).sql
+	docker-compose exec mariadb mysqldump -u root -p${DB_ROOT_PASSWORD:-root_password_change_me} ${DB_NAME:-raisecode} > backup_$(shell date +%Y%m%d_%H%M%S).sql
 	@echo "$(GREEN)✓ Backup creado$(NC)"
 
 backup-mongo: ## Crear backup de MongoDB
 	@echo "$(GREEN)Creando backup de MongoDB...$(NC)"
-	docker-compose exec mongodb mongodump --db ${MONGO_DATABASE:-code_judge_logs} --out /backup
+	docker-compose exec mongodb mongodump --db ${MONGO_DATABASE:-raisecode_logs} --out /backup
 	@echo "$(GREEN)✓ Backup creado en contenedor$(NC)"
 
 restore-db: ## Restaurar backup de MariaDB (requiere archivo backup.sql)
 	@echo "$(YELLOW)Restaurando backup de MariaDB...$(NC)"
-	docker-compose exec -T mariadb mysql -u root -p${DB_ROOT_PASSWORD:-root_password_change_me} ${DB_NAME:-code_judge} < backup.sql
+	docker-compose exec -T mariadb mysql -u root -p${DB_ROOT_PASSWORD:-root_password_change_me} ${DB_NAME:-raisecode} < backup.sql
 	@echo "$(GREEN)✓ Backup restaurado$(NC)"

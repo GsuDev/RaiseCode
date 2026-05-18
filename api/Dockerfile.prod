@@ -1,0 +1,38 @@
+# ==============================================================================
+# API Dockerfile - PRODUCCIÓN (multi-stage)
+# Stage 1: compila TypeScript con NestJS
+# Stage 2: runtime mínimo con node dist/main
+# ==============================================================================
+
+# --- Stage 1: build ---
+FROM node:20-alpine AS builder
+
+RUN apk add --no-cache python3 make g++ bash
+
+WORKDIR /app
+
+COPY package.json yarn.lock .yarnrc.yml ./
+RUN corepack enable && yarn install --frozen-lockfile
+
+COPY . .
+
+# DB_URL solo necesaria en build para que prisma.config.ts no falle al generar el cliente
+# La URL real se inyecta en runtime vía docker-compose
+ENV DB_URL="mysql://root:root@localhost:3306/raisecode"
+RUN yarn prisma generate
+RUN yarn build
+
+# --- Stage 2: runtime ---
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/generated ./generated
+COPY --from=builder /app/prisma ./prisma
+
+EXPOSE 3000
+
+CMD ["node", "dist/src/main"]

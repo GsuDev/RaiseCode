@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCourses } from '../services/cycles.service';
-import { CourseWithStats } from '../types';
+import type { CourseWithStats } from '../types';
 
 export const useCycles = () => {
   const [courses, setCourses] = useState<CourseWithStats[]>([]);

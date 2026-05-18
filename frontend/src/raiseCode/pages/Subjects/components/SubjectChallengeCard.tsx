@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Card, Flex, Text, VStack } from '@chakra-ui/react';
+import { Badge, Button, Card, Flex, Text, VStack } from '@chakra-ui/react';
 import { Users, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import type { SubjectChallenge } from '../../../components/SubjectSection/types';

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# Code Judge Platform - Script de Inicio Rápido
+# RaiseCode - Script de Inicio Rápido
 # ==============================================================================
 
 set -e
@@ -35,7 +35,7 @@ echo -e "${GREEN}"
 cat << "EOF"
 ╔═══════════════════════════════════════════════════════╗
 ║                                                       ║
-║     CODE JUDGE PLATFORM - QUICK START                ║
+║     RAISECODE - QUICK START                ║
 ║                                                       ║
 ║     Plataforma de corrección automática de código    ║
 ║                                                       ║
@@ -103,15 +103,15 @@ echo ""
 print_step "Construyendo imágenes de runners..."
 
 echo "  → Construyendo runner de JavaScript..."
-docker build -t code_judge_runner_js:latest ./runners/javascript -q
+docker build -t raisecode_runner_js:latest ./runners/javascript -q
 print_success "Runner de JavaScript construido"
 
 echo "  → Construyendo runner de Python..."
-docker build -t code_judge_runner_python:latest ./runners/python -q
+docker build -t raisecode_runner_python:latest ./runners/python -q
 print_success "Runner de Python construido"
 
 echo "  → Construyendo runner de Java..."
-docker build -t code_judge_runner_java:latest ./runners/java -q
+docker build -t raisecode_runner_java:latest ./runners/java -q
 print_success "Runner de Java construido"
 
 echo ""
@@ -202,7 +202,7 @@ print_step "Probando runners..."
 
 # Test JavaScript
 echo "  → Probando runner de JavaScript..."
-if echo 'console.log("Hello from JS");' | docker run --rm -i --network none --memory="128m" --cpus="0.5" code_judge_runner_js:latest 2>/dev/null | grep -q "Hello from JS"; then
+if echo 'console.log("Hello from JS");' | docker run --rm -i --network none --memory="128m" --cpus="0.5" raisecode_runner_js:latest 2>/dev/null | grep -q "Hello from JS"; then
     print_success "Runner de JavaScript funciona correctamente"
 else
     print_warning "Runner de JavaScript puede tener problemas"
@@ -210,7 +210,7 @@ fi
 
 # Test Python
 echo "  → Probando runner de Python..."
-if echo 'print("Hello from Python")' | docker run --rm -i --network none --memory="128m" --cpus="0.5" code_judge_runner_python:latest 2>/dev/null | grep -q "Hello from Python"; then
+if echo 'print("Hello from Python")' | docker run --rm -i --network none --memory="128m" --cpus="0.5" raisecode_runner_python:latest 2>/dev/null | grep -q "Hello from Python"; then
     print_success "Runner de Python funciona correctamente"
 else
     print_warning "Runner de Python puede tener problemas"
@@ -220,7 +220,7 @@ fi
 echo "  → Probando runner de Java..."
 mkdir -p /tmp/java-quickstart-test
 echo 'public class Main { public static void main(String[] args) { System.out.println("Hello from Java"); } }' > /tmp/java-quickstart-test/Main.java
-if docker run --rm -v /tmp/java-quickstart-test:/code:ro --network none --memory="256m" --cpus="0.5" code_judge_runner_java:latest 2>/dev/null | grep -q "Hello from Java"; then
+if docker run --rm -v /tmp/java-quickstart-test:/code:ro --network none --memory="256m" --cpus="0.5" raisecode_runner_java:latest 2>/dev/null | grep -q "Hello from Java"; then
     print_success "Runner de Java funciona correctamente"
 else
     print_warning "Runner de Java puede tener problemas"
