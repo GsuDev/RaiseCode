@@ -60,7 +60,7 @@ export const ProfileRecentActivity = ({ recentActivity }: Props) => {
               </Flex>
 
               <Box>
-                <Text fontSize="sm" fontWeight="semibold" color="fg" noOfLines={1}>
+                <Text fontSize="sm" fontWeight="semibold" color="fg" lineClamp={1}>
                   Completaste '{activity.challengeTitle}'
                 </Text>
                 <Text fontSize="xs" color="fg.muted">

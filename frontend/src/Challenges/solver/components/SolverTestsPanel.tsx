@@ -1,4 +1,4 @@
-import { Box, HStack, Text, VStack, Heading } from '@chakra-ui/react';
+import { Box, Text, VStack, Heading } from '@chakra-ui/react';
 import type { ChallengeTest } from '../../detail/services/challengeDetail.service';
 
 interface Props {
