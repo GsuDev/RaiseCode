@@ -66,7 +66,6 @@ const SelectField = ({
 /**
  * Paso 1 — Información básica del reto.
  * Recoge título, descripción breve, lenguaje, asignatura y dificultad.
- * Los puntos son un campo visual mock (no existe en el schema).
  */
 export const StepBasicInfo = ({
   form, updateField, languages, subjects, difficulties, optionsLoading, onNext,
@@ -75,7 +74,6 @@ export const StepBasicInfo = ({
 
   return (
     <VStack gap="0" align="stretch" h="full">
-      {/* Cabecera del panel */}
       <Box p="6" borderBottom="1px solid" borderColor="border">
         <HStack gap="2" mb="1">
           <FileText size={18} color="var(--chakra-colors-brand-500)" />
@@ -86,9 +84,7 @@ export const StepBasicInfo = ({
         </Text>
       </Box>
 
-      {/* Campos */}
       <VStack gap="5" p="6" flex="1" align="stretch">
-        {/* Título */}
         <Box>
           <Text mb="2" fontSize="sm" fontWeight="medium" color="fg">
             Título del Reto
@@ -106,7 +102,6 @@ export const StepBasicInfo = ({
           />
         </Box>
 
-        {/* Descripción breve */}
         <Box>
           <Text mb="2" fontSize="sm" fontWeight="medium" color="fg">
             Descripción Breve
@@ -126,7 +121,6 @@ export const StepBasicInfo = ({
           />
         </Box>
 
-        {/* Lenguaje + Asignatura */}
         <Grid templateColumns="1fr 1fr" gap="4">
           <SelectField
             label="Lenguaje de Programación"
@@ -146,8 +140,7 @@ export const StepBasicInfo = ({
           />
         </Grid>
 
-        {/* Dificultad + Puntos (mock) */}
-        <Grid templateColumns="1fr 1fr" gap="4">
+        <Grid templateColumns="1fr" gap="4">
           <SelectField
             label="Dificultad"
             value={form.dificultyId}
@@ -156,28 +149,9 @@ export const StepBasicInfo = ({
             placeholder="Selecciona dificultad"
             disabled={optionsLoading}
           />
-          <Box>
-            <Text mb="2" fontSize="sm" fontWeight="medium" color="fg">
-              Puntos{' '}
-              <Text as="span" fontSize="xs" color="fg.muted">
-                (visual)
-              </Text>
-            </Text>
-            <Input
-              type="number"
-              defaultValue={100}
-              bg="bg.subtle"
-              border="1px solid"
-              borderColor="border"
-              color="fg"
-              _focus={{ borderColor: 'brand.500', outline: 'none' }}
-              // TODO: conectar con campo real cuando exista en el schema
-            />
-          </Box>
         </Grid>
       </VStack>
 
-      {/* Footer */}
       <Flex p="6" justify="flex-end" borderTop="1px solid" borderColor="border">
         <Button
           bg="brand.500"
