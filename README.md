@@ -70,30 +70,20 @@ La aplicación estará disponible en **https://localhost**
 
 ---
 
-### Base de datos — Seed inicial
+## Base de datos — Seed inicial
 
-Una vez levantados los servicios, la base de datos está vacía. Hay que aplicar las migraciones y cargar los datos de ejemplo:
+> El seed requiere que las migraciones ya estén aplicadas (las tablas deben existir).
 
 ```bash
-# Mac / Linux
 # 1. Aplicar migraciones (crea las tablas):
-docker exec raisecode_api yarn prisma migrate deploy
+docker exec code_judge_api yarn prisma migrate deploy
 
-# 2. Cargar datos de ejemplo (lenguajes, asignaturas, logros, retos):
-docker exec -i raisecode_mariadb mysql -uroot -proot raisecode < seed.sql
+# 2. Poblar datos de ejemplo (opción recomendada — incluye Kotlin y logros):
+docker exec code_judge_api yarn prisma db seed
+
+# Alternativa con SQL directo:
+docker exec -i code_judge_mariadb mysql -uroot -proot raisecode < seed.sql
 ```
-
-```powershell
-# Windows (PowerShell)
-# 1. Aplicar migraciones:
-docker exec raisecode_api yarn prisma migrate deploy
-
-# 2. Cargar datos de ejemplo:
-Get-Content seed.sql | docker exec -i raisecode_mariadb mysql -uroot -proot raisecode
-```
-
-> El `seed.sql` crea los datos de forma fiable. Como alternativa puedes usar
-> `docker exec raisecode_api yarn prisma db seed` pero incluye menos datos.
 
 ---
 
