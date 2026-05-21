@@ -180,7 +180,7 @@ export class UsersService {
         },
         orderBy: { id: 'desc' },
       }),
-      this.prisma.challenge.count(),
+      this.prisma.user.count(),
     ]);
 
     // Transformar la salida para que roles sea un array de strings
@@ -207,88 +207,88 @@ export class UsersService {
   /**
   * Busca el perfil del usuario.
   */
-async findProfile(id: number) {
-  const user = await this.prisma.user.findUnique({
-    where: { id },
-    include: {
-      course: {
-        select: { id: true, name: true },
-      },
-      userRoles: {
-        include: { role: true },
-      },
-      completedChallenges: {
-        include: {
-          challenge: {
-            include: { language: true, dificulty: true },
-          },
+  async findProfile(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        course: {
+          select: { id: true, name: true },
         },
-        orderBy: { completedAt: 'desc' },
+        userRoles: {
+          include: { role: true },
+        },
+        completedChallenges: {
+          include: {
+            challenge: {
+              include: { language: true, dificulty: true },
+            },
+          },
+          orderBy: { completedAt: 'desc' },
+        },
       },
-    },
-  });
+    });
 
-  if (!user) {
-    throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-  }
-
-  const times = user.completedChallenges
-      .map((cc) => Number(cc.time))
-      .filter((t) => t > 0);
-
-  const avgExecutionTime = times.length > 0
-      ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
-      : null;
-
-  const bestExecutionTime = times.length > 0
-      ? Math.min(...times)
-      : null;
-
-  const xpMap: Record<string, number> = { Easy: 10, Medium: 25, Hard: 50 };
-
-  const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
-    const lang = curr.challenge.language;
-    if (lang) {
-      if (!acc[lang.id]) {
-        acc[lang.id] = { languageName: lang.name, count: 0 };
-      }
-      acc[lang.id].count += 1;
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
-    return acc;
-  }, {});
 
-  const recentActivity = user.completedChallenges.map((cc) => ({
-    challengeId: cc.challengeId,
-    challengeTitle: cc.challenge.title,
-    languageName: cc.challenge.language.name,
-    executionTime: Number(cc.time),
-    completedAt: cc.completedAt.toISOString(),
-    xpEarned: xpMap[cc.challenge.dificulty.name] ?? 10,
-  }));
+    const times = user.completedChallenges
+        .map((cc) => Number(cc.time))
+        .filter((t) => t > 0);
 
-  return {
-    id: user.id,
-    name: user.name,
-    lastname: user.lastname,
-    email: user.email,
-    xp: user.xp,
-    course: user.course,
-    roles: user.userRoles.map(ur => ur.role.name),
-    stats: {
-      completedCount: user.completedChallenges.length,
-      byLanguage: Object.values(languageStats),
-      avgExecutionTime,
-      bestExecutionTime,
-    },
-    recentActivity,
-  };
-}
+    const avgExecutionTime = times.length > 0
+        ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+        : null;
+
+    const bestExecutionTime = times.length > 0
+        ? Math.min(...times)
+        : null;
+
+    const xpMap: Record<string, number> = { Easy: 10, Medium: 25, Hard: 50 };
+
+    const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
+      const lang = curr.challenge.language;
+      if (lang) {
+        if (!acc[lang.id]) {
+          acc[lang.id] = { languageName: lang.name, count: 0 };
+        }
+        acc[lang.id].count += 1;
+      }
+      return acc;
+    }, {});
+
+    const recentActivity = user.completedChallenges.map((cc) => ({
+      challengeId: cc.challengeId,
+      challengeTitle: cc.challenge.title,
+      languageName: cc.challenge.language.name,
+      executionTime: Number(cc.time),
+      completedAt: cc.completedAt.toISOString(),
+      xpEarned: xpMap[cc.challenge.dificulty.name] ?? 10,
+    }));
+
+    return {
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      xp: user.xp,
+      course: user.course,
+      roles: user.userRoles.map(ur => ur.role.name),
+      stats: {
+        completedCount: user.completedChallenges.length,
+        byLanguage: Object.values(languageStats),
+        avgExecutionTime,
+        bestExecutionTime,
+      },
+      recentActivity,
+    };
+  }
 
   /**
   * Actualiza los datos de un usuario.
   */
   async update(id : number,  updateUserDto : UpdateUserDto) {
-    this.findOne(id)
+    await this.findOne(id);
 
     const updated = await this.prisma.user.update({
       where: { id },
@@ -313,7 +313,7 @@ async findProfile(id: number) {
   * Eliminia un usuario.
   */
   async remove(id : number, userId : number) {
-    this.findOne(id)
+    await this.findOne(id); 
 
     if (userId === id) {
       throw new NotAcceptableException(`No puede borrarse a si mismo`);
