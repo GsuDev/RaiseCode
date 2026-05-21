@@ -113,6 +113,7 @@ def _validate_tests(stdout: str, exit_code: int, test_cases: List[Dict]) -> tupl
             "passed":      ok,
             "expected":    expected,
             "actual":      actual,
+            "hidden":      tc.get("hidden", False)
         })
 
     return results, passed, len(test_cases)
@@ -138,6 +139,7 @@ def _validate_tests_by_line(stdout: str, exit_code: int, test_cases: List[Dict])
             "passed":      ok,
             "expected":    expected,
             "actual":      actual,
+            "hidden":      tc.get("hidden", False)
         })
 
     return results, passed, len(test_cases)
