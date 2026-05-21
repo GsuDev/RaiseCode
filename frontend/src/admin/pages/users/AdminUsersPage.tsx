@@ -15,6 +15,7 @@ import {
 import { Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { adminUsersService } from './service/adminUsers.service';
+import type { Course } from './service/adminUsers.service';
 import { CreateUserModal, EditUserModal } from './components';
 import { BulkUserForm } from './components/BulkUserForm';
 import { GeneratedCredentialsTable } from './components/GeneratedCredentialsTable';
@@ -41,6 +42,7 @@ interface PaginationMeta {
 
 export const AdminUsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -94,6 +96,11 @@ export const AdminUsersPage = () => {
   const { credentials, isLoading: isBulkLoading, createBulkUsers } = useBulkUserCreation({
     onSuccess: loadUsers,
   });
+
+  // Cargar cursos al montar
+  useEffect(() => {
+    adminUsersService.getCourses().then(setCourses).catch(() => {});
+  }, []);
 
   // Cargar usuarios cuando cambia la página
   useEffect(() => {
@@ -179,8 +186,9 @@ export const AdminUsersPage = () => {
       {/* Bulk User Generation */}
       <Box>
         <BulkUserForm
-          onSubmit={createBulkUsers}
+          onSubmit={(prefix, count, courseId) => createBulkUsers(prefix, count, courseId)}
           isLoading={isBulkLoading}
+          courses={courses}
         />
       </Box>
 

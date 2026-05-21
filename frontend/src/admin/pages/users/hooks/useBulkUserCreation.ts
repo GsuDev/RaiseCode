@@ -27,7 +27,7 @@ export const useBulkUserCreation = (options?: UseBulkUserCreationOptions) => {
     success: false,
   });
 
-  const createBulkUsers = async (prefix: string, count: number) => {
+  const createBulkUsers = async (prefix: string, count: number, courseId?: number) => {
     setState({
       credentials: [],
       isLoading: true,
@@ -38,7 +38,8 @@ export const useBulkUserCreation = (options?: UseBulkUserCreationOptions) => {
     try {
       const result = await adminUsersService.createBulkGenericUsers(
         prefix,
-        count
+        count,
+        courseId
       );
 
       setState({
