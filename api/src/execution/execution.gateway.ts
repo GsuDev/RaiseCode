@@ -1,5 +1,5 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
 /**
  * Gateway de WebSockets para el módulo de ejecución.
@@ -7,15 +7,22 @@ import { Server } from 'socket.io';
  * El cliente se suscribe al evento "execution:result:{jobId}".
  */
 @WebSocketGateway({ cors: { origin: '*' } })
-export class ExecutionGateway {
+export class ExecutionGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
 
+  handleConnection(client: Socket) {
+    // El cliente envía su userId como query param al conectarse
+    const userId = client.handshake.query.userId as string;
+    if (userId) {
+      client.join(`user:${userId}`);
+    }
+  }
+
   /**
-   * Emite el resultado de una ejecución al cliente que se suscribió
-   * al evento correspondiente a su jobId.
+   * Emite el resultado de una ejecución solo a los sockets del usuario
    */
-  emitResult(jobId: string, payload: object): void {
-    this.server.emit(`execution:result:${jobId}`, payload);
+  emitResult(jobId: string, userId: number, payload: object): void {
+    this.server.to(`user:${userId}`).emit(`execution:result:${jobId}`, payload);
   }
 }

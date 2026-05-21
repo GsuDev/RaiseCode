@@ -152,7 +152,7 @@ export class ExecutionService {
     }
 
     // 3. Emitir resultado por WebSocket al cliente que está escuchando este jobId
-    this.gateway.emitResult(dto.jobId, {
+    this.gateway.emitResult(dto.jobId, dto.userId, {
       status: dto.status,
       score: dto.score,
       tests_passed: dto.tests_passed,
