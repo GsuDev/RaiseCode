@@ -338,10 +338,12 @@ async findProfile(id: number) {
   async createBulkGenericUsers(
     bulkDto: CreateBulkGenericUsersDto,
   ): Promise<GeneratedUserCredentials[]> {
-    const { prefix, count } = bulkDto;
+    const { prefix, count, courseId } = bulkDto;
 
-    // Obtener el primer curso disponible como curso por defecto
-    const defaultCourse = await this.prisma.course.findFirst();
+    // Obtener el curso indicado o el primero disponible como fallback
+    const defaultCourse = courseId
+      ? await this.prisma.course.findUnique({ where: { id: courseId } })
+      : await this.prisma.course.findFirst();
     if (!defaultCourse) {
       throw new BadRequestException('No hay cursos disponibles para asignar a los usuarios');
     }
