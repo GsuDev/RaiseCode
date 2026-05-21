@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 @Injectable()
 export class AdminService {
@@ -45,7 +46,7 @@ export class AdminService {
     }
     async getActivityLast7Days() { 
         return this.prisma.completedChallenges.groupBy({
-            by: ['createdAt'], // ⚠️ NO EXISTE en CompletedChallenges, necesitas agregar timestamp
+            by: ['createdAt'],
             _count: true,
             where: {
                 createdAt: {
@@ -53,6 +54,27 @@ export class AdminService {
                 }
             }
         })
+    }
+
+    async getSettings() {
+        return await this.prisma.appConfig.findMany();  
+    }
+
+    async getSetting(key ?: string) {
+        const config = await this.prisma.appConfig.findUnique({ where: { key } });
+        return config ?  config.value : null;
+    }
+
+    async updateSettings(data : UpdateSettingsDto) {
+        const upserts = Object.entries(data).map(([key, value]) =>
+            this.prisma.appConfig.upsert({
+                where: { key },
+                create: { key, value },
+                update: { value },
+            })
+        );
+        await Promise.all(upserts);
+        return this.getSettings();
     }
 
     async getStats() {

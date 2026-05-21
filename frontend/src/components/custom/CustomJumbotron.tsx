@@ -10,6 +10,7 @@ import { ColorModeToggle } from "../ui/color-mode"
 import LogoSrc from "src/assets/Logo.svg"
 import { useAuth } from "@/auth/context/AuthContext"
 import { useNavigate } from "react-router"
+import { useRegistrationStatus } from "@/auth/Register/hooks/useRegistrationStatus"
 
 interface NavigationProps {
   currentPage: string
@@ -20,6 +21,7 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { isLoggedIn, user, logout } = useAuth()
   const navigate = useNavigate()
+  const { registrationEnabled } = useRegistrationStatus()
 
   const navItems = [
     { id: "/",           label: "Inicio",      icon: Trophy },
@@ -174,8 +176,16 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                   </Tooltip.Content>
                 </Tooltip.Positioner>
               </Tooltip.Root>
-              <Button bg="brand.500" color="bg" size="sm" onClick={() => onNavigate("/registro")} _hover={{ bg: "bg.subtle", color: "fg" }}>
-                Registrarse
+              <Button
+                bg={registrationEnabled ? "brand.500" : "bg.subtle"}
+                color={registrationEnabled ? "bg" : "fg.muted"}
+                size="sm"
+                onClick={() => registrationEnabled && onNavigate("/registro")}
+                disabled={!registrationEnabled}
+                title={!registrationEnabled ? "Registro desactivado temporalmente" : undefined}
+                _hover={{ bg: registrationEnabled ? "bg.subtle" : "bg.subtle", color: "fg" }}
+              >
+                {registrationEnabled ? "Registrarse" : "Registro desactivado"}
               </Button>
             </>
           )}
@@ -247,8 +257,15 @@ export function CustomJumbotron({ currentPage, onNavigate }: NavigationProps) {
                   <LogIn size={16} />
                   Iniciar Sesión
                 </Button>
-                <Button bg="brand.500" color="bg" justifyContent="flex-start" onClick={() => { onNavigate("/registro"); setMobileMenuOpen(false) }} _hover={{ bg: "brand.600" }}>
-                  Registrarse
+                <Button
+                  bg={registrationEnabled ? "brand.500" : "bg.subtle"}
+                  color={registrationEnabled ? "bg" : "fg.muted"}
+                  justifyContent="flex-start"
+                  onClick={() => { if (registrationEnabled) { onNavigate("/registro"); setMobileMenuOpen(false) } }}
+                  disabled={!registrationEnabled}
+                  _hover={{ bg: "brand.600" }}
+                >
+                  {registrationEnabled ? "Registrarse" : "Registro desactivado temporalmente"}
                 </Button>
               </>
             )}

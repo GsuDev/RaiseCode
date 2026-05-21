@@ -4,6 +4,7 @@ import { seedSubjects } from './seeds/seedSubjects';
 import { seedUsers } from './seeds/seedUsers';
 import { seedChallenges } from './seeds/seedChallenges';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { seedAppConfig } from './seeds/seedAppConfig';
 
 const adapter = new PrismaMariaDb(
         {
@@ -33,8 +34,10 @@ async function main() {
     await prisma.language.deleteMany();
     await prisma.role.deleteMany();
     await prisma.achievement.deleteMany();
+    await prisma.appConfig.deleteMany();
 
     console.log('Iniciando seeding...');
+    await seedAppConfig(prisma);
     await seedCatalogues(prisma);
     await seedSubjects(prisma);
     await seedUsers(prisma);
