@@ -9,22 +9,26 @@ import {
 } from '@chakra-ui/react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
+import type { Course } from '../service/adminUsers.service';
 
 interface BulkUserFormProps {
-  onSubmit: (prefix: string, count: number) => void;
+  onSubmit: (prefix: string, count: number, courseId?: number) => void;
   isLoading?: boolean;
+  courses?: Course[];
 }
 
 export const BulkUserForm: React.FC<BulkUserFormProps> = ({
   onSubmit,
   isLoading = false,
+  courses = [],
 }) => {
   const [prefix, setPrefix] = useState('');
   const [count, setCount] = useState(5);
-  const [errors, setErrors] = useState<{ prefix?: string; count?: string }>({});
+  const [courseId, setCourseId] = useState<number | undefined>(undefined);
+  const [errors, setErrors] = useState<{ prefix?: string; count?: string; courseId?: string }>({});
 
   const validateForm = (): boolean => {
-    const newErrors: { prefix?: string; count?: string } = {};
+    const newErrors: { prefix?: string; count?: string; courseId?: string } = {};
 
     if (!prefix.trim()) {
       newErrors.prefix = 'El prefijo es requerido';
@@ -40,6 +44,10 @@ export const BulkUserForm: React.FC<BulkUserFormProps> = ({
       newErrors.count = 'Máximo 50 usuarios';
     }
 
+    if (courses.length > 0 && !courseId) {
+      newErrors.courseId = 'El curso es requerido';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -47,9 +55,10 @@ export const BulkUserForm: React.FC<BulkUserFormProps> = ({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(prefix, count);
+      onSubmit(prefix, count, courseId);
       setPrefix('');
       setCount(5);
+      setCourseId(undefined);
       setErrors({});
     }
   };
@@ -89,7 +98,7 @@ export const BulkUserForm: React.FC<BulkUserFormProps> = ({
           </Text>
         </Box>
 
-        <SimpleGrid columns={2} gap={4}>
+        <SimpleGrid columns={{ base: 1, md: courses.length > 0 ? 3 : 2 }} gap={4}>
           <VStack align="stretch" gap={1}>
             <Text fontSize="sm" fontWeight="500">
               Prefijo *
@@ -130,6 +139,40 @@ export const BulkUserForm: React.FC<BulkUserFormProps> = ({
               </Text>
             )}
           </VStack>
+
+          {courses.length > 0 && (
+            <VStack align="stretch" gap={1}>
+              <Text fontSize="sm" fontWeight="500">
+                Curso *
+              </Text>
+              <select
+                value={courseId ?? ''}
+                onChange={(e) => setCourseId(e.target.value ? Number(e.target.value) : undefined)}
+                disabled={isLoading}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: `1px solid ${errors.courseId ? '#E53E3E' : 'var(--chakra-colors-border)'}`,
+                  background: 'var(--chakra-colors-bg-panel)',
+                  color: 'var(--chakra-colors-fg)',
+                  fontSize: '14px',
+                  width: '100%',
+                }}
+              >
+                <option value="">Seleccionar curso...</option>
+                {courses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              {errors.courseId && (
+                <Text fontSize="xs" color="red.600">
+                  {errors.courseId}
+                </Text>
+              )}
+            </VStack>
+          )}
         </SimpleGrid>
 
         <HStack justify="flex-end" gap={3}>

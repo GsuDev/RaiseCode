@@ -33,11 +33,6 @@ interface UpdateUserDto {
   courseId?: number;
 }
 
-interface CreateBulkGenericUsersDto {
-  prefix: string;
-  count: number;
-}
-
 export interface GeneratedUserCredentials {
   email: string;
   password: string;
@@ -157,13 +152,14 @@ export const adminUsersService = {
    */
   createBulkGenericUsers: async (
     prefix: string,
-    count: number
+    count: number,
+    courseId?: number
   ): Promise<GeneratedUserCredentials[]> => {
     const response = await fetch(`${API_URL}/users/bulk-generic`, {
       method: 'POST',
       headers: getAuthHeader(),
       credentials: 'include',
-      body: JSON.stringify({ prefix, count }),
+      body: JSON.stringify({ prefix, count, ...(courseId ? { courseId } : {}) }),
     });
 
     if (!response.ok) {
