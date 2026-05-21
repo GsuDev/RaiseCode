@@ -33,12 +33,6 @@ interface UpdateUserDto {
   courseId?: number;
 }
 
-interface CreateBulkGenericUsersDto {
-  prefix: string;
-  count: number;
-  courseId?: number;
-}
-
 export interface GeneratedUserCredentials {
   email: string;
   password: string;

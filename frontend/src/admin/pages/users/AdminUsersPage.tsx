@@ -10,7 +10,6 @@ import {
   Badge,
   Flex,
   IconButton,
-  Tabs,
 } from '@chakra-ui/react';
 import { Edit2, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
