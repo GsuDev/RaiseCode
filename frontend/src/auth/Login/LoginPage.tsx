@@ -2,9 +2,11 @@ import { Box, Button, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react
 import { useNavigate } from 'react-router';
 import LogoSrc from 'src/assets/Logo.svg';
 import { LoginForm } from './components/LoginForm';
+import { useRegistrationStatus } from 'src/auth/Register/hooks/useRegistrationStatus';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const { registrationEnabled } = useRegistrationStatus();
 
   return (
     <Flex minH="calc(100vh - 4rem)" alignItems="center" justifyContent="center" py="8">
@@ -37,9 +39,15 @@ export const LoginPage = () => {
 
           <Text mt="6" textAlign="center" color="fg.muted" fontSize="sm">
             ¿No tienes cuenta?{' '}
-            <Text as="button" color="brand.500" onClick={() => navigate('/registro')} _hover={{ textDecoration: 'underline' }}>
-              Regístrate gratis
-            </Text>
+            {registrationEnabled ? (
+              <Text as="button" color="brand.500" onClick={() => navigate('/registro')} _hover={{ textDecoration: 'underline' }}>
+                Regístrate gratis
+              </Text>
+            ) : (
+              <Text as="span" color="fg.subtle" fontStyle="italic">
+                Registro desactivado temporalmente
+              </Text>
+            )}
           </Text>
         </Box>
       </Box>
