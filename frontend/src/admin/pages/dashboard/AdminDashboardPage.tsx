@@ -1,4 +1,4 @@
-import { Grid, VStack } from '@chakra-ui/react';
+import { Box, Grid, Switch, Text, VStack } from '@chakra-ui/react';
 import { Award, Zap, CheckCircle, Stars } from 'lucide-react';
 import {
   StatCard,
@@ -7,9 +7,11 @@ import {
   DashboardHeader,
 } from './components';
 import { useAdminDashboard } from './hooks/useAdminDashboard';
+import { useAdminSettings } from './hooks/useAdminSettings';
 
 export const AdminDashboardPage = () => {
   const { dashboard, isLoading } = useAdminDashboard();
+  const { registrationEnabled, isUpdating, toggleRegistration } = useAdminSettings();
 
   return (
     <VStack gap={8} align="stretch">
@@ -95,6 +97,31 @@ export const AdminDashboardPage = () => {
         data={dashboard?.activityLast7Days}
         isLoading={isLoading}
       />
+
+      {/* Configuración del sistema */}
+      <Box
+        bg="bg.panel"
+        borderRadius="lg"
+        borderWidth="1px"
+        borderColor="border"
+        p={6}
+      >
+        <Text fontSize="lg" fontWeight="semibold" color="fg" mb={4}>
+          Configuración del sistema
+        </Text>
+        <Switch.Root
+          checked={registrationEnabled}
+          onCheckedChange={() => toggleRegistration()}
+          disabled={isUpdating}
+          colorPalette="brand"
+        >
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Registro público de usuarios</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
+      </Box>
     </VStack>
   );
 };
