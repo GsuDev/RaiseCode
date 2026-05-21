@@ -59,7 +59,7 @@ export interface ExecutionResult {
 }
 
 export const useExecution = () => {
-  const { token } = useAuth();
+  const {token, user } = useAuth();
   const [status, setStatus]  = useState<ExecutionStatus>('idle');
   const [result, setResult]  = useState<ExecutionResult | null>(null);
   const [error, setError]    = useState<string | null>(null);
@@ -83,6 +83,7 @@ export const useExecution = () => {
     const socket = io(WS_URL, {
       transports: ['websocket'],
       path: '/socket.io/',
+      query: { userId: String(user?.id) },
       reconnection: false,
     });
     socketRef.current = socket;

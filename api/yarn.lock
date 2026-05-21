@@ -1732,9 +1732,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/platform-socket.io@npm:^11.1.17":
-  version: 11.1.17
-  resolution: "@nestjs/platform-socket.io@npm:11.1.17"
+"@nestjs/platform-socket.io@npm:^11.1.22":
+  version: 11.1.22
+  resolution: "@nestjs/platform-socket.io@npm:11.1.22"
   dependencies:
     socket.io: "npm:4.8.3"
     tslib: "npm:2.8.1"
@@ -1742,7 +1742,7 @@ __metadata:
     "@nestjs/common": ^11.0.0
     "@nestjs/websockets": ^11.0.0
     rxjs: ^7.1.0
-  checksum: 10c0/d185633dddc865e9315f4411ae177e5237bdd5638515a00ac1504f4429be5f2e3de2bca6a18b5f7351753de1c58f71552d27343ccd421bf0c67a2b2a742ca6de
+  checksum: 10c0/6794b4de8b24504d61e2c2a2f9a8c4d76f667628395155da218eaf247f5fc52030e92459658ef22c9db96bafc992523060d5f85175f525690681f4e748e3077d
   languageName: node
   linkType: hard
 
@@ -1780,9 +1780,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/websockets@npm:^11.1.17":
-  version: 11.1.17
-  resolution: "@nestjs/websockets@npm:11.1.17"
+"@nestjs/websockets@npm:^11.1.22":
+  version: 11.1.22
+  resolution: "@nestjs/websockets@npm:11.1.22"
   dependencies:
     iterare: "npm:1.2.1"
     object-hash: "npm:3.0.0"
@@ -1796,7 +1796,7 @@ __metadata:
   peerDependenciesMeta:
     "@nestjs/platform-socket.io":
       optional: true
-  checksum: 10c0/c0827ebc1d8e76234ab2bd09afda7cfe233c1fcb864662f2d81bb902d85b21e4ffffa4de2ea7c6bc2d4dd1774cac8cb34b12af22f2a93522a9de6bd029b39b80
+  checksum: 10c0/6d9d2c8cb6f77620a0c0dcb0c23cc2a0289d0c05a7c87a06d98064bdddd11987adcbf5e8b107c6d1ce15645dc328df1c5d2d3a5683eede395adabc16ebefb547
   languageName: node
   linkType: hard
 
@@ -3198,10 +3198,10 @@ __metadata:
     "@nestjs/mongoose": "npm:^11.0.4"
     "@nestjs/passport": "npm:^11.0.5"
     "@nestjs/platform-express": "npm:^11.0.1"
-    "@nestjs/platform-socket.io": "npm:^11.1.17"
+    "@nestjs/platform-socket.io": "npm:^11.1.22"
     "@nestjs/schematics": "npm:^11.0.0"
     "@nestjs/testing": "npm:^11.0.1"
-    "@nestjs/websockets": "npm:^11.1.17"
+    "@nestjs/websockets": "npm:^11.1.22"
     "@prisma/adapter-mariadb": "npm:^7.3.0"
     "@prisma/adapter-pg": "npm:^7.3.0"
     "@prisma/client": "npm:^7.3.0"

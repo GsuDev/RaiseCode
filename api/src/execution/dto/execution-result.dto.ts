@@ -16,6 +16,10 @@ export class TestResultItemDto {
 
   @IsString()
   actual: string;
+  
+  @IsBoolean()
+  @IsOptional()
+  hidden?: boolean;
 }
 
 export class ExecutionResultDto {
