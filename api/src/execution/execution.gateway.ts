@@ -25,4 +25,8 @@ export class ExecutionGateway implements OnGatewayConnection {
   emitResult(jobId: string, userId: number, payload: object): void {
     this.server.to(`user:${userId}`).emit(`execution:result:${jobId}`, payload);
   }
+
+  emitAchievements(userId: number, achievements: any []): void {
+    this.server.to(`user:${userId}`).emit(`achievement:unlocked:${userId}`, achievements);
+  }
 }

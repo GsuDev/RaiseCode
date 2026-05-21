@@ -155,7 +155,10 @@ export class ExecutionService {
         data: { xp: { increment: xpToAdd } },
       });
 
-      await this.achievementsService.evaluateForUser(dto.userId);
+      const newAchievements = await this.achievementsService.evaluateForUser(dto.userId);
+      if (newAchievements.length > 0) {
+        this.gateway.emitAchievements(dto.userId, newAchievements)
+      }
     }
 
     // 3. Emitir resultado por WebSocket al cliente que está escuchando este jobId

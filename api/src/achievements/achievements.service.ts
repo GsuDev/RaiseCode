@@ -21,7 +21,7 @@ export class AchievementsService {
     });
   }
 
-  async evaluateForUser(userId: number): Promise<void> {
+  async evaluateForUser(userId: number): Promise<any[]> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -36,10 +36,11 @@ export class AchievementsService {
       },
     });
 
-    if (!user) return;
+    if (!user) return [];
 
     const completedCount = user.completedChallenges.length;
     const unlockedIds = user.userAchievements.map((ua) => ua.achievementId);
+    const newlyUnlocked: any[] = [];
 
     // Contar completions por asignatura
     const subjectMap = new Map<number, number>();
@@ -67,7 +68,10 @@ export class AchievementsService {
         await this.prisma.userAchievements.create({
           data: { userId, achievementId: achievement.id },
         });
+        newlyUnlocked.push(achievement);
       }
     }
+
+    return newlyUnlocked;
   }
 }

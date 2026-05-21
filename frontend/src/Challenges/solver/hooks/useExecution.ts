@@ -105,6 +105,17 @@ export const useExecution = () => {
       }
     });
 
+    socket.on(`achievement:unlocked:${user?.id}`, (achievements: any[]) => {
+      achievements.forEach((a) => {
+      toaster.create({
+        title: '🏆 ¡Logro desbloqueado!',
+        description: `${a.name} — ${a.description}`,
+        type: 'success',
+        duration: 5000,
+        });
+      });
+    });
+
     socket.on('connect_error', (err) => {
       if (resolvedRef.current) return;
       console.warn(`[WS] connect_error (intento ${reconnectRef.current + 1}):`, err.message);
