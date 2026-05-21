@@ -24,15 +24,25 @@ export interface Achievement {
 export interface UserAchievement {
   achievementId: number,
   unlockedAt: string;
-  achivement: Achievement; // deberia ser achievement pero hay error de tipeo en el schema 
+  achivement: Achievement;
+}
+
+export interface ProfileStats {
+  completedCount: number;
+  byLanguage: LanguageStat[];
+  avgExecutionTime: number | null; 
+  bestExecutionTime: number | null; 
 }
 
 export interface ProfileResponse {
+  id: number;
+  name: string;
+  lastname: string;
+  email: string;
   xp: number;
-  stats: {
-    completedCount: number;
-    byLanguage: LanguageStat[];
-  };
+  course: { id: number; name: string } | null;
+  roles: string[];
+  stats: ProfileStats;
   recentActivity: RecentActivity[];
 }
 

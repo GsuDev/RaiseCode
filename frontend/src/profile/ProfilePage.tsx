@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Box, Grid, Text, VStack, Center, Spinner } from "@chakra-ui/react";
-import { Target } from "lucide-react";
+import { Target, Clock, Zap } from "lucide-react"; 
 import { ProfileStatCard } from "./components/ProfileStatCard";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { useAuth } from "@/auth/context/AuthContext";
@@ -56,13 +56,34 @@ export const ProfilePage = () => {
           xp={data?.xp ?? 0}
         />
 
-        <Grid templateColumns={{ base: "1fr" }} gap={4}>
+        {/* Grid de estadísticas */}
+        <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4}>
           <ProfileStatCard
             icon={<Target size={24} />}
             value={data?.stats.completedCount || 0}
             label="Retos Completados"
             iconColor="green.500"
             boxBg="rgba(72, 187, 120, 0.15)"
+          />
+          
+          <ProfileStatCard
+            icon={<Clock size={24} />}
+            value={data?.stats.avgExecutionTime != null
+              ? `${(data.stats.avgExecutionTime / 1000).toFixed(1)} ms`
+              : '—'}
+            label="Tiempo Promedio"
+            iconColor="blue.500"
+            boxBg="rgba(66, 153, 225, 0.15)"
+          />
+
+          <ProfileStatCard
+            icon={<Zap size={24} />}
+            value={data?.stats.bestExecutionTime != null
+              ? `${(data.stats.bestExecutionTime / 1000).toFixed(1)} ms`
+              : '—'}
+            label="Mejor Tiempo"
+            iconColor="yellow.500"
+            boxBg="rgba(236, 201, 75, 0.15)"
           />
         </Grid>
 
