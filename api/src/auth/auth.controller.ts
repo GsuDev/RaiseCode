@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Get,
   Inject,
   Post,
   UsePipes,
@@ -55,5 +56,11 @@ export class AuthController {
       user: userWithoutPassword,
       ...tokenData,
     };
+  }
+
+  @Get('registration-status')
+  async getRegistrationStatus() {
+    const value = await this.adminService.getSetting('registrationEnabled');
+    return { registrationEnabled: value !== 'false' };
   }
 }
