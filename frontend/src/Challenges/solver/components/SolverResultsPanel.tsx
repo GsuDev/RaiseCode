@@ -36,14 +36,21 @@ export const SolverResultsPanel = ({ status, result, error }: Props) => {
           Consola de Salida
         </Text>
         {result && (
-          <Text
-            ml="auto"
-            fontSize="xs"
-            fontWeight="bold"
-            color={result.score === 100 ? 'green.400' : 'red.400'}
-          >
-            {result.tests_passed} / {result.tests_total} tests pasados
-          </Text>
+          <>
+            <Text
+              ml="auto"
+              fontSize="xs"
+              fontWeight="bold"
+              color={result.score === 100 ? 'green.400' : 'red.400'}
+            >
+              {result.tests_passed} / {result.tests_total} tests pasados
+            </Text>
+            {result.execution_time != null && (
+              <Text fontSize="xs" color="gray.500">
+                {(result.execution_time * 1000).toFixed(1)} ms
+              </Text>
+            )}
+          </>
         )}
       </HStack>
 
