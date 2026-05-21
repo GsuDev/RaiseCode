@@ -1,21 +1,22 @@
 import { Button, Flex, HStack, Text, Box } from '@chakra-ui/react';
-import { Play, RotateCcw } from 'lucide-react';
+import { Play, RotateCcw, Square } from 'lucide-react';
 
 interface Props {
   onRun: () => void;
+  onStop: () => void;
   isRunning: boolean;
   language: string;
 }
 
-export const ChallengeEditorToolbar = ({ onRun, isRunning, language }: Props) => {
+export const ChallengeEditorToolbar = ({ onRun, onStop, isRunning, language }: Props) => {
   return (
-    <Flex 
-      bg="bg.panel" 
-      borderBottomWidth="1px" 
-      borderColor="border" 
-      px="4" 
-      py="2" 
-      justify="space-between" 
+    <Flex
+      bg="bg.panel"
+      borderBottomWidth="1px"
+      borderColor="border"
+      px="4"
+      py="2"
+      justify="space-between"
       align="center"
     >
       <HStack gap="4">
@@ -32,17 +33,21 @@ export const ChallengeEditorToolbar = ({ onRun, isRunning, language }: Props) =>
           Reiniciar
         </Button>
 
-        <Button 
-          colorPalette="green" 
-          size="sm" 
-          onClick={onRun}
-          disabled={isRunning}
-        >
-          <Box as="span" display="inline-flex" mr="2">
-            <Play size={14} fill="currentColor" />
-          </Box>
-          {isRunning ? 'Ejecutando...' : 'Ejecutar'}
-        </Button>
+        {isRunning ? (
+          <Button colorPalette="red" variant="outline" size="sm" onClick={onStop}>
+            <Box as="span" display="inline-flex" mr="2">
+              <Square size={14} />
+            </Box>
+            Cancelar
+          </Button>
+        ) : (
+          <Button colorPalette="green" size="sm" onClick={onRun}>
+            <Box as="span" display="inline-flex" mr="2">
+              <Play size={14} fill="currentColor" />
+            </Box>
+            Ejecutar
+          </Button>
+        )}
       </HStack>
     </Flex>
   );
