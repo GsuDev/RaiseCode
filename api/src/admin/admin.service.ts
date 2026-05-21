@@ -62,7 +62,7 @@ export class AdminService {
 
     async getSetting(key ?: string) {
         const config = await this.prisma.appConfig.findUnique({ where: { key } });
-        return config ? { [config.key]: config.value } : {};
+        return config ?  config.value : null;
     }
 
     async updateSettings(data: Record<string, string>) {

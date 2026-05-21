@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
+import { AdminService } from 'src/admin/admin.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -15,11 +17,16 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
+    private adminService: AdminService,
   ) {}
 
   @Post('register')
   @UsePipes(ValidationPipe)
   async register(@Body() createUserDto: CreateUserDto) {
+    const registrationEnabled = await this.adminService.getSetting('registrationEnabled');
+    if (registrationEnabled === 'false') {
+      throw new ForbiddenException('El registro está desactivado temporalmente');
+    }
     const user = await this.usersService.createUser(createUserDto);
     const { password, ...userWithoutPassword } = user;
     const tokenData = this.authService.generateToken({

@@ -6,11 +6,13 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AdminModule } from 'src/admin/admin.module';
 
 @Module({
   imports: [
     UsersModule, // Importamos el módulo de usuarios para poder usar UsersService
     PassportModule,
+    AdminModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
