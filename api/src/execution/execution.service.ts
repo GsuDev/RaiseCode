@@ -141,11 +141,18 @@ export class ExecutionService {
         Medium: 25,
         Hard: 50,
       };
-      const xpToAdd = xpMap[challenge.dificulty.name] ?? 10;
+      const baseXp = xpMap[challenge.dificulty.name] ?? 10;
+      const timeoutSeconds = Number(process.env.RUNNER_TIMEOUT ?? 10);
+
+      const bonus = Math.max(
+        0,
+        Math.floor(((timeoutSeconds - dto.execution_time) / timeoutSeconds) * baseXp * 0.5),
+      );
+      const xpToAdd = baseXp + bonus;
 
       await this.prisma.user.update({
         where: { id: dto.userId },
-        data: { xp: { increment: xpToAdd }},
+        data: { xp: { increment: xpToAdd } },
       });
 
       await this.achievementsService.evaluateForUser(dto.userId);
