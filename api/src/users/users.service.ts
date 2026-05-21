@@ -232,6 +232,18 @@ async findProfile(id: number) {
     throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
   }
 
+  const times = user.completedChallenges
+      .map((cc) => Number(cc.time))
+      .filter((t) => t > 0);
+
+  const avgExecutionTime = times.length > 0
+      ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
+      : null;
+
+  const bestExecutionTime = times.length > 0
+      ? Math.min(...times)
+      : null;
+
   const xpMap: Record<string, number> = { Easy: 10, Medium: 25, Hard: 50 };
 
   const languageStats = user.completedChallenges.reduce((acc: any, curr: any) => {
@@ -265,6 +277,8 @@ async findProfile(id: number) {
     stats: {
       completedCount: user.completedChallenges.length,
       byLanguage: Object.values(languageStats),
+      avgExecutionTime,
+      bestExecutionTime,
     },
     recentActivity,
   };
