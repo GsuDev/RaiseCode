@@ -8,6 +8,6 @@ import { AuthModule } from 'src/auth/auth.module';
      imports: [AuthModule, PrismaModule],
       providers: [AdminService],
       exports: [AdminService],
-      controllers: [AdminController], // Exportamos el servicio para que AuthModule pueda usarlo
+      controllers: [AdminController],
 })
 export class AdminModule {}

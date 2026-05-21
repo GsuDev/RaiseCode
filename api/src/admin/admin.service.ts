@@ -45,7 +45,7 @@ export class AdminService {
     }
     async getActivityLast7Days() { 
         return this.prisma.completedChallenges.groupBy({
-            by: ['createdAt'], // ⚠️ NO EXISTE en CompletedChallenges, necesitas agregar timestamp
+            by: ['createdAt'],
             _count: true,
             where: {
                 createdAt: {
@@ -53,6 +53,28 @@ export class AdminService {
                 }
             }
         })
+    }
+
+    async getSettings() {
+        const configs = await this.prisma.appConfig.findMany();
+        return configs.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {} as Record<string, string>);
+    }
+
+    async getSetting(key ?: string) {
+        const config = await this.prisma.appConfig.findUnique({ where: { key } });
+        return config ? { [config.key]: config.value } : {};
+    }
+
+    async updateSettings(data: Record<string, string>) {
+        const upserts = Object.entries(data).map(([key, value]) =>
+            this.prisma.appConfig.upsert({
+                where: { key },
+                create: { key, value },
+                update: { value },
+            })
+        );
+        await Promise.all(upserts);
+        return this.getSettings();
     }
 
     async getStats() {
