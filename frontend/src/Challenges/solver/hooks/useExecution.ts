@@ -170,5 +170,16 @@ export const useExecution = () => {
     }
   };
 
-  return { submit, status, result, error };
+  const abort = () => {
+    socketRef.current?.disconnect();
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    reconnectRef.current = 0;
+    resolvedRef.current  = true;
+    jobIdRef.current     = null;
+    setStatus('idle');
+    setResult(null);
+    setError(null);
+  };
+
+  return { submit, abort, status, result, error };
 };

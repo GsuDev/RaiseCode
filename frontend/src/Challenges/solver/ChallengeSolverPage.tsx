@@ -11,7 +11,7 @@ import { ChallengeSuccessModal } from './components/ChallengeSuccessModal';
 
 export const ChallengeSolverPage = () => {
   const { challenge, loading, code, setCode } = useChallengeSolver();
-  const { submit, status, result, error } = useExecution();
+  const { submit, abort, status, result, error } = useExecution();
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
@@ -58,6 +58,7 @@ export const ChallengeSolverPage = () => {
         <GridItem h="full" display="flex" flexDirection="column">
           <ChallengeEditorToolbar
             onRun={handleRun}
+            onStop={abort}
             isRunning={status === 'running'}
             language={challenge.language.name.toLowerCase()}
           />
