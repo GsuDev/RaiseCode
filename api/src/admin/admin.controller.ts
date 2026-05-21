@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards, ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles/roles.decorator';
 import { RolesGuard } from 'src/auth/roles/roles.guard';
 import { AdminService } from './admin.service';
-import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -26,7 +25,7 @@ export class AdminController {
     @Patch('/settings')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN')
-    updateSettings(@Body() dto: UpdateSettingsDto) {
+    updateSettings(@Body(new ValidationPipe({ whitelist: false, forbidNonWhitelisted: false, transform: false })) dto: Record<string, string>) {
         return this.adminService.updateSettings(dto);
     }
 }

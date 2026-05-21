@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 @Injectable()
 export class AdminService {
@@ -56,8 +57,7 @@ export class AdminService {
     }
 
     async getSettings() {
-        const configs = await this.prisma.appConfig.findMany();
-        return configs.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {} as Record<string, string>);
+        return await this.prisma.appConfig.findMany();  
     }
 
     async getSetting(key ?: string) {
@@ -65,7 +65,7 @@ export class AdminService {
         return config ?  config.value : null;
     }
 
-    async updateSettings(data: Record<string, string>) {
+    async updateSettings(data : UpdateSettingsDto) {
         const upserts = Object.entries(data).map(([key, value]) =>
             this.prisma.appConfig.upsert({
                 where: { key },

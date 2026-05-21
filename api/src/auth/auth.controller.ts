@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  Inject,
   Post,
   UsePipes,
   ValidationPipe,
+  forwardRef,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
@@ -17,6 +19,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
+    @Inject(forwardRef(() => AdminService))
     private adminService: AdminService,
   ) {}
 
