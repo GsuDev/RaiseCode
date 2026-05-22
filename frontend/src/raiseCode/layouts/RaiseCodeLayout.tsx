@@ -1,4 +1,6 @@
 import { CustomJumbotron } from '@/components/custom/CustomJumbotron';
+import { Footer } from '@/raiseCode/components/Footer/Footer';
+import { Box } from '@chakra-ui/react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 
 export const RaiseCodeLayout = () => {
@@ -6,12 +8,15 @@ export const RaiseCodeLayout = () => {
   const location = useLocation();
 
   return (
-    <>
+    <Box display="flex" flexDirection="column" minH="100vh">
       <CustomJumbotron
         currentPage={location.pathname}
         onNavigate={(page) => navigate(page)}
       />
-      <Outlet />
-    </>
+      <Box flex="1">
+        <Outlet />
+      </Box>
+      <Footer />
+    </Box>
   );
 };
