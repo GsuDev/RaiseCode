@@ -146,7 +146,7 @@ export class ExecutionService {
 
       const bonus = Math.max(
         0,
-        Math.floor(((timeoutSeconds - dto.execution_time) / timeoutSeconds) * baseXp * 0.5),
+        Math.floor(((timeoutSeconds - dto.execution_time) / timeoutSeconds) * baseXp * 1.5),
       );
       const xpToAdd = baseXp + bonus;
 
@@ -161,13 +161,29 @@ export class ExecutionService {
       }
     }
 
-    // 3. Emitir resultado por WebSocket al cliente que está escuchando este jobId
+    // 3. Sanitizar test_results: ocultar expected/actual de tests hidden consultando la BD
+    const dbTests = await this.prisma.challengeTest.findMany({
+      where: { challengeId: dto.challengeId },
+      select: { hidden: true },
+      orderBy: { id: 'asc' },
+    });
+    const hiddenByIndex = dbTests.map((t) => t.hidden);
+
+    const sanitizedResults = dto.test_results.map((r) => {
+      const isHidden = hiddenByIndex[r.test_number - 1] ?? false;
+      if (isHidden) {
+        return { test_number: r.test_number, passed: r.passed, hidden: true };
+      }
+      return { ...r, hidden: false };
+    });
+
+    // 4. Emitir resultado por WebSocket al cliente que está escuchando este jobId
     this.gateway.emitResult(dto.jobId, dto.userId, {
       status: dto.status,
       score: dto.score,
       tests_passed: dto.tests_passed,
       tests_total: dto.tests_total,
-      test_results: dto.test_results,
+      test_results: sanitizedResults,
       stdout: dto.stdout,
       stderr: dto.stderr,
       execution_time: dto.execution_time,
