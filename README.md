@@ -72,18 +72,18 @@ La aplicación estará disponible en **https://localhost**
 
 ## Base de datos — Seed inicial
 
-> El seed requiere que las migraciones ya estén aplicadas (las tablas deben existir).
+> Aplica las migraciones y puebla la BBDD con datos de ejemplo (usuarios, retos, lenguajes, logros...).
 
 ```bash
-# 1. Aplicar migraciones (crea las tablas):
-docker exec code_judge_api yarn prisma migrate deploy
-
-# 2. Poblar datos de ejemplo (opción recomendada — incluye Kotlin y logros):
-docker exec code_judge_api yarn prisma db seed
-
-# Alternativa con SQL directo:
-docker exec -i code_judge_mariadb mysql -uroot -proot raisecode < seed.sql
+make seed
 ```
+
+Credenciales por defecto tras el seed:
+
+| Rol | Email | Contraseña |
+|-----|-------|------------|
+| Admin | `admin@raisecode.dev` | `Admin1234!` |
+| Usuario demo | `user@raisecode.dev` | — |
 
 ---
 
@@ -142,8 +142,7 @@ make ssl-certs
 make prod
 
 # 4. Aplicar migraciones y seed
-docker exec raisecode_api yarn prisma migrate deploy
-docker exec -i raisecode_mariadb mysql -uroot -p<DB_PASSWORD> raisecode < seed.sql
+make seed
 ```
 
 ### Windows (PowerShell como administrador)
@@ -153,7 +152,6 @@ docker exec -i raisecode_mariadb mysql -uroot -p<DB_PASSWORD> raisecode < seed.s
 git clone https://github.com/GsuDev/RaiseCode.git
 cd RaiseCode
 Copy-Item .env.example .env
-# Editar .env con credenciales reales
 
 # 2. Generar certificado SSL
 .\nginx\certs\generate-certs.ps1
@@ -162,8 +160,8 @@ Copy-Item .env.example .env
 docker compose -f docker-compose.prod.yml up --build -d
 
 # 4. Aplicar migraciones y seed
-docker exec raisecode_api yarn prisma migrate deploy
-Get-Content seed.sql | docker exec -i raisecode_mariadb mysql -uroot -p<DB_PASSWORD> raisecode
+docker cp api/prisma.config.ts raisecode_api:/app/prisma.config.ts
+docker compose -f docker-compose.prod.yml exec api sh -c "node_modules/.bin/prisma migrate deploy && node_modules/.bin/tsx prisma/seed.ts"
 ```
 
 ### Comandos de producción (Mac / Linux)
@@ -174,6 +172,7 @@ Get-Content seed.sql | docker exec -i raisecode_mariadb mysql -uroot -p<DB_PASSW
 | `make prod-down` | Parar y eliminar contenedores de producción |
 | `make prod-logs` | Ver logs del stack de producción |
 | `make prod-build` | Solo construir las imágenes sin levantar |
+| `make seed` | Aplicar migraciones y poblar la base de datos |
 
 ---
 
@@ -237,4 +236,6 @@ make ssl-certs-docker
 
 ### La base de datos está vacía después de levantar
 
-Hay que aplicar el seed manualmente (ver sección [Base de datos — Seed inicial](#base-de-datos--seed-inicial)).
+```bash
+make seed
+```
