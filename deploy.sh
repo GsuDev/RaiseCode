@@ -72,9 +72,11 @@ else
     print_success "Docker ya instalado: $(docker --version)"
 fi
 
-# Asegurar que Docker está arrancado
-sudo systemctl enable docker --quiet
-sudo systemctl start docker
+# Asegurar que Docker está arrancado (solo si systemd gestiona el servicio)
+if systemctl list-unit-files docker.service &>/dev/null 2>&1; then
+    sudo systemctl enable docker --quiet
+    sudo systemctl start docker
+fi
 
 # Añadir usuario actual al grupo docker
 if ! groups "$USER" | grep -q docker; then
