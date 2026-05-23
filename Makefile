@@ -1,4 +1,4 @@
-.PHONY: help build up down restart logs clean build-runners test-runner prod prod-down prod-logs prod-build
+.PHONY: help build up down restart logs clean build-runners test-runner prod prod-down prod-logs prod-build seed
 
 # Colores para output
 GREEN  := \033[0;32m
@@ -22,6 +22,15 @@ prod: ## Levantar stack de PRODUCCIÓN (docker-compose.prod.yml)
 
 prod-build: ## Construir imágenes de producción sin levantar
 	docker compose -f docker-compose.prod.yml build
+
+seed: ## Ejecutar migraciones y seed en producción
+	@echo "$(GREEN)Copiando prisma.config.ts al contenedor...$(NC)"
+	@docker cp api/prisma.config.ts raisecode_api:/app/prisma.config.ts
+	@echo "$(GREEN)Aplicando migraciones...$(NC)"
+	@docker compose -f docker-compose.prod.yml exec api sh -c "node_modules/.bin/prisma migrate deploy"
+	@echo "$(GREEN)Ejecutando seed...$(NC)"
+	@docker compose -f docker-compose.prod.yml exec api sh -c "node_modules/.bin/tsx prisma/seed.ts"
+	@echo "$(GREEN)✓ Base de datos lista$(NC)"
 
 prod-down: ## Parar y eliminar contenedores de producción
 	docker compose -f docker-compose.prod.yml down
