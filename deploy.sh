@@ -97,14 +97,12 @@ print_step "Generando certificados SSL..."
 
 if [ ! -f nginx/certs/cert.pem ] || [ ! -f nginx/certs/key.pem ]; then
     mkdir -p nginx/certs
-    docker run --rm \
-        -v "$(pwd)/nginx/certs:/certs" \
-        alpine/openssl \
-        req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout /certs/key.pem \
-        -out /certs/cert.pem \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout nginx/certs/key.pem \
+        -out nginx/certs/cert.pem \
         -subj "/C=ES/ST=Local/L=Local/O=RaiseCode/CN=localhost" \
-        -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+        -addext "subjectAltName=DNS:localhost,IP:127.0.0.1" \
+        2>/dev/null
     print_success "Certificados SSL generados"
 else
     print_success "Certificados SSL ya existen"
