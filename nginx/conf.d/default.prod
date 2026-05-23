@@ -5,16 +5,6 @@
 #   - location / sirve la SPA estática sin headers de HMR/WebSocket
 # ==============================================================================
 
-# Upstream para el Frontend (nginx sirviendo el build estático)
-upstream frontend {
-    server frontend:80;
-}
-
-# Upstream para la API (NestJS)
-upstream api {
-    server api:3000;
-}
-
 # ==============================================================================
 # SERVER BLOCK 1: HTTP (puerto 80) — Redirección a HTTPS
 # ==============================================================================
@@ -22,6 +12,11 @@ server {
     listen 80;
     listen [::]:80;
     server_name localhost;
+
+    # Resolución dinámica via DNS interno de Docker
+    resolver 127.0.0.11 valid=30s ipv6=off;
+    set $upstream_frontend frontend:80;
+    set $upstream_api      api:3000;
 
     location /health {
         access_log off;
@@ -51,6 +46,11 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
     server_name localhost;
+
+    # Resolución dinámica via DNS interno de Docker
+    resolver 127.0.0.11 valid=30s ipv6=off;
+    set $upstream_frontend frontend:80;
+    set $upstream_api      api:3000;
 
     ssl_certificate     /etc/nginx/certs/cert.pem;
     ssl_certificate_key /etc/nginx/certs/key.pem;
@@ -152,7 +152,7 @@ server {
         limit_req zone=auth burst=5 nodelay;
         limit_req_status 429;
 
-        proxy_pass http://api;
+        proxy_pass http://$upstream_api;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -164,7 +164,7 @@ server {
         limit_req zone=auth burst=5 nodelay;
         limit_req_status 429;
 
-        proxy_pass http://api;
+        proxy_pass http://$upstream_api;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -176,7 +176,7 @@ server {
     # Socket.IO WebSocket — antes de /api/ para que nginx lo capture primero
     # ==================================================================
     location /socket.io/ {
-        proxy_pass http://api;
+        proxy_pass http://$upstream_api;
         proxy_http_version 1.1;
 
         proxy_set_header Upgrade $http_upgrade;
@@ -198,7 +198,7 @@ server {
     # API Backend
     # ==================================================================
     location /api/ {
-        proxy_pass http://api;
+        proxy_pass http://$upstream_api;
         proxy_http_version 1.1;
 
         proxy_set_header Host $host;
@@ -221,7 +221,7 @@ server {
     # Frontend — SPA estática (nginx:alpine, sin HMR)
     # ==================================================================
     location / {
-        proxy_pass http://frontend;
+        proxy_pass http://$upstream_frontend;
         proxy_http_version 1.1;
 
         proxy_set_header Host $host;
